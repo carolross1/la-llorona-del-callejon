@@ -1,0 +1,550 @@
+fileFormatVersion: 2
+guid: b68c667d6f688ed438db101ea910a3b1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7575270302072378602
+    second: Carlos_Caminando_0
+  - first:
+      213: 2727168485898434996
+    second: Carlos_Caminando_1
+  - first:
+      213: -825684788247245397
+    second: Carlos_Caminando_2
+  - first:
+      213: -999545712589744799
+    second: Carlos_Caminando_3
+  - first:
+      213: 4858124680216683469
+    second: Carlos_Caminando_4
+  - first:
+      213: 104330832976725979
+    second: Carlos_Caminando_5
+  - first:
+      213: -2396540037955678684
+    second: Carlos_Caminando_6
+  - first:
+      213: -3793914804206977061
+    second: Carlos_Caminando_7
+  - first:
+      213: 3401814494321479919
+    second: Carlos_Caminando_8
+  - first:
+      213: -5932281660338658233
+    second: Carlos_Caminando_9
+  - first:
+      213: -2617278172761646498
+    second: Carlos_Caminando_10
+  - first:
+      213: -1731677847715247243
+    second: Carlos_Caminando_11
+  - first:
+      213: 2002396451738828759
+    second: Carlos_Caminando_12
+  - first:
+      213: 632858276676941078
+    second: Carlos_Caminando_13
+  - first:
+      213: 6100264130570324870
+    second: Carlos_Caminando_14
+  - first:
+      213: -7682407959674898449
+    second: Carlos_Caminando_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Carlos_Caminando_0
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 758
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae417984434c02960800000000000000
+      internalID: 7575270302072378602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_1
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 758
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b9bd9ce949d8d520800000000000000
+      internalID: 2727168485898434996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_2
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 758
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bad441c4f049a84f0800000000000000
+      internalID: -825684788247245397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_3
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 758
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 165d2506876e022f0800000000000000
+      internalID: -999545712589744799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_4
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 508
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc3afde38a68b6340800000000000000
+      internalID: 4858124680216683469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_5
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 508
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd7c2bef658a27100800000000000000
+      internalID: 104330832976725979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_6
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 508
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42e86ab6887cdbed0800000000000000
+      internalID: -2396540037955678684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_7
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 508
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdfb52b269e495bc0800000000000000
+      internalID: -3793914804206977061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_8
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 258
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe09ecd424ca53f20800000000000000
+      internalID: 3401814494321479919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_9
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 258
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74423ffa24d4cada0800000000000000
+      internalID: -5932281660338658233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_10
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 258
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5a982a6e5f8dabd0800000000000000
+      internalID: -2617278172761646498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_11
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 258
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57b058d1c28d7f7e0800000000000000
+      internalID: -1731677847715247243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_12
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 8
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7df3565b6f0f9cb10800000000000000
+      internalID: 2002396451738828759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_13
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 8
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 615be76ef3d58c800800000000000000
+      internalID: 632858276676941078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_14
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 8
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68b83baf7ed78a450800000000000000
+      internalID: 6100264130570324870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carlos_Caminando_15
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 8
+        width: 320
+        height: 250
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe7b1ffe9aa926590800000000000000
+      internalID: -7682407959674898449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 3942d48bc133b304991c5a2e9ed7c4b1
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":320.0,"y":250.0},"gridSpriteOffset":{"x":116.0,"y":16.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Carlos_Caminando_0: 7575270302072378602
+      Carlos_Caminando_1: 2727168485898434996
+      Carlos_Caminando_10: -2617278172761646498
+      Carlos_Caminando_11: -1731677847715247243
+      Carlos_Caminando_12: 2002396451738828759
+      Carlos_Caminando_13: 632858276676941078
+      Carlos_Caminando_14: 6100264130570324870
+      Carlos_Caminando_15: -7682407959674898449
+      Carlos_Caminando_2: -825684788247245397
+      Carlos_Caminando_3: -999545712589744799
+      Carlos_Caminando_4: 4858124680216683469
+      Carlos_Caminando_5: 104330832976725979
+      Carlos_Caminando_6: -2396540037955678684
+      Carlos_Caminando_7: -3793914804206977061
+      Carlos_Caminando_8: 3401814494321479919
+      Carlos_Caminando_9: -5932281660338658233
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

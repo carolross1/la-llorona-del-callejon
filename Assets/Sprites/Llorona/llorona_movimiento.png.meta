@@ -1,0 +1,654 @@
+fileFormatVersion: 2
+guid: edae50273d676984cb53de30c5b371ee
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7904605776595507003
+    second: Llorona_Movimiento_0
+  - first:
+      213: 1430474835330657642
+    second: Llorona_Movimiento_1
+  - first:
+      213: 5517017691271510593
+    second: Llorona_Movimiento_2
+  - first:
+      213: 8453706709219767042
+    second: Llorona_Movimiento_3
+  - first:
+      213: 1511313183383362277
+    second: Llorona_Movimiento_4
+  - first:
+      213: 1621298448356873989
+    second: Llorona_Movimiento_5
+  - first:
+      213: 2714093266266320151
+    second: Llorona_Movimiento_6
+  - first:
+      213: 5170227071555272652
+    second: Llorona_Movimiento_7
+  - first:
+      213: 2452808128605873941
+    second: Llorona_Movimiento_8
+  - first:
+      213: -865769665461877112
+    second: Llorona_Movimiento_9
+  - first:
+      213: -4016820206860373813
+    second: Llorona_Movimiento_10
+  - first:
+      213: -7227334990276291610
+    second: Llorona_Movimiento_11
+  - first:
+      213: 7372464962840706895
+    second: Llorona_Movimiento_12
+  - first:
+      213: 4245743672218294311
+    second: Llorona_Movimiento_13
+  - first:
+      213: 4025691673096008873
+    second: Llorona_Movimiento_14
+  - first:
+      213: -6665398628984671469
+    second: Llorona_Movimiento_15
+  - first:
+      213: -9165431067012080007
+    second: Llorona_Movimiento_16
+  - first:
+      213: 2775144693999144686
+    second: Llorona_Movimiento_17
+  - first:
+      213: -12864817562798404
+    second: Llorona_Movimiento_18
+  - first:
+      213: -174549273523511160
+    second: Llorona_Movimiento_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 180
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: llorona_movimiento_0
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 999
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b7e89081196f2649b0d93302a3e4e0f
+      internalID: -573187024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_1
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 999
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 504c7b88db79ede438e85dbf14dd82d8
+      internalID: 419599938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_2
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 999
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac8587e3d76d9fd4fab1dc74637dd7cb
+      internalID: -417214118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_3
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 999
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 847e580b0ea5be74faf560bac534c653
+      internalID: -269776505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_4
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 754
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80fffd29d089d2b4a97dc14bf79ca985
+      internalID: 1782026752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_5
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 754
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4854fcf2ba585254b83a3e7be5dea770
+      internalID: -377337882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_6
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 754
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38bee5cb513963841b9417d161f2c0b9
+      internalID: -1416813207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_7
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 754
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66b18a9542e77bf4b911eacc16d58021
+      internalID: -1174766428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_8
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 509
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a59be5461fd626d46904c1c8af9d48ef
+      internalID: -1135796825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_9
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 509
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40364931c32fc2c44b32adc1055e7a21
+      internalID: -829266820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_10
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 509
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d688ff04050baae4c93310d8df0a166a
+      internalID: 792854968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_11
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 509
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d19817026d77814e8612175b5486533
+      internalID: -1862001400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_12
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 264
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2ec624a2e8fead48b037c2f64237049
+      internalID: -499339941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_13
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 264
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ef5547a05243564f9f80c8d507de78a
+      internalID: -1091891330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_14
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 264
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81d3a95a131adb046b35bf56c4a609ad
+      internalID: 1660736683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_15
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 264
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13e09a7c9a2caa347ae7819f01140f4b
+      internalID: 499304983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_16
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 19
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06344ec16a921764188263512e65c069
+      internalID: -1264522335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_17
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 19
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c80dbfdf26b0afe4a9869d29bd475cf7
+      internalID: 451257111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_18
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 19
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a1fc34f77f5e1e4cafa31e855666256
+      internalID: -57653120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: llorona_movimiento_19
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 19
+        width: 228
+        height: 245
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5c7fe74b25c55d4ca81e91218844a3a
+      internalID: 1774062004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 149a21c4c67c2f041847dea269851ad8
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":228.0,"y":245.0},"gridSpriteOffset":{"x":170.0,"y":10.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      llorona_movimiento_0: -573187024
+      llorona_movimiento_1: 419599938
+      llorona_movimiento_10: 792854968
+      llorona_movimiento_11: -1862001400
+      llorona_movimiento_12: -499339941
+      llorona_movimiento_13: -1091891330
+      llorona_movimiento_14: 1660736683
+      llorona_movimiento_15: 499304983
+      llorona_movimiento_16: -1264522335
+      llorona_movimiento_17: 451257111
+      llorona_movimiento_18: -57653120
+      llorona_movimiento_19: 1774062004
+      llorona_movimiento_2: -417214118
+      llorona_movimiento_3: -269776505
+      llorona_movimiento_4: 1782026752
+      llorona_movimiento_5: -377337882
+      llorona_movimiento_6: -1416813207
+      llorona_movimiento_7: -1174766428
+      llorona_movimiento_8: -1135796825
+      llorona_movimiento_9: -829266820
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

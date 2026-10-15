@@ -1,0 +1,32 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] float walkSpeed = 3f;
+    [SerializeField] float runSpeed = 6f;
+    Rigidbody2D rb;
+    Vector2 input;
+
+    public bool IsRunning { get; private set; }
+    public bool IsHidden { get; set; }
+
+    void Awake() => rb = GetComponent<Rigidbody2D>();
+
+    void Update()
+    {
+        var kb = Keyboard.current;
+        input = new Vector2(
+            (kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1 : 0) - (kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1 : 0),
+            (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0)
+        ).normalized;
+        IsRunning = kb.leftShiftKey.isPressed && input != Vector2.zero;
+    }
+
+    void FixedUpdate()
+    {
+        if (IsHidden) { rb.linearVelocity = Vector2.zero; return; }
+        rb.linearVelocity = input * (IsRunning ? runSpeed : walkSpeed);
+    }
+}

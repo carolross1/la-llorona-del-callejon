@@ -1,104 +1,64 @@
+// Assets/Editor/Level1Builder.cs
+using System;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
-// Herramienta de editor: arma el Nivel 1 según el boceto (40 x 16 unidades).
-// IMPORTANTE: este archivo debe estar en una carpeta llamada "Editor" (Assets/Editor/).
-// Menú: La Llorona > Construir Nivel 1 (boceto)
-//
-// El origen (0,0) es la esquina inferior izquierda del mapa. 1 unidad = 1 tile.
-public class Level1Builder : EditorWindow
+/// <summary>
+/// Constructor automatizado del Nivel 1 (El Mercado Vacío) según la especificación del GDD.
+/// Mapa de 40 x 16 unidades, iluminación URP 2D, escondites con HidePoint,
+/// colisiones compuestas, waypoints de patrulla y triggers de tutorial.
+///
+/// Ejecución:
+/// Menú Unity: La Llorona > Construir Nivel 1 Completo
+/// Línea de comandos (batchmode): -executeMethod Level1Builder.BuildLevel1Scene
+/// </summary>
+public static class Level1Builder
 {
-    [Header("Pisos (selecciona varios tiles y arrástralos sobre el nombre de la lista)")]
-    public TileBase[] floorTiles;       // empedrado (zonas 2 y 3)
-    public TileBase[] puddleTiles;      // empedrado con charcos (se mezclan de vez en cuando)
-    public TileBase[] dirtTiles;        // tierra con plantas (zonas 1 y 4)
-    [Range(0f, 0.5f)] public float puddleChance = 0.12f;
+    const string ScenePath = "Assets/Scenes/Level1_Mercado.unity";
 
-    [Header("Paredes (en orden de izquierda a derecha, como vienen en la hoja)")]
-    public TileBase[] wallUpperTiles;   // fila de arriba de la pared (con faroles y ventanas)
-    public TileBase[] wallLowerTiles;   // fila de abajo de la pared (la más oscura)
-
-    [Header("Escondites")]
-    public Sprite hide1Sprite;          // puesto con cajas (zona 1)
-    public Sprite hide2Sprite;          // barril con lona (zona 2)
-    public Sprite hide3Sprite;          // puerta con cajas (zona 3)
-
-    [Header("Obstáculos y decoración")]
-    public Sprite puestoSprite;         // puesto azul grande (ya trae sus cajas)
-    public Sprite farolSprite;
-    public Sprite boteSprite;
-    public Sprite sacosSprite;
-    public Sprite bancaSprite;
-    public Sprite cartelSprite;         // cartel "Feria Patronal"
-    public Sprite papelPicadoSprite;
-
-    [Header("Opciones")]
-    public bool clearTiles = true;
-
-    static readonly string[] FieldNames =
+    [MenuItem("La Llorona/Construir Nivel 1 Completo")]
+    public static void BuildLevel1Scene()
     {
-        "floorTiles", "puddleTiles", "dirtTiles", "puddleChance",
-        "wallUpperTiles", "wallLowerTiles",
-        "hide1Sprite", "hide2Sprite", "hide3Sprite",
-        "puestoSprite", "farolSprite", "boteSprite", "sacosSprite",
-        "bancaSprite", "cartelSprite", "papelPicadoSprite",
-        "clearTiles"
-    };
+        Debug.Log("[Level1Builder] Iniciando construcción del Nivel 1...");
 
-    enum PropKind { Solid, Hide, Deco }
-
-    Vector2 scroll;
-
-    [MenuItem("La Llorona/Construir Nivel 1 (boceto)")]
-    static void Open()
-    {
-        GetWindow<Level1Builder>("Nivel 1");
-    }
-
-    void OnGUI()
-    {
-        scroll = EditorGUILayout.BeginScrollView(scroll);
-
-        EditorGUILayout.HelpBox(
-            "Abre la escena Level1_Mercado, arrastra tus tiles y sprites, y presiona Construir.\n" +
-            "Lo que dejes vacío se omite. Puedes volver a construir cuantas veces quieras (borra lo anterior).",
-            MessageType.Info);
-
-        SerializedObject so = new SerializedObject(this);
-        so.Update();
-        foreach (string n in FieldNames)
+        // Abrir o crear la escena
+        Scene scene;
+        if (File.Exists(ScenePath))
         {
-            SerializedProperty p = so.FindProperty(n);
-            if (p != null) EditorGUILayout.PropertyField(p, true);
+            scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         }
-        so.ApplyModifiedProperties();
-
-        EditorGUILayout.Space();
-        if (GUILayout.Button("Construir Nivel 1", GUILayout.Height(34)))
-            Build();
-
-        EditorGUILayout.EndScrollView();
-    }
-
-    void Build()
-    {
-        if (Application.isPlaying)
+        else
         {
-            Debug.LogWarning("Sal del modo Play antes de construir el nivel.");
-            return;
+            Directory.CreateDirectory("Assets/Scenes");
+            scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
         }
 
         Undo.IncrementCurrentGroup();
         int group = Undo.GetCurrentGroup();
-        Undo.SetCurrentGroupName("Construir Nivel 1");
+        Undo.SetCurrentGroupName("Construir Nivel 1 Completo");
 
-        int walls = LayerMask.NameToLayer("Walls");
-        if (walls < 0) Debug.LogWarning("Falta la capa 'Walls' (Project Settings > Tags and Layers).");
+        // Capas y tags
+        int wallsLayer = LayerMask.NameToLayer("Walls");
+        int hideSpotLayer = LayerMask.NameToLayer("HideSpot");
+        int playerLayer = LayerMask.NameToLayer("Player");
+        int lloronaLayer = LayerMask.NameToLayer("Llorona");
 
-        // ---------- Grid y tilemaps ----------
+        if (wallsLayer < 0) wallsLayer = 0;
+        if (hideSpotLayer < 0) hideSpotLayer = 0;
+
+        // Cargar recursos
+        TileBase[] allTiles = LoadTiles();
+        Sprite puestoSprite = LoadSprite("Assets/Sprites/Environment/puesto_mercado.png");
+        Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
+        Sprite[] hideSprites = LoadSubSprites("Assets/Sprites/Environment/escondites.png");
+
+        // 1. Grid y Tilemaps
         GameObject gridGo = GameObject.Find("Grid");
         if (gridGo == null)
         {
@@ -107,163 +67,189 @@ public class Level1Builder : EditorWindow
             Undo.RegisterCreatedObjectUndo(gridGo, "Grid");
         }
 
-        Tilemap suelo = GetOrCreateTilemap(gridGo.transform, "Suelo", 0, -1, false);
-        Tilemap paredes = GetOrCreateTilemap(gridGo.transform, "Paredes", 1, walls, true);
+        Tilemap sueloMap = GetOrCreateTilemap(gridGo.transform, "Suelo", 0, -1, false);
+        Tilemap paredesMap = GetOrCreateTilemap(gridGo.transform, "Paredes", 1, wallsLayer, true);
 
-        if (clearTiles)
-        {
-            Undo.RegisterCompleteObjectUndo(suelo, "Limpiar suelo");
-            Undo.RegisterCompleteObjectUndo(paredes, "Limpiar paredes");
-            suelo.ClearAllTiles();
-            paredes.ClearAllTiles();
-        }
+        sueloMap.ClearAllTiles();
+        paredesMap.ClearAllTiles();
 
-        // ---------- Piso: tierra en zonas 1 y 4, empedrado en el centro ----------
-        if (floorTiles == null || floorTiles.Length == 0) Debug.LogWarning("Faltan los tiles del piso (empedrado).");
-        System.Random rnd = new System.Random(7);   // semilla fija: siempre queda igual
+        // 2. Construir Suelo (40 x 16)
+        // Zona jugable Y: 2 a 13. Tierra en X < 4 y X >= 36; Adoquín con 12% charcos al centro.
+        TileBase[] dirtTiles = allTiles.Skip(12).Take(12).ToArray();
+        TileBase[] floorTiles = allTiles.Take(6).ToArray();
+        TileBase[] puddleTiles = allTiles.Skip(6).Take(6).ToArray();
+
+        System.Random rnd = new System.Random(17);
         for (int x = 0; x < 40; x++)
         {
             for (int y = 2; y <= 13; y++)
             {
-                bool edge = x < 4 || x >= 36;
+                bool isDirt = (x < 4 || x >= 36);
                 TileBase t;
-                if (edge)
+                if (isDirt)
                 {
-                    t = Pick(dirtTiles != null && dirtTiles.Length > 0 ? dirtTiles : floorTiles, rnd);
+                    t = dirtTiles.Length > 0 ? dirtTiles[rnd.Next(dirtTiles.Length)] : null;
                 }
                 else
                 {
-                    t = Pick(floorTiles, rnd);
-                    if (puddleTiles != null && puddleTiles.Length > 0 && rnd.NextDouble() < puddleChance)
-                        t = Pick(puddleTiles, rnd);
+                    bool hasPuddle = (puddleTiles.Length > 0 && rnd.NextDouble() < 0.12);
+                    t = hasPuddle
+                        ? puddleTiles[rnd.Next(puddleTiles.Length)]
+                        : (floorTiles.Length > 0 ? floorTiles[rnd.Next(floorTiles.Length)] : null);
                 }
-                suelo.SetTile(new Vector3Int(x, y, 0), t);
+
+                if (t != null)
+                    sueloMap.SetTile(new Vector3Int(x, y, 0), t);
             }
         }
 
-        // ---------- Paredes: 2 filas arriba (y 14-15) y 2 abajo (y 0-1) ----------
-        if (wallUpperTiles == null || wallUpperTiles.Length == 0) Debug.LogWarning("Faltan los tiles de la pared.");
-        TileBase[] lower = wallLowerTiles != null && wallLowerTiles.Length > 0 ? wallLowerTiles : wallUpperTiles;
+        // 3. Construir Fachadas y Muros (Filas 0-1 abajo y 14-15 arriba)
+        TileBase[] wallUpper = allTiles.Skip(36).Take(12).ToArray();
+        TileBase[] wallLower = allTiles.Skip(24).Take(12).ToArray();
+
         for (int x = 0; x < 40; x++)
         {
-            paredes.SetTile(new Vector3Int(x, 15, 0), InOrder(wallUpperTiles, x));
-            paredes.SetTile(new Vector3Int(x, 14, 0), InOrder(lower, x));
-            paredes.SetTile(new Vector3Int(x, 1, 0), InOrder(wallUpperTiles, x));
-            paredes.SetTile(new Vector3Int(x, 0, 0), InOrder(lower, x));
+            if (wallUpper.Length > 0)
+            {
+                paredesMap.SetTile(new Vector3Int(x, 15, 0), wallUpper[x % wallUpper.Length]);
+                paredesMap.SetTile(new Vector3Int(x, 1, 0), wallUpper[x % wallUpper.Length]);
+            }
+            if (wallLower.Length > 0)
+            {
+                paredesMap.SetTile(new Vector3Int(x, 14, 0), wallLower[x % wallLower.Length]);
+                paredesMap.SetTile(new Vector3Int(x, 0, 0), wallLower[x % wallLower.Length]);
+            }
         }
 
-        // ---------- Props ----------
-        // Los números del final son la escala: ajustan cada sprite al tamaño del boceto.
-        Transform props = FreshRoot("Props");
+        // 4. Configurar CompositeCollider2D en Paredes (Unity 6)
+        ConfigureCompositeCollider(paredesMap.gameObject);
 
-        // Escondites (HideSpot, trigger)
-        MakeProp(props, "Escondite_1", hide1Sprite, 8.2f, 12.0f, 1.30f, PropKind.Hide, walls);
-        MakeProp(props, "Escondite_2", hide2Sprite, 17.8f, 12.0f, 1.05f, PropKind.Hide, walls);
-        MakeProp(props, "Escondite_3", hide3Sprite, 26.1f, 14.2f, 1.00f, PropKind.Hide, walls);
+        // 5. Props y Escondites
+        Transform propsRoot = FreshRoot("Props");
 
-        // Obstáculos sólidos
-        MakeProp(props, "Puesto_1", puestoSprite, 14.5f, 9.0f, 1.0f, PropKind.Solid, walls);
-        MakeProp(props, "Puesto_2", puestoSprite, 21.7f, 5.5f, 1.0f, PropKind.Solid, walls);
-        MakeProp(props, "Farol_1", farolSprite, 2.2f, 12.0f, 0.83f, PropKind.Solid, walls);
-        MakeProp(props, "Farol_2", farolSprite, 17.0f, 4.5f, 0.83f, PropKind.Solid, walls);
-        MakeProp(props, "Farol_3", farolSprite, 30.5f, 13.4f, 0.83f, PropKind.Solid, walls);
-        MakeProp(props, "Farol_4", farolSprite, 30.5f, 4.6f, 0.83f, PropKind.Solid, walls);
-        MakeProp(props, "Sacos_1", sacosSprite, 24.9f, 10.7f, 0.95f, PropKind.Solid, walls);
-        MakeProp(props, "Sacos_2", sacosSprite, 34.0f, 3.9f, 0.95f, PropKind.Solid, walls);
-        MakeProp(props, "Bote", boteSprite, 11.3f, 4.4f, 0.64f, PropKind.Solid, walls);
+        // Escondites con HideSpot y HidePoint
+        Sprite h1 = hideSprites != null && hideSprites.Length > 0 ? hideSprites[0] : null;
+        Sprite h2 = hideSprites != null && hideSprites.Length > 1 ? hideSprites[1] : null;
+        Sprite h3 = hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null;
 
-        // Decoración (sin colisión)
-        MakeProp(props, "Cartel", cartelSprite, 4.2f, 12.0f, 1.11f, PropKind.Deco, walls);
-        MakeProp(props, "Papel_1", papelPicadoSprite, 8.0f, 13.9f, 1.35f, PropKind.Deco, walls);
-        MakeProp(props, "Papel_2", papelPicadoSprite, 30.9f, 13.9f, 1.35f, PropKind.Deco, walls);
-        MakeProp(props, "Banca", bancaSprite, 12.1f, 13.2f, 0.91f, PropKind.Deco, walls);
+        CreateHideSpot(propsRoot, "Escondite_1_Cajas", h1, 8.0f, 11.0f, 1.3f, hideSpotLayer);
+        CreateHideSpot(propsRoot, "Escondite_2_Barril", h2, 18.0f, 11.0f, 1.05f, hideSpotLayer);
+        CreateHideSpot(propsRoot, "Escondite_3_Puerta", h3, 26.5f, 13.0f, 1.0f, hideSpotLayer);
 
-        // ---------- Límites invisibles a izquierda y derecha ----------
-        Transform limits = FreshRoot("LimitesInvisibles");
-        MakeWall(limits, "Limite_Izq", -0.5f, 8f, walls);
-        MakeWall(limits, "Limite_Der", 40.5f, 8f, walls);
+        // Obstáculos sólidos (Puestos)
+        CreateSolidProp(propsRoot, "Puesto_1", puestoSprite, 14.5f, 6.8f, 1.0f, wallsLayer, new Vector2(2.5f, 0.8f), new Vector2(0f, -0.6f));
+        CreateSolidProp(propsRoot, "Puesto_2", puestoSprite, 21.5f, 3.4f, 1.0f, wallsLayer, new Vector2(2.5f, 0.8f), new Vector2(0f, -0.6f));
 
-        // ---------- Waypoints de La Llorona ----------
+        // Sprites de decoración
+        Sprite farol = GetDecorSprite(decorSprites, 0);
+        Sprite sacos = GetDecorSprite(decorSprites, 1);
+        Sprite banca = GetDecorSprite(decorSprites, 2);
+        Sprite bote = GetDecorSprite(decorSprites, 3);
+        Sprite cartel = GetDecorSprite(decorSprites, 4);
+        Sprite papel = GetDecorSprite(decorSprites, 5);
+
+        // Faroles con Light2D puntual cálida
+        CreateFarol(propsRoot, "Farol_1", farol, 2.2f, 11.0f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_2", farol, 17.0f, 2.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_3", farol, 30.5f, 12.0f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_4", farol, 30.5f, 2.5f, wallsLayer);
+
+        // Otros obstáculos y decoración
+        CreateSolidProp(propsRoot, "Bote", bote, 11.5f, 3.8f, 0.7f, wallsLayer, new Vector2(0.6f, 0.4f), new Vector2(0f, -0.3f));
+        CreateSolidProp(propsRoot, "Banca", banca, 12.0f, 12.4f, 0.9f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
+        CreateSolidProp(propsRoot, "Costales_1", sacos, 25.0f, 9.7f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
+        CreateSolidProp(propsRoot, "Costales_2", sacos, 34.0f, 2.8f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
+
+        CreateDecoProp(propsRoot, "Cartel", cartel, 4.2f, 10.8f, 1.1f);
+        CreateDecoProp(propsRoot, "PapelPicado_1", papel, 5.5f, 12.9f, 1.3f);
+        CreateDecoProp(propsRoot, "PapelPicado_2", papel, 33.0f, 12.9f, 1.3f);
+
+        // 6. Límites laterales invisibles
+        Transform limitsRoot = FreshRoot("LimitesInvisibles");
+        CreateInvisibleWall(limitsRoot, "Limite_Izquierdo", -0.5f, 8.0f, wallsLayer);
+        CreateInvisibleWall(limitsRoot, "Limite_Derecho", 40.5f, 8.0f, wallsLayer);
+
+        // 7. Iluminación Global URP 2D
+        EnsureGlobalLight();
+
+        // 8. Waypoints de patrulla de La Llorona
         Transform wpRoot = FreshRoot("Waypoints");
-        Transform wpA = MakeEmpty(wpRoot, "WP_A", 29.0f, 12.4f);
-        Transform wpB = MakeEmpty(wpRoot, "WP_B", 29.0f, 3.6f);
+        Transform wpA = CreateEmpty(wpRoot, "WP_A", 29.0f, 12.4f);
+        Transform wpB = CreateEmpty(wpRoot, "WP_B", 29.0f, 3.6f);
 
-        // ---------- Meta ----------
+        // 9. Meta de pared a pared en x ≈ 39.2
         GameObject oldGoal = GameObject.Find("Meta");
         if (oldGoal != null) Undo.DestroyObjectImmediate(oldGoal);
+
         GameObject goal = new GameObject("Meta");
-        goal.transform.position = new Vector3(38.9f, 8.5f, 0f);
+        goal.transform.position = new Vector3(39.2f, 8.0f, 0f);
         BoxCollider2D goalCol = goal.AddComponent<BoxCollider2D>();
         goalCol.isTrigger = true;
-        goalCol.size = new Vector2(1.6f, 3f);
+        goalCol.size = new Vector2(1.5f, 13.0f); // De pared a pared
         goal.AddComponent<LevelGoal>();
         Undo.RegisterCreatedObjectUndo(goal, "Meta");
 
-        // ---------- Player, cámara y Llorona ----------
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            Undo.RecordObject(player.transform, "Mover Player");
-            player.transform.position = new Vector3(2.5f, 7.5f, 0f);
-        }
-        else
-        {
-            Debug.LogWarning("No encontré al Player (tag Player). Colócalo en (2.5, 7.5).");
-        }
+        // 10. Triggers de Tutorial Contextual
+        Transform tutRoot = FreshRoot("TutorialTriggers");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Movimiento", new Vector2(4.0f, 7.0f), new Vector2(2f, 6f),
+            "WASD o Flechas para moverte.\nMantén Shift para correr (pero haces ruido).");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Escondite", new Vector2(7.0f, 10.5f), new Vector2(3f, 4f),
+            "Acércate al escondite y presiona E para ocultarte.");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Peligro", new Vector2(23.5f, 7.5f), new Vector2(2f, 8f),
+            "¡Cuidado! Se escucha un llanto cercano.\nEspera a que La Llorona se aleje antes de cruzar.");
 
-        Camera cam = Camera.main;
-        if (cam != null)
-        {
-            Undo.RecordObject(cam.transform, "Mover cámara");
-            cam.transform.position = new Vector3(2.5f, 7.5f, -10f);
-        }
+        // 11. Jugador (Carlos)
+        SetupPlayer(new Vector2(2.5f, 7.0f), playerLayer);
 
-        LloronaAI llorona = FindFirstObjectByType<LloronaAI>();
-        if (llorona != null)
-        {
-            Undo.RecordObject(llorona.transform, "Mover Llorona");
-            llorona.transform.position = new Vector3(29.0f, 3.6f, 0f);
+        // 12. La Llorona
+        SetupLlorona(new Vector2(29.0f, 3.6f), wpA, wpB, wallsLayer, lloronaLayer);
 
-            // waypoints y obstacleMask son privados ([SerializeField]), por eso se asignan así
-            SerializedObject llSo = new SerializedObject(llorona);
-            SerializedProperty wps = llSo.FindProperty("waypoints");
-            wps.arraySize = 2;
-            wps.GetArrayElementAtIndex(0).objectReferenceValue = wpA;
-            wps.GetArrayElementAtIndex(1).objectReferenceValue = wpB;
-            if (walls >= 0)
-                llSo.FindProperty("obstacleMask").intValue = 1 << walls;
-            llSo.ApplyModifiedProperties();
-        }
-        else
-        {
-            Debug.Log("No hay La Llorona en la escena (LloronaAI). Agrégala y vuelve a construir.");
-        }
+        // 13. Cámara
+        SetupCamera(new Vector2(2.5f, 7.0f));
+
+        // 14. Managers de la escena
+        SetupManagers();
 
         Undo.CollapseUndoOperations(group);
-        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-        Debug.Log("Nivel 1 construido. Revisa la ventana Scene y guarda la escena (Ctrl+S).");
+        EditorSceneManager.SaveScene(scene, ScenePath);
+        Debug.Log("[Level1Builder] ¡Nivel 1 construido y guardado con éxito en: " + ScenePath + "!");
     }
 
-    // ---------------- Auxiliares ----------------
+    // ---------------- Métodos Auxiliares ----------------
 
-    static TileBase Pick(TileBase[] arr, System.Random rnd)
+    static TileBase[] LoadTiles()
     {
-        if (arr == null || arr.Length == 0) return null;
-        return arr[rnd.Next(arr.Length)];
+        TileBase[] tiles = new TileBase[48];
+        for (int i = 0; i < 48; i++)
+        {
+            string path = $"Assets/Tiles/tiles_{i}.asset";
+            tiles[i] = AssetDatabase.LoadAssetAtPath<TileBase>(path);
+        }
+        return tiles;
     }
 
-    // Respeta el orden de la hoja: columna 0, 1, 2... y vuelve a empezar
-    static TileBase InOrder(TileBase[] arr, int x)
+    static Sprite LoadSprite(string path)
     {
-        if (arr == null || arr.Length == 0) return null;
-        return arr[x % arr.Length];
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
-    static Tilemap GetOrCreateTilemap(Transform grid, string name, int order, int layer, bool collider)
+    static Sprite[] LoadSubSprites(string path)
     {
-        Transform t = grid.Find(name);
+        return AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().OrderBy(s => s.name).ToArray();
+    }
+
+    static Sprite GetDecorSprite(Sprite[] arr, int index)
+    {
+        if (arr != null && index >= 0 && index < arr.Length)
+            return arr[index];
+        return null;
+    }
+
+    static Tilemap GetOrCreateTilemap(Transform grid, string name, int order, int layer, bool hasCollider)
+    {
+        Transform child = grid.Find(name);
         GameObject go;
-        if (t == null)
+        if (child == null)
         {
             go = new GameObject(name);
             go.transform.SetParent(grid, false);
@@ -273,19 +259,37 @@ public class Level1Builder : EditorWindow
         }
         else
         {
-            go = t.gameObject;
+            go = child.gameObject;
         }
 
         TilemapRenderer r = go.GetComponent<TilemapRenderer>();
         if (r != null) r.sortingOrder = order;
         if (layer >= 0) go.layer = layer;
-        if (collider && go.GetComponent<TilemapCollider2D>() == null)
+
+        if (hasCollider && go.GetComponent<TilemapCollider2D>() == null)
             go.AddComponent<TilemapCollider2D>();
 
         return go.GetComponent<Tilemap>();
     }
 
-    // Borra el objeto raíz anterior (si existe) y crea uno nuevo, para poder reconstruir.
+    static void ConfigureCompositeCollider(GameObject go)
+    {
+        TilemapCollider2D tc = go.GetComponent<TilemapCollider2D>();
+        if (tc == null) tc = go.AddComponent<TilemapCollider2D>();
+
+        CompositeCollider2D cc = go.GetComponent<CompositeCollider2D>();
+        if (cc == null) cc = go.AddComponent<CompositeCollider2D>();
+
+        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Static;
+        }
+
+        // Unity 6 API: Collider2D.compositeOperation
+        tc.compositeOperation = Collider2D.CompositeOperation.Merge;
+    }
+
     static Transform FreshRoot(string name)
     {
         GameObject old = GameObject.Find(name);
@@ -296,32 +300,76 @@ public class Level1Builder : EditorWindow
         return go.transform;
     }
 
-    static Transform MakeEmpty(Transform parent, string name, float x, float y)
+    static Transform CreateEmpty(Transform parent, string name, float x, float y)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
+        Undo.RegisterCreatedObjectUndo(go, name);
         return go.transform;
     }
 
-    static void MakeWall(Transform parent, string name, float x, float y, int layer)
+    static void CreateHideSpot(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer)
     {
+        if (sprite == null) return;
+
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.size = new Vector2(1f, 16f);
+        go.transform.localScale = new Vector3(scale, scale, 1f);
         if (layer >= 0) go.layer = layer;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 2;
+
+        Vector2 size = sprite.bounds.size;
+
+        // Trigger que sobresale 0.6 por el frente
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(size.x + (0.6f / scale), size.y + (0.6f / scale));
+
+        // Componente HideSpot y objeto hijo HidePoint
+        HideSpot hs = go.AddComponent<HideSpot>();
+
+        GameObject hp = new GameObject("HidePoint");
+        hp.transform.SetParent(go.transform, false);
+        hp.transform.localPosition = new Vector3(0f, 0.4f, 0f); // Detrás del objeto
+
+        // Asignar campo hidePoint mediante SerializedObject
+        SerializedObject so = new SerializedObject(hs);
+        SerializedProperty hpProp = so.FindProperty("hidePoint");
+        if (hpProp != null) hpProp.objectReferenceValue = hp.transform;
+        so.ApplyModifiedProperties();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-    static void MakeProp(Transform parent, string name, Sprite sprite, float x, float y,
-                         float scale, PropKind kind, int walls)
+    static void CreateSolidProp(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer, Vector2 colSize, Vector2 colOffset)
     {
-        if (sprite == null)
-        {
-            Debug.LogWarning("Sin sprite para " + name + " (se omite).");
-            return;
-        }
+        if (sprite == null) return;
+
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = new Vector3(scale, scale, 1f);
+        if (layer >= 0) go.layer = layer;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 2;
+
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.size = colSize;
+        bc.offset = colOffset;
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateDecoProp(Transform parent, string name, Sprite sprite, float x, float y, float scale)
+    {
+        if (sprite == null) return;
 
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
@@ -332,31 +380,162 @@ public class Level1Builder : EditorWindow
         sr.sprite = sprite;
         sr.sortingOrder = 2;
 
-        Vector2 size = sprite.bounds.size;   // en unidades locales: el collider se escala con el objeto
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
 
-        switch (kind)
-        {
-            case PropKind.Solid:
-                {
-                    // Collider solo en la base, para poder pasar "por detrás" de la parte alta
-                    BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-                    bc.size = new Vector2(size.x * 0.85f, size.y * 0.5f);
-                    bc.offset = new Vector2(0f, -size.y * 0.25f);
-                    if (walls >= 0) go.layer = walls;   // también bloquea la vista de La Llorona
-                    break;
-                }
-            case PropKind.Hide:
-                {
-                    try { go.tag = "HideSpot"; }
-                    catch (UnityException) { Debug.LogError("Falta el tag 'HideSpot' (Project Settings > Tags and Layers)."); }
+    static void CreateFarol(Transform parent, string name, Sprite sprite, float x, float y, int layer)
+    {
+        if (sprite == null) return;
 
-                    BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-                    bc.isTrigger = true;
-                    bc.size = size + new Vector2(0.6f, 0.6f) / scale;
-                    break;
-                }
-        }
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = new Vector3(0.83f, 0.83f, 1f);
+        if (layer >= 0) go.layer = layer;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 2;
+
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.size = new Vector2(0.5f, 0.4f);
+        bc.offset = new Vector2(0f, -0.6f);
+
+        // Luz cálida 2D
+        GameObject lightGo = new GameObject("LuzFarol");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.75f, 0.4f); // Cálida
+        l2d.intensity = 1.3f;
+        l2d.pointLightOuterRadius = 5.0f;
 
         Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateInvisibleWall(Transform parent, string name, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        if (layer >= 0) go.layer = layer;
+
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.size = new Vector2(1.0f, 16.0f);
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void EnsureGlobalLight()
+    {
+        GameObject glGo = GameObject.Find("Global Light 2D");
+        if (glGo == null)
+        {
+            glGo = new GameObject("Global Light 2D");
+            Undo.RegisterCreatedObjectUndo(glGo, "Global Light 2D");
+        }
+
+        Light2D gl = glGo.GetComponent<Light2D>();
+        if (gl == null) gl = glGo.AddComponent<Light2D>();
+
+        gl.lightType = Light2D.LightType.Global;
+        gl.color = new Color(0.22f, 0.18f, 0.38f); // Azul morado nocturno
+        gl.intensity = 0.22f;
+    }
+
+    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size, string text)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(pos.x, pos.y, 0f);
+
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = size;
+
+        TutorialTrigger tt = go.AddComponent<TutorialTrigger>();
+        SerializedObject so = new SerializedObject(tt);
+        so.FindProperty("tutorialMessage").stringValue = text;
+        so.FindProperty("displayDuration").floatValue = 4.5f;
+        so.ApplyModifiedProperties();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void SetupPlayer(Vector2 pos, int playerLayer)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Undo.RecordObject(player.transform, "Posicionar Player");
+            player.transform.position = new Vector3(pos.x, pos.y, 0f);
+            if (playerLayer >= 0) player.layer = playerLayer;
+        }
+        else
+        {
+            Debug.LogWarning("[Level1Builder] No se encontró GameObject con tag 'Player'.");
+        }
+    }
+
+    static void SetupLlorona(Vector2 pos, Transform wpA, Transform wpB, int wallsLayer, int lloronaLayer)
+    {
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
+        if (llorona != null)
+        {
+            Undo.RecordObject(llorona.transform, "Posicionar Llorona");
+            llorona.transform.position = new Vector3(pos.x, pos.y, 0f);
+            if (lloronaLayer >= 0) llorona.gameObject.layer = lloronaLayer;
+
+            SerializedObject so = new SerializedObject(llorona);
+            SerializedProperty wps = so.FindProperty("waypoints");
+            wps.arraySize = 2;
+            wps.GetArrayElementAtIndex(0).objectReferenceValue = wpA;
+            wps.GetArrayElementAtIndex(1).objectReferenceValue = wpB;
+
+            if (wallsLayer >= 0)
+                so.FindProperty("obstacleMask").intValue = 1 << wallsLayer;
+
+            // Dificultad Nivel 1 según GDD:
+            // patrolSpeed 1.2, chaseSpeed 2.0, viewDistance 4.0, viewAngle 90
+            so.FindProperty("patrolSpeed").floatValue = 1.2f;
+            so.FindProperty("chaseSpeed").floatValue = 2.0f;
+            so.FindProperty("viewDistance").floatValue = 4.0f;
+            so.FindProperty("viewAngle").floatValue = 90.0f;
+
+            so.ApplyModifiedProperties();
+        }
+        else
+        {
+            Debug.LogWarning("[Level1Builder] No se encontró LloronaAI en la escena.");
+        }
+    }
+
+    static void SetupCamera(Vector2 pos)
+    {
+        Camera cam = Camera.main;
+        if (cam != null)
+        {
+            Undo.RecordObject(cam.transform, "Configurar Cámara");
+            cam.transform.position = new Vector3(pos.x, pos.y, -10f);
+            cam.orthographic = true;
+            cam.orthographicSize = 5f;
+
+            CameraFollow2D follow = cam.GetComponent<CameraFollow2D>();
+            if (follow == null)
+                follow = cam.gameObject.AddComponent<CameraFollow2D>();
+
+            follow.SetBounds(new Vector2(8.8f, 7.0f), new Vector2(31.2f, 9.0f));
+        }
+    }
+
+    static void SetupManagers()
+    {
+        if (UnityEngine.Object.FindAnyObjectByType<GameManager>() == null)
+        {
+            GameObject gm = new GameObject("GameManager");
+            gm.AddComponent<GameManager>();
+            Undo.RegisterCreatedObjectUndo(gm, "GameManager");
+        }
     }
 }

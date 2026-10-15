@@ -11,12 +11,14 @@ public class HideSystem : MonoBehaviour
     Vector3 savedPos;
     int savedLayerId;
     int savedOrder;
+    RigidbodyConstraints2D savedConstraints;
 
     void Awake()
     {
         player = GetComponent<PlayerMovement>();
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        savedConstraints = rb.constraints;
     }
 
     void Update()
@@ -46,9 +48,11 @@ public class HideSystem : MonoBehaviour
             player.IsHidden = true;
             rb.linearVelocity = Vector2.zero;
             Teleport(current.HidePosition);
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;   // quieto mientras está escondido
         }
         else
         {
+            rb.constraints = savedConstraints;
             player.IsHidden = false;
             sr.sortingLayerID = savedLayerId;
             sr.sortingOrder = savedOrder;

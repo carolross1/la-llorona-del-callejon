@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HideSpot : MonoBehaviour
 {
-    [SerializeField] Transform hidePoint;          // arrastra aquí HidePoint
+    [SerializeField] Transform hidePoint;           // arrastra aquí HidePoint
     [SerializeField] SpriteRenderer spriteRenderer; // opcional, se busca solo
 
     public SpriteRenderer Sprite => spriteRenderer;

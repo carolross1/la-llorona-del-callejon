@@ -16,7 +16,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+        {
+            input = Vector2.zero;
+            IsRunning = false;
+            return;
+        }
+
         var kb = Keyboard.current;
+        if (kb == null) return;
+
         input = new Vector2(
             (kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1 : 0) - (kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1 : 0),
             (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0)
@@ -26,7 +35,11 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (IsHidden) { rb.linearVelocity = Vector2.zero; return; }
+        if (IsHidden || (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing))
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
         rb.linearVelocity = input * (IsRunning ? runSpeed : walkSpeed);
     }
 }

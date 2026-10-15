@@ -36,7 +36,7 @@ public class LloronaAI : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        player = FindFirstObjectByType<PlayerMovement>();
+        player = FindAnyObjectByType<PlayerMovement>();
     }
 
     void FixedUpdate()
@@ -137,8 +137,10 @@ public class LloronaAI : MonoBehaviour
         if (player.IsHidden) return;   // escondido: no lo atrapa
 
         caught = true;
-        // Temporal: cuando exista el GameManager aquí se pierde una vida
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnPlayerCaught();
+        else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     // Cono de visión en la ventana Scene (selecciona a la Llorona)

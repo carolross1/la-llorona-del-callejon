@@ -8,8 +8,10 @@ public class LevelGoal : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("¡Nivel completado!");
-            // Temporal: cuando tengas Nivel 2, cambia esto por LoadScene del siguiente
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            if (GameManager.Instance != null)
+                GameManager.Instance.OnLevelCompleted();
+            else
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }

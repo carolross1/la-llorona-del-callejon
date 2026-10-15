@@ -44,6 +44,9 @@ TagManager:
   - name: Characters
     uniqueID: 3914527217
     locked: 0
+  - name: Props
+    uniqueID: 1904179605
+    locked: 0
   m_RenderingLayers:
   - Default
   m_MigratedRenderPipelines: []

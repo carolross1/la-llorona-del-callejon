@@ -46,8 +46,27 @@
 * **Problemas superados:**
   * Se corrigieron advertencias de deprecación en Unity 6.6 (`FindAnyObjectByType`).
   * Se eliminaron excepciones de nulos en `PlayerMovement.cs` cuando no hay teclado conectado.
-* **Lo pendiente para Avance 3 (Fase B):**
+* **Lo completado para Avance 3 (Fase B):**
   * Construcción automatizada de Niveles 2 ("El Callejón del Beso") y 3 ("El Atrio de la Parroquia").
   * Mecánica de ofrendas (`Candle` y `Offering`) con distracción de 3 segundos en La Llorona.
-  * `AudioManager` y `AudioMixer` con grupos Music y SFX, llanto 3D y música ambiental.
+  * `AudioManager` centralizado con soporte para crossfade musical, audio 3D posicional para el llanto y ranuras para todos los clips previstos.
   * Efecto `LightFlicker` para faroles del callejón.
+  * ScriptableObject `LloronaSettings` y generador `DifficultySettingsBuilder`.
+
+---
+
+## Entrada 3 — Avance 3: Niveles 2 y 3, Audio, Ofrendas y Dificultad (Fase B)
+* **Objetivo:** Implementación de Niveles 2 y 3, sistema de audio, ofrendas de velas con distracción de La Llorona y curva de dificultad progresiva con ScriptableObjects.
+* **Lo realizado:**
+  * **Level2Builder.cs:** Generación del Callejón del Beso (ancho 6, largo 50 con giro en L), 3 escondites (puertas y barril), faroles parpadeantes (`LightFlicker`), patrulla vertical A -> B de La Llorona y meta final.
+  * **Level3Builder.cs:** Generación del Atrio de la Parroquia (36 x 26 unidades), fuente central de cantera, patrulla de La Llorona en bucle circular (6 waypoints), 3 escondites y meta hacia el cementerio.
+  * **Sistema de Ofrendas (`Candle.cs` y `Offering.cs`):** Velas coleccionables con `E`, colocadas en el suelo con `F`, que atraen y distraen a La Llorona durante 3 segundos. Contador de velas integrado reactivamente en el HUD.
+  * **LightFlicker.cs:** Oscilación estocástica basada en Perlin Noise y caídas abruptas de intensidad para simular faroles coloniales y velas temblorosas en URP 2D.
+  * **Dificultad Progresiva:** ScriptableObject `LloronaSettings.cs` y generador `DifficultySettingsBuilder.cs` con la curva exacta de dificultad (patrolSpeed, chaseSpeed, viewDistance, viewAngle) para los niveles 1, 2, 3 y 4.
+  * **AudioManager.cs:** Controlador centralizado con canales independientes de música (crossfade suave) y SFX, además de emisor 3D para el llanto de La Llorona con atenuación y paneo respecto a Carlos.
+  * **UIBuilder.cs:** Registro ampliado en `EditorBuildSettings` de las 7 escenas del juego y adaptación parametrizada para inyectar Canvas en Niveles 2 y 3.
+* **Pendiente para Avance 4 (Fase C):**
+  * Nivel 4 ("El Cementerio"), niebla con partículas y casa de escape final.
+  * Sistema de diálogos y narrativa integrada (`DialogueSystem`, `DialogueData`) y cinemática de cierre (`FinalCutscene`).
+  * Menú de Opciones completo persistente.
+  * Pantalla de créditos y barra de miedo opcional.

@@ -127,57 +127,76 @@ public static class Level3Builder
         CreateCandlePickup(candlesRoot, "Vela_2", velaSprite, new Vector2(18.0f, 21.0f));
         CreateCandlePickup(candlesRoot, "Vela_3", velaSprite, new Vector2(27.0f, 6.0f));
 
-        // 7. Iluminación Global URP 2D
-        EnsureGlobalLight(0.20f);
+        // 7. Iluminación Global URP 2D — atrio de noche, visible
+        EnsureGlobalLight(0.48f);
 
         // 8. Waypoints en Círculo (6 puntos alrededor de la fuente central en X=18, Y=13)
         Transform wpRoot = FreshRoot("Waypoints");
         Transform[] wps = new Transform[6];
-        wps[0] = CreateEmpty(wpRoot, "WP_Norte", 18.0f, 18.5f);
+        wps[0] = CreateEmpty(wpRoot, "WP_Norte",   18.0f, 18.5f);
         wps[1] = CreateEmpty(wpRoot, "WP_NorEste", 22.5f, 16.0f);
         wps[2] = CreateEmpty(wpRoot, "WP_SurEste", 22.5f, 10.0f);
-        wps[3] = CreateEmpty(wpRoot, "WP_Sur", 18.0f, 7.5f);
-        wps[4] = CreateEmpty(wpRoot, "WP_SurOeste", 13.5f, 10.0f);
-        wps[5] = CreateEmpty(wpRoot, "WP_NorOeste", 13.5f, 16.0f);
+        wps[3] = CreateEmpty(wpRoot, "WP_Sur",     18.0f,  7.5f);
+        wps[4] = CreateEmpty(wpRoot, "WP_SurOeste",13.5f, 10.0f);
+        wps[5] = CreateEmpty(wpRoot, "WP_NorOeste",13.5f, 16.0f);
 
-        // 9. Meta hacia el Cementerio (X ≈ 35.2)
+        // 9. Meta hacia el Cementerio (X ≈ 35.2) con señal verde
         GameObject goal = new GameObject("Meta");
         goal.transform.position = new Vector3(35.2f, 13.0f, 0f);
         BoxCollider2D gCol = goal.AddComponent<BoxCollider2D>();
         gCol.isTrigger = true;
         gCol.size = new Vector2(1.5f, 20.0f);
         goal.AddComponent<LevelGoal>();
+        // Luz verde de salida
+        GameObject exitLightGo = new GameObject("LuzSalida");
+        exitLightGo.transform.SetParent(goal.transform, false);
+        Light2D exitL = exitLightGo.AddComponent<Light2D>();
+        exitL.lightType = Light2D.LightType.Point;
+        exitL.color = new Color(0.2f, 1f, 0.35f);
+        exitL.intensity = 2.0f;
+        exitL.pointLightOuterRadius = 5f;
         Undo.RegisterCreatedObjectUndo(goal, "Meta");
 
         // 10. Player (inicio al oeste)
         SetupPlayer(new Vector2(2.5f, 13.0f), playerLayer);
 
-        // 11. La Llorona (Dificultad Nivel 3: patrolSpeed 1.6, chaseSpeed 2.8, viewDistance 5.5, viewAngle 110)
+        // 11. La Llorona (Dificultad Nivel 3)
         SetupLloronaCircular(new Vector2(18.0f, 18.5f), wps, wallsLayer, lloronaLayer, 1.6f, 2.8f, 5.5f, 110.0f);
 
         // 12. Cámara
         Camera cam = Camera.main;
-        if (cam != null)
+        if (cam == null)
         {
-            cam.orthographic = true;
-            cam.orthographicSize = 5f;
-            cam.transform.position = new Vector3(2.5f, 13.0f, -10f);
-            CameraFollow2D follow = cam.GetComponent<CameraFollow2D>() ?? cam.gameObject.AddComponent<CameraFollow2D>();
-            follow.SetBounds(new Vector2(8.8f, 7.0f), new Vector2(27.2f, 19.0f));
+            GameObject camGo = new GameObject("Main Camera");
+            camGo.tag = "MainCamera";
+            cam = camGo.AddComponent<Camera>();
+            camGo.AddComponent<AudioListener>();
         }
+        cam.orthographic = true;
+        cam.orthographicSize = 5f;
+        cam.transform.position = new Vector3(2.5f, 13.0f, -10f);
+        cam.backgroundColor = new Color(0.05f, 0.04f, 0.12f);
+        CameraFollow2D camFollow = cam.GetComponent<CameraFollow2D>() ?? cam.gameObject.AddComponent<CameraFollow2D>();
+        camFollow.SetBounds(new Vector2(8.8f, 7.0f), new Vector2(27.2f, 19.0f));
 
-        // 13. Tutorial de Ofrendas
+        // 13. Tutorials
         Transform tutRoot = FreshRoot("TutorialTriggers");
-        CreateTutorialTrigger(tutRoot, "Tutorial_Velas", new Vector2(5.0f, 13.0f), new Vector2(3f, 8f),
-            "Recoge velas con E y colócalas con F.\nLa Llorona se detendrá 3 segundos a contemplar la ofrenda.");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
+            new Vector2(2.5f, 13.0f), new Vector2(4f, 8f),
+            "¡Atrio de la parroquia! Recoge velas (E) y colócalas (F)\npara distraer a La Llorona 3 segundos.",
+            showOnStart: true);
+        CreateTutorialTrigger(tutRoot, "Tutorial_Fuente",
+            new Vector2(14.0f, 13.0f), new Vector2(3f, 6f),
+            "La Llorona circula alrededor de la fuente.\n¡Espera su momento y cruza deprisa!");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
+            new Vector2(32.0f, 13.0f), new Vector2(3f, 8f),
+            "¡La salida está a tu derecha! ¡Cruza la luz verde!");
 
         // 14. Manager
         SetupGameManager(3);
 
         Undo.CollapseUndoOperations(group);
         EditorSceneManager.SaveScene(scene, ScenePath);
-
-        // UI Canvas
         UIBuilder.BuildLevel3UICanvas();
         Debug.Log("[Level3Builder] ¡Nivel 3 construido y guardado en " + ScenePath + "!");
     }
@@ -387,7 +406,8 @@ public static class Level3Builder
         gl.intensity = intensity;
     }
 
-    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size, string text)
+    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size,
+        string text, bool showOnStart = false)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
@@ -399,9 +419,12 @@ public static class Level3Builder
         TutorialTrigger tt = go.AddComponent<TutorialTrigger>();
         SerializedObject so = new SerializedObject(tt);
         so.FindProperty("tutorialMessage").stringValue = text;
+        so.FindProperty("displayDuration").floatValue  = showOnStart ? 5.0f : 4.5f;
+        so.FindProperty("showOnStart").boolValue       = showOnStart;
         so.ApplyModifiedProperties();
         Undo.RegisterCreatedObjectUndo(go, name);
     }
+
 
     static void SetupPlayer(Vector2 pos, int playerLayer)
     {

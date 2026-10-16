@@ -141,53 +141,73 @@ public static class Level2Builder
         CreateFlickeringFarol(props, "Farol_Flicker_3", farol, 25.0f, 14.0f, wallsLayer);
         CreateFlickeringFarol(props, "Farol_Flicker_4", farol, 28.5f, 34.0f, wallsLayer);
 
-        // 4. Luz Global URP 2D (más oscura en el callejón, 0.15)
-        EnsureGlobalLight(0.16f);
+        // 4. Luz Global — callejón nocturno pero visible
+        EnsureGlobalLight(0.42f);
 
-        // 5. Waypoints de patrulla de La Llorona (A -> B en el tramo largo)
+        // 5. Waypoints de patrulla (A → B en el tramo largo vertical)
         Transform wpRoot = FreshRoot("Waypoints");
         Transform wpA = CreateEmpty(wpRoot, "WP_A", 26.5f, 40.0f);
         Transform wpB = CreateEmpty(wpRoot, "WP_B", 26.5f, 12.0f);
 
-        // 6. Meta al final del callejón (Y ≈ 45.5)
+        // 6. Meta al final del callejón (Y ≈ 45.5) con señal verde
         GameObject goal = new GameObject("Meta");
         goal.transform.position = new Vector3(26.5f, 45.5f, 0f);
         BoxCollider2D gCol = goal.AddComponent<BoxCollider2D>();
         gCol.isTrigger = true;
         gCol.size = new Vector2(6.0f, 1.5f);
         goal.AddComponent<LevelGoal>();
+        // Luz verde de salida
+        GameObject exitLight = new GameObject("LuzSalida");
+        exitLight.transform.SetParent(goal.transform, false);
+        exitLight.transform.localPosition = Vector3.zero;
+        Light2D exitL2d = exitLight.AddComponent<Light2D>();
+        exitL2d.lightType = Light2D.LightType.Point;
+        exitL2d.color = new Color(0.2f, 1f, 0.35f);
+        exitL2d.intensity = 2.0f;
+        exitL2d.pointLightOuterRadius = 5f;
         Undo.RegisterCreatedObjectUndo(goal, "Meta");
 
         // 7. Player
-        SetupPlayer(new Vector2(2.5f, 4.5f), playerLayer);
+        SetupPlayer(new Vector2(26.5f, 4.5f), playerLayer);
 
-        // 8. La Llorona (Dificultad Nivel 2: patrolSpeed 1.5, chaseSpeed 2.5, viewDistance 5.0, viewAngle 100)
+        // 8. La Llorona (Dificultad Nivel 2)
         SetupLlorona(new Vector2(26.5f, 40.0f), wpA, wpB, wallsLayer, lloronaLayer, 1.5f, 2.5f, 5.0f, 100.0f);
 
-        // 9. Cámara (seguimiento de Carlos adaptado al callejón)
+        // 9. Cámara
         Camera cam = Camera.main;
-        if (cam != null)
+        if (cam == null)
         {
-            cam.orthographic = true;
-            cam.orthographicSize = 5f;
-            cam.transform.position = new Vector3(2.5f, 4.5f, -10f);
-            CameraFollow2D follow = cam.GetComponent<CameraFollow2D>();
-            if (follow == null) follow = cam.gameObject.AddComponent<CameraFollow2D>();
-            follow.SetBounds(new Vector2(3f, 4f), new Vector2(27f, 44f));
+            GameObject camGo = new GameObject("Main Camera");
+            camGo.tag = "MainCamera";
+            cam = camGo.AddComponent<Camera>();
+            camGo.AddComponent<AudioListener>();
         }
+        cam.orthographic = true;
+        cam.orthographicSize = 5f;
+        cam.transform.position = new Vector3(26.5f, 4.5f, -10f);
+        cam.backgroundColor = new Color(0.04f, 0.03f, 0.10f);
+        CameraFollow2D camFollow = cam.GetComponent<CameraFollow2D>();
+        if (camFollow == null) camFollow = cam.gameObject.AddComponent<CameraFollow2D>();
+        camFollow.SetBounds(new Vector2(27f, 4f), new Vector2(27f, 44f));
 
-        // 10. Triggers de Tutorial / Contexto
+        // 10. Tutorials
         Transform tutRoot = FreshRoot("TutorialTriggers");
-        CreateTutorialTrigger(tutRoot, "Tutorial_Faroles", new Vector2(6.0f, 4.5f), new Vector2(3f, 5f),
-            "Los faroles parpadean en el callejón estrecho.\nMuévete en las sombras para no ser visto.");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
+            new Vector2(26.5f, 4.5f), new Vector2(5f, 5f),
+            "¡Callejón estrecho! Usa los escondites (E) y\nevita correr — La Llorona te escucha.",
+            showOnStart: true);
+        CreateTutorialTrigger(tutRoot, "Tutorial_Giro",
+            new Vector2(26.5f, 7.0f), new Vector2(4f, 3f),
+            "El callejón gira más adelante. ¡Espía antes de doblar!");
+        CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
+            new Vector2(26.5f, 42.0f), new Vector2(5f, 4f),
+            "¡La salida está cerca! ¡Llega a la luz verde!");
 
         // 11. Manager
         SetupGameManager(2);
 
         Undo.CollapseUndoOperations(group);
         EditorSceneManager.SaveScene(scene, ScenePath);
-
-        // Generar UI Canvas de este nivel
         UIBuilder.BuildLevel2UICanvas();
         Debug.Log("[Level2Builder] ¡Nivel 2 construido y guardado en " + ScenePath + "!");
     }
@@ -323,7 +343,8 @@ public static class Level2Builder
         gl.intensity = intensity;
     }
 
-    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size, string text)
+    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size,
+        string text, bool showOnStart = false)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
@@ -335,6 +356,8 @@ public static class Level2Builder
         TutorialTrigger tt = go.AddComponent<TutorialTrigger>();
         SerializedObject so = new SerializedObject(tt);
         so.FindProperty("tutorialMessage").stringValue = text;
+        so.FindProperty("displayDuration").floatValue  = showOnStart ? 5.0f : 4.5f;
+        so.FindProperty("showOnStart").boolValue       = showOnStart;
         so.ApplyModifiedProperties();
         Undo.RegisterCreatedObjectUndo(go, name);
     }

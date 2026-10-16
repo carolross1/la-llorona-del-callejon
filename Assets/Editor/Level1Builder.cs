@@ -496,6 +496,9 @@ public static class Level1Builder
             if (wallsLayer >= 0)
                 so.FindProperty("obstacleMask").intValue = 1 << wallsLayer;
 
+            LloronaSettings s = AssetDatabase.LoadAssetAtPath<LloronaSettings>("Assets/Settings/LloronaSettings_Level1.asset");
+            if (s != null) so.FindProperty("settings").objectReferenceValue = s;
+
             // Dificultad Nivel 1 según GDD:
             // patrolSpeed 1.2, chaseSpeed 2.0, viewDistance 4.0, viewAngle 90
             so.FindProperty("patrolSpeed").floatValue = 1.2f;

@@ -217,13 +217,16 @@ public static class UIBuilder
         Debug.Log("[UIBuilder] Escena Credits generada.");
     }
 
-    // ---------------- Canvas de Level1_Mercado ----------------
-    public static void BuildLevel1UICanvas()
+    // ---------------- Canvas de Niveles (HUD, Pausa, Fin, Game Over) ----------------
+    public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity");
+    public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity");
+    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity");
+
+    public static void BuildLevelUICanvas(string path)
     {
-        string path = "Assets/Scenes/Level1_Mercado.unity";
         if (!File.Exists(path))
         {
-            Debug.LogWarning("[UIBuilder] No se encontró Level1_Mercado.unity. Se debe construir primero.");
+            Debug.LogWarning("[UIBuilder] No se encontró " + path + ". Se debe construir primero.");
             return;
         }
 
@@ -272,6 +275,12 @@ public static class UIBuilder
         Text tutTxt = CreateText(tutPanel.transform, "TutorialText", "WASD para moverte. Shift para correr.", 22, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(760, 75)).GetComponent<Text>();
         tutPanel.SetActive(false);
 
+        // Inventario de Velas (Arriba Izquierda, debajo de corazones)
+        GameObject candleRoot = new GameObject("Velas_Inventario");
+        candleRoot.transform.SetParent(hudGo.transform, false);
+        Text candleTxt = CreateText(candleRoot.transform, "CandleCountText", "Velas: 0 [F: Colocar]", 20, TextAnchor.MiddleLeft, new Color(1f, 0.85f, 0.4f), new Vector2(0.04f, 0.87f), new Vector2(0.04f, 0.87f), new Vector2(250, 30)).GetComponent<Text>();
+        candleRoot.SetActive(false);
+
         // Enlazar HUD
         SerializedObject soHud = new SerializedObject(hud);
         SerializedProperty hpArray = soHud.FindProperty("heartImages");
@@ -280,6 +289,8 @@ public static class UIBuilder
         soHud.FindProperty("timerText").objectReferenceValue = timerTxt;
         soHud.FindProperty("scoreText").objectReferenceValue = scoreTxt;
         soHud.FindProperty("objectiveText").objectReferenceValue = objTxt;
+        soHud.FindProperty("candleInventoryRoot").objectReferenceValue = candleRoot;
+        soHud.FindProperty("candleCountText").objectReferenceValue = candleTxt;
         soHud.FindProperty("tutorialPanel").objectReferenceValue = tutPanel;
         soHud.FindProperty("tutorialText").objectReferenceValue = tutTxt;
         soHud.FindProperty("tutorialCanvasGroup").objectReferenceValue = tutCg;
@@ -363,6 +374,8 @@ public static class UIBuilder
             "Assets/Scenes/MainMenu.unity",
             "Assets/Scenes/LevelSelect.unity",
             "Assets/Scenes/Level1_Mercado.unity",
+            "Assets/Scenes/Level2_Callejon.unity",
+            "Assets/Scenes/Level3_Atrio.unity",
             "Assets/Scenes/Credits.unity"
         };
 
@@ -373,7 +386,7 @@ public static class UIBuilder
         }
 
         EditorBuildSettings.scenes = scenes;
-        Debug.Log("[UIBuilder] Build Settings actualizado con las 5 escenas del juego.");
+        Debug.Log("[UIBuilder] Build Settings actualizado con las 7 escenas del juego.");
     }
 
     // ---------------- Constructores Básicos de uGUI ----------------

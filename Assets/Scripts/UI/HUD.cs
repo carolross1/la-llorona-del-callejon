@@ -21,6 +21,10 @@ public class HUD : MonoBehaviour
     [SerializeField] Text scoreText;
     [SerializeField] Text objectiveText;
 
+    [Header("Inventario de Velas / Ofrendas")]
+    [SerializeField] GameObject candleInventoryRoot;
+    [SerializeField] Text candleCountText;
+
     [Header("Tutorial Contextual")]
     [SerializeField] GameObject tutorialPanel;
     [SerializeField] Text tutorialText;
@@ -37,6 +41,9 @@ public class HUD : MonoBehaviour
 
     void Start()
     {
+        Candle.OnCandlesCountChanged += UpdateCandleCount;
+        UpdateCandleCount(Candle.PlayerCandlesCount);
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnLivesChanged += UpdateLives;
@@ -56,12 +63,21 @@ public class HUD : MonoBehaviour
 
     void OnDestroy()
     {
+        Candle.OnCandlesCountChanged -= UpdateCandleCount;
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnLivesChanged -= UpdateLives;
             GameManager.Instance.OnTimeChanged -= UpdateTime;
             GameManager.Instance.OnScoreChanged -= UpdateScore;
         }
+    }
+
+    public void UpdateCandleCount(int count)
+    {
+        if (candleInventoryRoot != null)
+            candleInventoryRoot.SetActive(count > 0);
+        if (candleCountText != null)
+            candleCountText.text = $"Velas: {count} [F: Colocar]";
     }
 
     public void UpdateLives(int lives)

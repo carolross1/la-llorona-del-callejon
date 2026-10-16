@@ -3,7 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class LloronaAI : MonoBehaviour
 {
-    enum State { Patrol, Wait, Chase }
+    enum State { Patrol, Wait, Chase, Distracted }
+
+    [Header("Ajustes de Dificultad (ScriptableObject)")]
+    [SerializeField] LloronaSettings settings;
 
     [Header("Patrulla")]
     [SerializeField] Transform[] waypoints;
@@ -29,14 +32,36 @@ public class LloronaAI : MonoBehaviour
     bool caught;
     Vector2 facing = Vector2.down;
     Vector2 lastSeenPos;
+    Vector2 distractionPos;
 
     public Vector2 Facing => facing;
     public bool IsChasing => state == State.Chase;
+    public bool IsDistracted => state == State.Distracted;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         player = FindAnyObjectByType<PlayerMovement>();
+        ApplySettings();
+    }
+
+    public void SetSettings(LloronaSettings newSettings)
+    {
+        settings = newSettings;
+        ApplySettings();
+    }
+
+    void ApplySettings()
+    {
+        if (settings == null) return;
+        patrolSpeed = settings.PatrolSpeed;
+        chaseSpeed = settings.ChaseSpeed;
+        viewDistance = settings.ViewDistance;
+        viewAngle = settings.ViewAngle;
+        hearDistance = settings.HearDistance;
+        waitTime = settings.WaitTime;
+        loseSightTime = settings.LoseSightTime;
+        runNoiseMultiplier = settings.RunNoiseMultiplier;
     }
 
     void FixedUpdate()
@@ -96,7 +121,36 @@ public class LloronaAI : MonoBehaviour
 
                 if (timer <= 0) state = State.Patrol;
                 break;
+
+            case State.Distracted:
+                timer -= Time.fixedDeltaTime;
+                if (Vector2.Distance(transform.position, distractionPos) > 0.3f)
+                    MoveTo(distractionPos, patrolSpeed * 0.8f);
+                else
+                    rb.linearVelocity = Vector2.zero;
+
+                if (timer <= 0) state = State.Patrol;
+                break;
         }
+    }
+
+    /// <summary>
+    /// Distrae a La Llorona hacia una ofrenda o posición específica durante varios segundos.
+    /// Durante la distracción no persigue a Carlos.
+    /// </summary>
+    public void Distract(Vector2 targetPos, float duration = 3.0f)
+    {
+        state = State.Distracted;
+        timer = duration;
+        distractionPos = targetPos;
+    }
+
+    /// <summary>
+    /// Distrae a La Llorona deteniéndola en su posición actual durante varios segundos.
+    /// </summary>
+    public void Distract(float duration = 3.0f)
+    {
+        Distract(transform.position, duration);
     }
 
     void StartChase()
@@ -115,6 +169,7 @@ public class LloronaAI : MonoBehaviour
 
     bool CanSeePlayer()
     {
+        if (state == State.Distracted) return false;
         if (player.IsHidden) return false;
 
         Vector2 to = player.transform.position - transform.position;

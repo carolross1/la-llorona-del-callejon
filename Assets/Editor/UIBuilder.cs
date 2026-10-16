@@ -144,13 +144,20 @@ public static class UIBuilder
 
         MainMenuUI menu = canvasGo.AddComponent<MainMenuUI>();
         SerializedObject so = new SerializedObject(menu);
-        so.FindProperty("playButton").objectReferenceValue          = btnJugar;
-        so.FindProperty("continueButton").objectReferenceValue      = btnContinue;
-        so.FindProperty("levelSelectButton").objectReferenceValue   = btnSelect;
-        so.FindProperty("optionsButton").objectReferenceValue       = btnOpciones;
-        so.FindProperty("creditsButton").objectReferenceValue       = btnCredits;
-        so.FindProperty("quitButton").objectReferenceValue          = btnSalir;
+        // Nombres exactos de campos en MainMenuUI.cs
+        void Assign(string propName, Object val)
+        {
+            var p = so.FindProperty(propName);
+            if (p != null) p.objectReferenceValue = val;
+        }
+        Assign("playButton",        btnJugar);
+        Assign("continueButton",    btnContinue);
+        Assign("levelSelectButton", btnSelect);
+        Assign("optionsButton",     btnOpciones);
+        Assign("creditsButton",     btnCredits);
+        Assign("exitButton",        btnSalir);   // ← campo real en MainMenuUI
         so.ApplyModifiedProperties();
+
 
         EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), path);
         Debug.Log("[UIBuilder] Escena MainMenu generada.");
@@ -199,12 +206,27 @@ public static class UIBuilder
         Button btnBack = CreateSpriteButton(canvasGo.transform, "Btn_Volver",
             "← Volver", new Vector2(0f, -280f), new Vector2(260, 54));
 
+        string[] sceneNames = { "Level1_Mercado", "Level2_Callejon", "Level3_Atrio", "Level4_Cementerio" };
+
         LevelSelectUI lvlSel = canvasGo.AddComponent<LevelSelectUI>();
         SerializedObject so = new SerializedObject(lvlSel);
-        SerializedProperty btns = so.FindProperty("levelButtons");
-        btns.arraySize = 4;
-        for (int i = 0; i < 4; i++) btns.GetArrayElementAtIndex(i).objectReferenceValue = levelBtns[i];
-        so.FindProperty("backButton").objectReferenceValue = btnBack;
+
+        // LevelSelectUI usa levelEntries (array de structs con levelNumber, sceneName, button)
+        SerializedProperty entries = so.FindProperty("levelEntries");
+        if (entries != null)
+        {
+            entries.arraySize = 4;
+            for (int i = 0; i < 4; i++)
+            {
+                SerializedProperty entry = entries.GetArrayElementAtIndex(i);
+                entry.FindPropertyRelative("levelNumber").intValue      = i + 1;
+                entry.FindPropertyRelative("sceneName").stringValue     = sceneNames[i];
+                entry.FindPropertyRelative("button").objectReferenceValue = levelBtns[i];
+            }
+        }
+
+        SerializedProperty backProp = so.FindProperty("backButton");
+        if (backProp != null) backProp.objectReferenceValue = btnBack;
         so.ApplyModifiedProperties();
 
         EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), path);

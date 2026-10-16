@@ -32,7 +32,11 @@ public static class UIBuilder
         BuildMainMenuScene();
         BuildLevelSelectScene();
         BuildCreditsScene();
+        // Canvas HUD en todos los niveles jugables
         BuildLevel1UICanvas();
+        BuildLevel2UICanvas();
+        BuildLevel3UICanvas();
+        BuildLevel4UICanvas();
 
         UpdateBuildSettings();
         AssetDatabase.SaveAssets();
@@ -221,6 +225,7 @@ public static class UIBuilder
     public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity");
     public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity");
     public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity");
+    public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity");
 
     public static void BuildLevelUICanvas(string path)
     {
@@ -376,6 +381,7 @@ public static class UIBuilder
             "Assets/Scenes/Level1_Mercado.unity",
             "Assets/Scenes/Level2_Callejon.unity",
             "Assets/Scenes/Level3_Atrio.unity",
+            "Assets/Scenes/Level4_Cementerio.unity",
             "Assets/Scenes/Credits.unity"
         };
 
@@ -386,7 +392,7 @@ public static class UIBuilder
         }
 
         EditorBuildSettings.scenes = scenes;
-        Debug.Log("[UIBuilder] Build Settings actualizado con las 7 escenas del juego.");
+        Debug.Log("[UIBuilder] Build Settings actualizado con las 8 escenas del juego.");
     }
 
     // ---------------- Constructores Básicos de uGUI ----------------

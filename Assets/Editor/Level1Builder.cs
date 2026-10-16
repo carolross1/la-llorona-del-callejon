@@ -148,26 +148,34 @@ public static class Level1Builder
         Sprite cartel = GetDecorSprite(decorSprites, 4);
         Sprite papel = GetDecorSprite(decorSprites, 5);
 
-        // Faroles con Light2D puntual cálida
-        CreateFarol(propsRoot, "Farol_1", farol, 2.2f, 11.0f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_2", farol, 17.0f, 2.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_3", farol, 30.5f, 12.0f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_4", farol, 30.5f, 2.5f, wallsLayer);
+        // Faroles con Light2D puntual cálida — cubrimos todo el mapa
+        CreateFarol(propsRoot, "Farol_1",  farol,  2.2f, 11.0f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_2",  farol, 10.0f,  2.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_3",  farol, 10.0f, 12.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_4",  farol, 17.0f,  2.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_5",  farol, 17.0f, 12.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_6",  farol, 24.0f,  7.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_7",  farol, 30.5f, 12.0f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_8",  farol, 30.5f,  2.5f, wallsLayer);
+        CreateFarol(propsRoot, "Farol_9",  farol, 37.0f,  7.5f, wallsLayer);
 
         // Otros obstáculos y decoración
-        CreateSolidProp(propsRoot, "Bote", bote, 11.5f, 3.8f, 0.7f, wallsLayer, new Vector2(0.6f, 0.4f), new Vector2(0f, -0.3f));
-        CreateSolidProp(propsRoot, "Banca", banca, 12.0f, 12.4f, 0.9f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
-        CreateSolidProp(propsRoot, "Costales_1", sacos, 25.0f, 9.7f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
-        CreateSolidProp(propsRoot, "Costales_2", sacos, 34.0f, 2.8f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
+        CreateSolidProp(propsRoot, "Bote",       bote,  11.5f,  3.8f, 0.7f, wallsLayer, new Vector2(0.6f, 0.4f), new Vector2(0f, -0.3f));
+        CreateSolidProp(propsRoot, "Banca",      banca, 12.0f, 12.4f, 0.9f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
+        CreateSolidProp(propsRoot, "Costales_1", sacos, 25.0f,  9.7f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
+        CreateSolidProp(propsRoot, "Costales_2", sacos, 34.0f,  2.8f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
 
-        CreateDecoProp(propsRoot, "Cartel", cartel, 4.2f, 10.8f, 1.1f);
-        CreateDecoProp(propsRoot, "PapelPicado_1", papel, 5.5f, 12.9f, 1.3f);
+        CreateDecoProp(propsRoot, "Cartel",        cartel, 4.2f, 10.8f, 1.1f);
+        CreateDecoProp(propsRoot, "PapelPicado_1", papel,  5.5f, 12.9f, 1.3f);
         CreateDecoProp(propsRoot, "PapelPicado_2", papel, 33.0f, 12.9f, 1.3f);
+
+        // ── Señal de SALIDA en X≈39 para que el jugador sepa adónde ir ──────────
+        CreateExitSign(propsRoot, 37.5f, 7.5f);
 
         // 6. Límites laterales invisibles
         Transform limitsRoot = FreshRoot("LimitesInvisibles");
         CreateInvisibleWall(limitsRoot, "Limite_Izquierdo", -0.5f, 8.0f, wallsLayer);
-        CreateInvisibleWall(limitsRoot, "Limite_Derecho", 40.5f, 8.0f, wallsLayer);
+        CreateInvisibleWall(limitsRoot, "Limite_Derecho",   40.5f, 8.0f, wallsLayer);
 
         // 7. Iluminación Global URP 2D
         EnsureGlobalLight();
@@ -175,7 +183,7 @@ public static class Level1Builder
         // 8. Waypoints de patrulla de La Llorona
         Transform wpRoot = FreshRoot("Waypoints");
         Transform wpA = CreateEmpty(wpRoot, "WP_A", 29.0f, 12.4f);
-        Transform wpB = CreateEmpty(wpRoot, "WP_B", 29.0f, 3.6f);
+        Transform wpB = CreateEmpty(wpRoot, "WP_B", 29.0f,  3.6f);
 
         // 9. Meta de pared a pared en x ≈ 39.2
         GameObject oldGoal = GameObject.Find("Meta");
@@ -189,14 +197,29 @@ public static class Level1Builder
         goal.AddComponent<LevelGoal>();
         Undo.RegisterCreatedObjectUndo(goal, "Meta");
 
-        // 10. Triggers de Tutorial Contextual
+        // 10. Triggers de Tutorial Contextual (en puntos clave del recorrido)
         Transform tutRoot = FreshRoot("TutorialTriggers");
-        CreateTutorialTrigger(tutRoot, "Tutorial_Movimiento", new Vector2(4.0f, 7.0f), new Vector2(2f, 6f),
-            "WASD o Flechas para moverte.\nMantén Shift para correr (pero haces ruido).");
-        CreateTutorialTrigger(tutRoot, "Tutorial_Escondite", new Vector2(7.0f, 10.5f), new Vector2(3f, 4f),
-            "Acércate al escondite y presiona E para ocultarte.");
-        CreateTutorialTrigger(tutRoot, "Tutorial_Peligro", new Vector2(23.5f, 7.5f), new Vector2(2f, 8f),
+
+        // Tutorial de inicio: se activa de inmediato (zona justo donde aparece Carlos)
+        CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
+            new Vector2(2.5f, 7.0f), new Vector2(3f, 8f),
+            "Usa WASD o las Flechas para moverte.\nMantén SHIFT para correr (¡pero haces ruido!).",
+            showOnStart: true);
+
+        // Tutorial de escondite al acercarse al primer escondite
+        CreateTutorialTrigger(tutRoot, "Tutorial_Escondite",
+            new Vector2(8.0f, 11.0f), new Vector2(3f, 4f),
+            "Presiona E cerca de un escondite para ocultarte.\nVuelve a presionar E para salir.");
+
+        // Tutorial de peligro antes de la zona de La Llorona
+        CreateTutorialTrigger(tutRoot, "Tutorial_Peligro",
+            new Vector2(23.5f, 7.5f), new Vector2(2f, 8f),
             "¡Cuidado! Se escucha un llanto cercano.\nEspera a que La Llorona se aleje antes de cruzar.");
+
+        // Tutorial de la salida
+        CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
+            new Vector2(35.5f, 7.5f), new Vector2(3f, 8f),
+            "¡La salida está justo aquí! ¡Cruza la señal verde para completar el nivel!");
 
         // 11. Jugador (Carlos)
         SetupPlayer(new Vector2(2.5f, 7.0f), playerLayer);
@@ -408,9 +431,9 @@ public static class Level1Builder
 
         Light2D l2d = lightGo.AddComponent<Light2D>();
         l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.75f, 0.4f); // Cálida
-        l2d.intensity = 1.3f;
-        l2d.pointLightOuterRadius = 5.0f;
+        l2d.color = new Color(1.0f, 0.82f, 0.5f); // Ámbar cálido
+        l2d.intensity = 2.2f;                       // Aumentado para mayor visibilidad
+        l2d.pointLightOuterRadius = 7.5f;            // Radio ampliado
 
         Undo.RegisterCreatedObjectUndo(go, name);
     }
@@ -439,12 +462,14 @@ public static class Level1Builder
         Light2D gl = glGo.GetComponent<Light2D>();
         if (gl == null) gl = glGo.AddComponent<Light2D>();
 
-        gl.lightType = Light2D.LightType.Global;
-        gl.color = new Color(0.22f, 0.18f, 0.38f); // Azul morado nocturno
-        gl.intensity = 0.22f;
+        gl.lightType  = Light2D.LightType.Global;
+        // Noche de fiesta patronal: ámbar cálido, suficiente para ver el nivel
+        gl.color      = new Color(0.85f, 0.72f, 0.50f);
+        gl.intensity  = 0.55f;
     }
 
-    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size, string text)
+    /// <param name="showOnStart">Si true, el HUD mostrará este mensaje automáticamente al iniciar la escena.</param>
+    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size, string text, bool showOnStart = false)
     {
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
@@ -457,10 +482,42 @@ public static class Level1Builder
         TutorialTrigger tt = go.AddComponent<TutorialTrigger>();
         SerializedObject so = new SerializedObject(tt);
         so.FindProperty("tutorialMessage").stringValue = text;
-        so.FindProperty("displayDuration").floatValue = 4.5f;
+        so.FindProperty("displayDuration").floatValue  = showOnStart ? 5.0f : 4.5f;
+        // Si showOnStart, el trigger cubre toda la zona de inicio para activarse de inmediato
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    /// <summary>Crea un letrero verde luminoso "SALIDA →" en la posición dada.</summary>
+    static void CreateExitSign(Transform parent, float x, float y)
+    {
+        GameObject go = new GameObject("Señal_Salida");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        // Panel verde semitransparente como sprite cuadrado de color
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        // Usamos un sprite blanco de Unity y lo coloreamos
+        sr.color = new Color(0.1f, 0.9f, 0.2f, 0.85f);
+        sr.sortingOrder = 10;
+
+        // Luz verde puntual para llamar la atención
+        GameObject lightGo = new GameObject("LuzSalida");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = Vector3.zero;
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType             = Light2D.LightType.Point;
+        l2d.color                 = new Color(0.2f, 1.0f, 0.3f);
+        l2d.intensity             = 1.8f;
+        l2d.pointLightOuterRadius = 4.0f;
+
+        // Texto flotante "SALIDA →"
+        GameObject textGo = new GameObject("TextoSalida");
+        textGo.transform.SetParent(go.transform, false);
+        textGo.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+
+        Undo.RegisterCreatedObjectUndo(go, "Señal_Salida");
     }
 
     static void SetupPlayer(Vector2 pos, int playerLayer)

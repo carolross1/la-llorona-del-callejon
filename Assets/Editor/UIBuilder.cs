@@ -250,55 +250,119 @@ public static class UIBuilder
         hudGo.transform.SetParent(canvasGo.transform, false);
         HUD hud = hudGo.AddComponent<HUD>();
 
-        // Corazones de vida (Arriba Izquierda)
+        // ── Corazones de vida (Arriba Izquierda) ────────────────────────────────
         GameObject heartsRoot = new GameObject("Vidas_Corazones");
         heartsRoot.transform.SetParent(hudGo.transform, false);
         RectTransform rtHearts = heartsRoot.AddComponent<RectTransform>();
-        rtHearts.anchorMin = new Vector2(0.04f, 0.93f);
-        rtHearts.anchorMax = new Vector2(0.04f, 0.93f);
+        // Ancla top-left; posición fija desde la esquina superior izquierda
+        rtHearts.anchorMin = new Vector2(0f, 1f);
+        rtHearts.anchorMax = new Vector2(0f, 1f);
+        rtHearts.pivot     = new Vector2(0f, 1f);
+        rtHearts.anchoredPosition = new Vector2(16f, -16f);
         rtHearts.sizeDelta = new Vector2(160, 45);
 
         Image[] heartImgs = new Image[3];
         for (int i = 0; i < 3; i++)
         {
-            GameObject h = CreateImage(heartsRoot.transform, $"Corazon_{i + 1}", Color.red, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(36, 36));
+            GameObject h = CreateImage(heartsRoot.transform, $"Corazon_{i + 1}", Color.red,
+                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(36, 36));
             RectTransform hRt = h.GetComponent<RectTransform>();
             hRt.anchoredPosition = new Vector2(i * 45f + 20f, 0f);
             heartImgs[i] = h.GetComponent<Image>();
         }
 
-        // Cronómetro y Puntaje (Arriba Derecha)
-        Text timerTxt = CreateText(hudGo.transform, "TimerText", "Tiempo: 00:00", 24, TextAnchor.MiddleRight, Color.white, new Vector2(0.96f, 0.95f), new Vector2(0.96f, 0.95f), new Vector2(250, 35)).GetComponent<Text>();
-        Text scoreTxt = CreateText(hudGo.transform, "ScoreText", "Puntos: 0", 24, TextAnchor.MiddleRight, Color.yellow, new Vector2(0.96f, 0.90f), new Vector2(0.96f, 0.90f), new Vector2(250, 35)).GetComponent<Text>();
+        // ── Timer (Arriba Centro) ────────────────────────────────────────────────
+        Text timerTxt = CreateText(
+            hudGo.transform, "TimerText", "00:00", 28,
+            TextAnchor.MiddleCenter, Color.white,
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(200, 48)
+        ).GetComponent<Text>();
+        timerTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -28f);
+        // Sombra para legibilidad
+        var timerShadow = timerTxt.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+        timerShadow.effectColor    = new Color(0f, 0f, 0f, 0.8f);
+        timerShadow.effectDistance = new Vector2(2f, -2f);
 
-        // Objetivo (Arriba Centro)
-        Text objTxt = CreateText(hudGo.transform, "ObjectiveText", "Objetivo: Cruza el mercado sin que La Llorona te vea", 22, TextAnchor.MiddleCenter, new Color(0.85f, 0.95f, 1f), new Vector2(0.5f, 0.93f), new Vector2(0.5f, 0.93f), new Vector2(700, 40)).GetComponent<Text>();
+        // ── Puntaje (Arriba Centro, debajo del timer) ───────────────────────────
+        Text scoreTxt = CreateText(
+            hudGo.transform, "ScoreText", "Puntos: 0", 20,
+            TextAnchor.MiddleCenter, new Color(1f, 0.95f, 0.4f),
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(200, 34)
+        ).GetComponent<Text>();
+        scoreTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -70f);
 
-        // Banner de Tutorial Contextual (Abajo Centro)
-        GameObject tutPanel = CreateImage(hudGo.transform, "TutorialPanel", new Color(0.1f, 0.1f, 0.15f, 0.9f), new Vector2(0.5f, 0.16f), new Vector2(0.5f, 0.16f), new Vector2(800, 90));
+        // ── Objetivo (Arriba Derecha, separado del timer) ───────────────────────
+        Text objTxt = CreateText(
+            hudGo.transform, "ObjectiveText",
+            "Objetivo: llega al otro extremo del mercado",
+            18, TextAnchor.MiddleRight,
+            new Color(0.78f, 0.93f, 1f),
+            new Vector2(1f, 1f), new Vector2(1f, 1f),
+            new Vector2(380, 36)
+        ).GetComponent<Text>();
+        objTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(-16f, -20f);
+        objTxt.GetComponent<RectTransform>().pivot = new Vector2(1f, 1f);
+
+        // ── Banner de Tutorial Contextual (Centro-Inferior) ────────────────────
+        // Panel oscuro con borde, bien separado del HUD superior
+        GameObject tutPanel = CreateImage(
+            hudGo.transform, "TutorialPanel",
+            new Color(0.05f, 0.05f, 0.10f, 0.92f),
+            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+            new Vector2(860, 96)
+        );
+        tutPanel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 80f);
         CanvasGroup tutCg = tutPanel.AddComponent<CanvasGroup>();
-        Text tutTxt = CreateText(tutPanel.transform, "TutorialText", "WASD para moverte. Shift para correr.", 22, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(760, 75)).GetComponent<Text>();
+
+        // Línea de acento superior (verde) para que destaque
+        GameObject tutBorder = CreateImage(tutPanel.transform, "TutBorde",
+            new Color(0.3f, 1f, 0.4f, 1f),
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+            new Vector2(860, 4));
+        tutBorder.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
+
+        Text tutTxt = CreateText(
+            tutPanel.transform, "TutorialText",
+            "WASD para moverte · Shift para correr · E para esconderte",
+            20, TextAnchor.MiddleCenter, Color.white,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            new Vector2(820, 80)
+        ).GetComponent<Text>();
         tutPanel.SetActive(false);
 
-        // Inventario de Velas (Arriba Izquierda, debajo de corazones)
+        // ── Inventario de Velas (Izquierda, debajo de corazones) ────────────────
         GameObject candleRoot = new GameObject("Velas_Inventario");
         candleRoot.transform.SetParent(hudGo.transform, false);
-        Text candleTxt = CreateText(candleRoot.transform, "CandleCountText", "Velas: 0 [F: Colocar]", 20, TextAnchor.MiddleLeft, new Color(1f, 0.85f, 0.4f), new Vector2(0.04f, 0.87f), new Vector2(0.04f, 0.87f), new Vector2(250, 30)).GetComponent<Text>();
+        RectTransform rtCandle = candleRoot.AddComponent<RectTransform>();
+        rtCandle.anchorMin = new Vector2(0f, 1f);
+        rtCandle.anchorMax = new Vector2(0f, 1f);
+        rtCandle.pivot     = new Vector2(0f, 1f);
+        rtCandle.anchoredPosition = new Vector2(16f, -70f);
+        rtCandle.sizeDelta = new Vector2(280, 32);
+        Text candleTxt = CreateText(
+            candleRoot.transform, "CandleCountText", "🕯 Velas: 0  [F] Colocar",
+            18, TextAnchor.MiddleLeft,
+            new Color(1f, 0.88f, 0.45f),
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+            new Vector2(280, 32)
+        ).GetComponent<Text>();
         candleRoot.SetActive(false);
 
-        // Enlazar HUD
+        // ── Enlazar HUD ──────────────────────────────────────────────────────────
         SerializedObject soHud = new SerializedObject(hud);
         SerializedProperty hpArray = soHud.FindProperty("heartImages");
         hpArray.arraySize = 3;
         for (int i = 0; i < 3; i++) hpArray.GetArrayElementAtIndex(i).objectReferenceValue = heartImgs[i];
-        soHud.FindProperty("timerText").objectReferenceValue = timerTxt;
-        soHud.FindProperty("scoreText").objectReferenceValue = scoreTxt;
-        soHud.FindProperty("objectiveText").objectReferenceValue = objTxt;
-        soHud.FindProperty("candleInventoryRoot").objectReferenceValue = candleRoot;
-        soHud.FindProperty("candleCountText").objectReferenceValue = candleTxt;
-        soHud.FindProperty("tutorialPanel").objectReferenceValue = tutPanel;
-        soHud.FindProperty("tutorialText").objectReferenceValue = tutTxt;
-        soHud.FindProperty("tutorialCanvasGroup").objectReferenceValue = tutCg;
+        soHud.FindProperty("timerText").objectReferenceValue             = timerTxt;
+        soHud.FindProperty("scoreText").objectReferenceValue             = scoreTxt;
+        soHud.FindProperty("objectiveText").objectReferenceValue         = objTxt;
+        soHud.FindProperty("candleInventoryRoot").objectReferenceValue   = candleRoot;
+        soHud.FindProperty("candleCountText").objectReferenceValue       = candleTxt;
+        soHud.FindProperty("tutorialPanel").objectReferenceValue         = tutPanel;
+        soHud.FindProperty("tutorialText").objectReferenceValue          = tutTxt;
+        soHud.FindProperty("tutorialCanvasGroup").objectReferenceValue   = tutCg;
         soHud.ApplyModifiedProperties();
 
         // --- PauseMenu ---

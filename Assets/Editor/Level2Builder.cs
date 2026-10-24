@@ -491,7 +491,8 @@ public static class Level2Builder
             Undo.RegisterCreatedObjectUndo(gmGo, "GameManager");
         }
         SerializedObject so = new SerializedObject(gm);
-        so.FindProperty("levelNumber").intValue = lvl;
+        SerializedProperty prop = so.FindProperty("currentLevelNumber") ?? so.FindProperty("levelNumber");
+        if (prop != null) prop.intValue = lvl;
         so.ApplyModifiedProperties();
     }
 }

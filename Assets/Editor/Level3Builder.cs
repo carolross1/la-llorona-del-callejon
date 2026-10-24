@@ -1,4 +1,5 @@
 // Assets/Editor/Level3Builder.cs
+using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -9,23 +10,21 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 /// <summary>
-/// Constructor automatizado del Nivel 3: "El Atrio de la Parroquia".
-/// Explanada abierta de 36 x 26 unidades con fuente central, patrulla circular en 6 waypoints,
-/// 3 escondites, velas coleccionables/ofrendas que distraen a La Llorona por 3 s y meta al este.
-///
-/// Ejecución:
-/// Menú Unity: La Llorona > Construir Nivel 3 (Atrio)
-/// Línea de comandos (batchmode): -executeMethod Level3Builder.BuildLevel3Scene
+/// Constructor automatizado del Nivel 3: El Atrio de la Parroquia.
+/// Plaza abierta de 36 x 26 con fuente central donde La Llorona patrulla en círculo.
+/// Incluye recolección de velas, escondites, charcos de agua de la fuente,
+/// botellas ruidosas, perro callejero y portal monumental de salida.
 /// </summary>
 public static class Level3Builder
 {
     const string ScenePath = "Assets/Scenes/Level3_Atrio.unity";
 
-    [MenuItem("La Llorona/Construir Nivel 3 (Atrio)")]
+    [MenuItem("La Llorona/Construir Nivel 3")]
     public static void BuildLevel3Scene()
     {
-        Debug.Log("[Level3Builder] Construyendo Nivel 3: El Atrio de la Parroquia...");
-        Directory.CreateDirectory("Assets/Scenes");
+        Debug.Log("[Level3Builder] Iniciando construcción del Nivel 3 (El Atrio)...");
+
+        SpriteAssetGenerator.GenerateAllSprites();
 
         Scene scene = File.Exists(ScenePath)
             ? EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single)
@@ -40,76 +39,67 @@ public static class Level3Builder
         int playerLayer = LayerMask.NameToLayer("Player");
         int lloronaLayer = LayerMask.NameToLayer("Llorona");
 
-        if (wallsLayer < 0) wallsLayer = 0;
-        if (hideSpotLayer < 0) hideSpotLayer = 0;
-
         TileBase[] allTiles = LoadTiles();
-        Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
         Sprite[] hideSprites = LoadSubSprites("Assets/Sprites/Environment/escondites.png");
+        Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
         Sprite velaSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/vela.png");
 
         // 1. Grid y Tilemaps
-        GameObject gridGo = GameObject.Find("Grid");
-        if (gridGo == null)
-        {
-            gridGo = new GameObject("Grid");
-            gridGo.AddComponent<Grid>();
-            Undo.RegisterCreatedObjectUndo(gridGo, "Grid");
-        }
+        GameObject gridGo = GameObject.Find("Grid") ?? new GameObject("Grid");
+        if (gridGo.GetComponent<Grid>() == null) gridGo.AddComponent<Grid>();
 
         Tilemap suelo = GetOrCreateTilemap(gridGo.transform, "Suelo", 0, -1, false);
         Tilemap paredes = GetOrCreateTilemap(gridGo.transform, "Paredes", 1, wallsLayer, true);
         suelo.ClearAllTiles();
         paredes.ClearAllTiles();
 
-        // 2. Construcción de Plaza del Atrio (36 x 26)
+        // 2. Dimensiones: 36 x 26 (X: 0 a 36, Y: 0 a 26)
         TileBase floorTile = allTiles[0];
-        TileBase puddleTile = allTiles[6];
         TileBase wallUpper = allTiles[36];
         TileBase wallLower = allTiles[24];
 
-        System.Random rnd = new System.Random(88);
-
-        // Suelo de la plaza
-        for (int x = 0; x < 36; x++)
+        for (int x = 0; x <= 36; x++)
         {
-            for (int y = 2; y <= 23; y++)
+            for (int y = 2; y <= 24; y++)
             {
-                TileBase t = (rnd.NextDouble() < 0.10) ? puddleTile : floorTile;
+                TileBase t = (x < 4 || x > 32) ? allTiles[12] : allTiles[(x + y) % 6];
                 suelo.SetTile(new Vector3Int(x, y, 0), t);
             }
         }
 
-        // Paredes: Fachada de parroquia al norte (Y=24,25) y muro colonial al sur (Y=0,1)
-        for (int x = 0; x < 36; x++)
+        // Muros superior e inferior
+        for (int x = 0; x <= 36; x++)
         {
-            paredes.SetTile(new Vector3Int(x, 25, 0), wallUpper);
-            paredes.SetTile(new Vector3Int(x, 24, 0), wallLower);
+            paredes.SetTile(new Vector3Int(x, 26, 0), wallUpper);
+            paredes.SetTile(new Vector3Int(x, 25, 0), wallLower);
             paredes.SetTile(new Vector3Int(x, 1, 0), wallUpper);
             paredes.SetTile(new Vector3Int(x, 0, 0), wallLower);
         }
 
         ConfigureCompositeCollider(paredes.gameObject);
 
-        // Límites laterales
-        Transform limits = FreshRoot("LimitesInvisibles");
-        CreateInvisibleWall(limits, "Limite_Izq", -0.5f, 13.0f, 26f, wallsLayer);
-        CreateInvisibleWall(limits, "Limite_Der", 36.5f, 13.0f, 26f, wallsLayer);
+        // 3. Límites laterales
+        Transform limits = FreshRoot("Limites");
+        CreateInvisibleWall(limits, "Lim_Oeste", -0.5f, 13.0f, 26f, wallsLayer);
+        CreateInvisibleWall(limits, "Lim_Este",  36.5f, 13.0f, 26f, wallsLayer);
 
-        // 3. Fuente Central de Cantera (X=18, Y=13)
+        // 4. Props y Escondites
         Transform props = FreshRoot("Props");
-        CreateFountain(props, "Fuente_Central", 18.0f, 13.0f, wallsLayer);
 
-        // 4. Escondites
-        Sprite hBoxes = hideSprites != null && hideSprites.Length > 0 ? hideSprites[0] : null;
         Sprite hDoor = hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null;
         Sprite hBarrel = hideSprites != null && hideSprites.Length > 1 ? hideSprites[1] : null;
+        Sprite hBoxes = hideSprites != null && hideSprites.Length > 0 ? hideSprites[0] : null;
 
-        CreateHideSpot(props, "Escondite_Cajas_1", hBoxes, 7.0f, 13.0f, 1.2f, hideSpotLayer);
-        CreateHideSpot(props, "Escondite_Puerta_Parroquia", hDoor, 18.0f, 23.5f, 1.0f, hideSpotLayer);
+        // Fuente central en X=18, Y=13
+        CreateFuente(props, "Fuente_Central", 18.0f, 13.0f, wallsLayer);
+
+        // Escondites
+        CreateHideSpot(props, "Escondite_Cajas_1", hBoxes, 8.0f, 13.0f, 1.2f, hideSpotLayer);
+        CreateHideSpot(props, "Escondite_Puerta_1", hDoor, 18.0f, 24.5f, 1.0f, hideSpotLayer);
+        CreateHideSpot(props, "Escondite_Barril_1", hBarrel, 18.0f, 2.5f, 1.05f, hideSpotLayer);
         CreateHideSpot(props, "Escondite_Barril_2", hBarrel, 28.0f, 13.0f, 1.05f, hideSpotLayer);
 
-        // 5. Faroles en los cuatro cuadrantes del atrio
+        // Faroles
         Sprite farol = decorSprites != null && decorSprites.Length > 0 ? decorSprites[0] : null;
         Sprite banca = decorSprites != null && decorSprites.Length > 2 ? decorSprites[2] : null;
 
@@ -121,16 +111,26 @@ public static class Level3Builder
         CreateSolidProp(props, "Banca_1", banca, 11.0f, 19.0f, 1.0f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
         CreateSolidProp(props, "Banca_2", banca, 25.0f, 19.0f, 1.0f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
 
-        // 6. Velas Coleccionables (Ofrendas que distraen a La Llorona)
+        // Obstáculos interactivos
+        CreateMudPuddle(props, 14.5f, 10.5f, 1.2f);
+        CreateMudPuddle(props, 21.5f, 15.5f, 1.2f);
+        CreateNoiseObstacle(props, 10.0f, 13.0f);
+        CreateNoiseObstacle(props, 26.0f, 13.0f);
+        CreateStrayDog(props, 24.0f, 6.5f);
+
+        // 5. Velas Coleccionables
         Transform candlesRoot = FreshRoot("OfrendasVelas");
         CreateCandlePickup(candlesRoot, "Vela_1", velaSprite, new Vector2(9.0f, 6.0f));
         CreateCandlePickup(candlesRoot, "Vela_2", velaSprite, new Vector2(18.0f, 21.0f));
         CreateCandlePickup(candlesRoot, "Vela_3", velaSprite, new Vector2(27.0f, 6.0f));
 
-        // 7. Iluminación Global URP 2D — atrio de noche, visible
-        EnsureGlobalLight(0.48f);
+        // 6. Portal Monumental de Salida (X ≈ 35.0, Y = 13.0)
+        CreateExitPortal(props, 35.0f, 13.0f);
 
-        // 8. Waypoints en Círculo (6 puntos alrededor de la fuente central en X=18, Y=13)
+        // 7. Iluminación Global
+        EnsureGlobalLight(0.50f);
+
+        // 8. Waypoints en Círculo (6 puntos alrededor de la fuente central)
         Transform wpRoot = FreshRoot("Waypoints");
         Transform[] wps = new Transform[6];
         wps[0] = CreateEmpty(wpRoot, "WP_Norte",   18.0f, 18.5f);
@@ -140,21 +140,13 @@ public static class Level3Builder
         wps[4] = CreateEmpty(wpRoot, "WP_SurOeste",13.5f, 10.0f);
         wps[5] = CreateEmpty(wpRoot, "WP_NorOeste",13.5f, 16.0f);
 
-        // 9. Meta hacia el Cementerio (X ≈ 35.2) con señal verde
+        // 9. Meta de seguridad en X ≈ 35.2
         GameObject goal = new GameObject("Meta");
         goal.transform.position = new Vector3(35.2f, 13.0f, 0f);
         BoxCollider2D gCol = goal.AddComponent<BoxCollider2D>();
         gCol.isTrigger = true;
-        gCol.size = new Vector2(1.5f, 20.0f);
+        gCol.size = new Vector2(2.5f, 20.0f);
         goal.AddComponent<LevelGoal>();
-        // Luz verde de salida
-        GameObject exitLightGo = new GameObject("LuzSalida");
-        exitLightGo.transform.SetParent(goal.transform, false);
-        Light2D exitL = exitLightGo.AddComponent<Light2D>();
-        exitL.lightType = Light2D.LightType.Point;
-        exitL.color = new Color(0.2f, 1f, 0.35f);
-        exitL.intensity = 2.0f;
-        exitL.pointLightOuterRadius = 5f;
         Undo.RegisterCreatedObjectUndo(goal, "Meta");
 
         // 10. Player (inicio al oeste)
@@ -183,14 +175,14 @@ public static class Level3Builder
         Transform tutRoot = FreshRoot("TutorialTriggers");
         CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
             new Vector2(2.5f, 13.0f), new Vector2(4f, 8f),
-            "¡Atrio de la parroquia! Recoge velas (E) y colócalas (F)\npara distraer a La Llorona 3 segundos.",
+            "¡Atrio de la parroquia! Recoge velas (E) y colócalas (F)\npara distraer a La Llorona unos segundos.",
             showOnStart: true);
         CreateTutorialTrigger(tutRoot, "Tutorial_Fuente",
             new Vector2(14.0f, 13.0f), new Vector2(3f, 6f),
-            "La Llorona circula alrededor de la fuente.\n¡Espera su momento y cruza deprisa!");
+            "La Llorona circula alrededor de la fuente.\n¡Espera el momento justo y cruza con sigilo!");
         CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
             new Vector2(32.0f, 13.0f), new Vector2(3f, 8f),
-            "¡La salida está a tu derecha! ¡Cruza la luz verde!");
+            "¡La salida al panteón está justo enfrente!");
 
         // 14. Manager
         SetupGameManager(3);
@@ -209,89 +201,123 @@ public static class Level3Builder
         return tiles;
     }
 
-    static Sprite[] LoadSubSprites(string path)
-    {
-        return AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().OrderBy(s => s.name).ToArray();
-    }
-
-    static Tilemap GetOrCreateTilemap(Transform grid, string name, int order, int layer, bool hasCollider)
-    {
-        Transform child = grid.Find(name);
-        GameObject go = (child == null) ? new GameObject(name) : child.gameObject;
-        if (child == null)
-        {
-            go.transform.SetParent(grid, false);
-            go.AddComponent<Tilemap>();
-            go.AddComponent<TilemapRenderer>();
-            Undo.RegisterCreatedObjectUndo(go, name);
-        }
-        TilemapRenderer r = go.GetComponent<TilemapRenderer>();
-        if (r != null) r.sortingOrder = order;
-        if (layer >= 0) go.layer = layer;
-        if (hasCollider && go.GetComponent<TilemapCollider2D>() == null)
-            go.AddComponent<TilemapCollider2D>();
-        return go.GetComponent<Tilemap>();
-    }
-
-    static void ConfigureCompositeCollider(GameObject go)
-    {
-        TilemapCollider2D tc = go.GetComponent<TilemapCollider2D>();
-        if (tc == null) tc = go.AddComponent<TilemapCollider2D>();
-        CompositeCollider2D cc = go.GetComponent<CompositeCollider2D>();
-        if (cc == null) cc = go.AddComponent<CompositeCollider2D>();
-        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-        if (rb != null) rb.bodyType = RigidbodyType2D.Static;
-        tc.compositeOperation = Collider2D.CompositeOperation.Merge;
-    }
+    static Sprite[] LoadSubSprites(string path) =>
+        AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().OrderBy(s => s.name).ToArray();
 
     static Transform FreshRoot(string name)
     {
-        GameObject old = GameObject.Find(name);
-        if (old != null) Undo.DestroyObjectImmediate(old);
-        GameObject go = new GameObject(name);
-        Undo.RegisterCreatedObjectUndo(go, name);
-        return go.transform;
+        GameObject ex = GameObject.Find(name);
+        if (ex != null) Undo.DestroyObjectImmediate(ex);
+        GameObject g = new GameObject(name);
+        Undo.RegisterCreatedObjectUndo(g, name);
+        return g.transform;
     }
 
-    static Transform CreateEmpty(Transform parent, string name, float x, float y)
+    static Tilemap GetOrCreateTilemap(Transform parent, string name, int order, int layer, bool hasCollider)
     {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        Undo.RegisterCreatedObjectUndo(go, name);
-        return go.transform;
-    }
-
-    static void CreateFountain(Transform parent, string name, float x, float y, int layer)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
+        Transform ch = parent.Find(name);
+        GameObject go = ch != null ? ch.gameObject : new GameObject(name);
+        if (ch == null) { go.transform.SetParent(parent, false); Undo.RegisterCreatedObjectUndo(go, name); }
+        Tilemap tm = go.GetComponent<Tilemap>() ?? go.AddComponent<Tilemap>();
+        TilemapRenderer tr = go.GetComponent<TilemapRenderer>() ?? go.AddComponent<TilemapRenderer>();
+        tr.sortingOrder = order;
         if (layer >= 0) go.layer = layer;
+        if (hasCollider)
+        {
+            TilemapCollider2D tc = go.GetComponent<TilemapCollider2D>() ?? go.AddComponent<TilemapCollider2D>();
+            tc.compositeOperation = Collider2D.CompositeOperation.Merge;
+        }
+        return tm;
+    }
+
+    static void ConfigureCompositeCollider(GameObject paredesGo)
+    {
+        CompositeCollider2D comp = paredesGo.GetComponent<CompositeCollider2D>() ?? paredesGo.AddComponent<CompositeCollider2D>();
+        comp.geometryType = CompositeCollider2D.GeometryType.Polygons;
+        Rigidbody2D rb = paredesGo.GetComponent<Rigidbody2D>();
+        if (rb != null) { rb.bodyType = RigidbodyType2D.Static; rb.simulated = true; }
+    }
+
+    static void CreateFuente(Transform parent, string name, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/puesto_mercado.png");
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sp;
+        sr.color = new Color(0.6f, 0.7f, 0.85f);
+        sr.sortingOrder = 2;
 
         CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
         cc.radius = 2.2f;
+        if (layer >= 0) go.layer = layer;
 
-        // Luz tenue mística sobre el agua de la fuente
         GameObject lightGo = new GameObject("LuzFuente");
         lightGo.transform.SetParent(go.transform, false);
         Light2D l2d = lightGo.AddComponent<Light2D>();
         l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(0.3f, 0.6f, 0.85f);
+        l2d.color = new Color(0.4f, 0.7f, 1.0f);
         l2d.intensity = 0.9f;
         l2d.pointLightOuterRadius = 4.5f;
 
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-    static void CreateHideSpot(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer)
+    static void CreateFarol(Transform parent, string name, Sprite sprite, float x, float y, int layer)
     {
-        if (sprite == null) return;
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = new Vector3(scale, scale, 1f);
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 2;
+
+        CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+        col.radius = 0.3f;
+        col.offset = new Vector2(0f, -0.6f);
         if (layer >= 0) go.layer = layer;
+
+        GameObject lightGo = new GameObject("Luz");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 0.4f, 0f);
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.85f, 0.50f);
+        l2d.intensity = 1.35f;
+        l2d.pointLightOuterRadius = 4.5f;
+
+        lightGo.AddComponent<LightFlicker>();
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateMudPuddle(Transform parent, float x, float y, float scale = 1.0f)
+    {
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/charco_lodo.png");
+        GameObject go = new GameObject("Charco_Lodo");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * scale;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 1;
+
+        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
+        cc.isTrigger = true;
+        cc.radius = 1.1f;
+
+        go.AddComponent<MudPuddle>();
+        Undo.RegisterCreatedObjectUndo(go, "Charco_Lodo");
+    }
+
+    static void CreateNoiseObstacle(Transform parent, float x, float y)
+    {
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
+        GameObject go = new GameObject("Basura_Ruido");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
@@ -299,64 +325,127 @@ public static class Level3Builder
 
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
-        bc.size = sprite.bounds.size + new Vector3(0.6f / scale, 0.6f / scale, 0f);
+        bc.size = new Vector2(1.8f, 1.0f);
 
-        HideSpot hs = go.AddComponent<HideSpot>();
-        GameObject hp = new GameObject("HidePoint");
-        hp.transform.SetParent(go.transform, false);
-        hp.transform.localPosition = new Vector3(0f, 0.4f, 0f);
-
-        SerializedObject so = new SerializedObject(hs);
-        so.FindProperty("hidePoint").objectReferenceValue = hp.transform;
-        so.ApplyModifiedProperties();
-
-        Undo.RegisterCreatedObjectUndo(go, name);
+        go.AddComponent<NoiseObstacle>();
+        Undo.RegisterCreatedObjectUndo(go, "Basura_Ruido");
     }
 
-    static void CreateFarol(Transform parent, string name, Sprite sprite, float x, float y, int layer)
+    static void CreateStrayDog(Transform parent, float x, float y)
     {
-        if (sprite == null) return;
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/perro_callejero.png");
+        GameObject go = new GameObject("Perro_Callejero");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+
+        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
+        cc.isTrigger = true;
+        cc.radius = 0.9f;
+
+        go.AddComponent<StrayDogAI>();
+
+        GameObject eyeLight = new GameObject("LuzOjos");
+        eyeLight.transform.SetParent(go.transform, false);
+        Light2D l2d = eyeLight.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.25f, 0.15f);
+        l2d.intensity = 0.9f;
+        l2d.pointLightOuterRadius = 1.8f;
+
+        Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero");
+    }
+
+    static void CreateExitPortal(Transform parent, float x, float y)
+    {
+        Sprite portalSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
+
+        GameObject go = new GameObject("Portal_Salida_Meta");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = portalSprite;
+        sr.sortingOrder = 4;
+
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(3.5f, 4.5f);
+        go.AddComponent<LevelGoal>();
+
+        GameObject lightGo = new GameObject("LuzSalida");
+        lightGo.transform.SetParent(go.transform, false);
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(0.2f, 1.0f, 0.45f);
+        l2d.intensity = 2.4f;
+        l2d.pointLightOuterRadius = 5.5f;
+        lightGo.AddComponent<LightFlicker>();
+
+        GameObject labelGo = new GameObject("LabelSalida");
+        labelGo.transform.SetParent(go.transform, false);
+        labelGo.transform.localPosition = new Vector3(0f, 2.8f, 0f);
+        TextMesh tm = labelGo.AddComponent<TextMesh>();
+        tm.text = "SALIDA ➔";
+        tm.fontSize = 32;
+        tm.characterSize = 0.12f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.alignment = TextAlignment.Center;
+        tm.color = new Color(0.35f, 1f, 0.55f);
+        MeshRenderer mr = labelGo.GetComponent<MeshRenderer>();
+        mr.sortingOrder = 15;
+
+        Undo.RegisterCreatedObjectUndo(go, "Portal_Salida_Meta");
+    }
+
+    static void CreateHideSpot(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer)
+    {
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = new Vector3(0.83f, 0.83f, 1f);
-        if (layer >= 0) go.layer = layer;
-
+        go.transform.localScale = Vector3.one * scale;
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
         sr.sortingOrder = 2;
 
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.size = new Vector2(0.5f, 0.4f);
-        bc.offset = new Vector2(0f, -0.6f);
+        BoxCollider2D trig = go.AddComponent<BoxCollider2D>();
+        trig.isTrigger = true;
+        trig.size = new Vector2(1.2f, 1.2f);
 
-        GameObject lightGo = new GameObject("LuzFarol");
-        lightGo.transform.SetParent(go.transform, false);
-        Light2D l2d = lightGo.AddComponent<Light2D>();
-        l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.75f, 0.4f);
-        l2d.intensity = 1.3f;
-        l2d.pointLightOuterRadius = 5.0f;
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.8f, 0.4f);
+        col.offset = new Vector2(0f, -0.4f);
 
+        GameObject hp = new GameObject("HidePoint");
+        hp.transform.SetParent(go.transform, false);
+        hp.transform.localPosition = new Vector3(0f, -0.1f, 0f);
+
+        HideSpot hs = go.AddComponent<HideSpot>();
+        SerializedObject so = new SerializedObject(hs);
+        so.FindProperty("hidePoint").objectReferenceValue = hp.transform;
+        so.ApplyModifiedProperties();
+
+        if (layer >= 0) go.layer = layer;
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
     static void CreateSolidProp(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer, Vector2 colSize, Vector2 colOffset)
     {
-        if (sprite == null) return;
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = new Vector3(scale, scale, 1f);
-        if (layer >= 0) go.layer = layer;
-
+        go.transform.localScale = Vector3.one * scale;
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
         sr.sortingOrder = 2;
 
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.size = colSize;
-        bc.offset = colOffset;
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = colSize;
+        col.offset = colOffset;
+        if (layer >= 0) go.layer = layer;
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
@@ -368,15 +457,17 @@ public static class Level3Builder
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
-        sr.sortingOrder = 2;
+        sr.sortingOrder = 3;
 
-        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
-        cc.isTrigger = true;
-        cc.radius = 0.8f;
+        CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+        col.isTrigger = true;
+        col.radius = 0.5f;
 
-        Light2D l2d = go.AddComponent<Light2D>();
+        GameObject lightGo = new GameObject("LuzVela");
+        lightGo.transform.SetParent(go.transform, false);
+        Light2D l2d = lightGo.AddComponent<Light2D>();
         l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.70f, 0.30f);
+        l2d.color = new Color(1.0f, 0.75f, 0.35f);
         l2d.intensity = 1.1f;
         l2d.pointLightOuterRadius = 3.0f;
 
@@ -402,7 +493,7 @@ public static class Level3Builder
         if (glGo == null) glGo = new GameObject("Global Light 2D");
         Light2D gl = glGo.GetComponent<Light2D>() ?? glGo.AddComponent<Light2D>();
         gl.lightType = Light2D.LightType.Global;
-        gl.color = new Color(0.20f, 0.16f, 0.35f);
+        gl.color = new Color(0.92f, 0.88f, 0.78f);
         gl.intensity = intensity;
     }
 
@@ -425,7 +516,6 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-
     static void SetupPlayer(Vector2 pos, int playerLayer)
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -447,46 +537,50 @@ public static class Level3Builder
     static void SetupLloronaCircular(Vector2 pos, Transform[] wps, int wallsLayer, int lloronaLayer, float pSpeed, float cSpeed, float vDist, float vAngle)
     {
         LloronaAI llorona = Object.FindAnyObjectByType<LloronaAI>();
-        if (llorona == null)
-        {
-            GameObject lGo = new GameObject("Llorona");
-            lGo.AddComponent<Rigidbody2D>().gravityScale = 0f;
-            lGo.AddComponent<CircleCollider2D>().radius = 0.5f;
-            lGo.AddComponent<SpriteRenderer>().sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Llorona/llorona.png");
-            llorona = lGo.AddComponent<LloronaAI>();
-            lGo.AddComponent<LloronaAnimation>();
-        }
+        if (llorona == null) return;
+        Undo.RecordObject(llorona.transform, "Posicionar Llorona");
         llorona.transform.position = new Vector3(pos.x, pos.y, 0f);
         if (lloronaLayer >= 0) llorona.gameObject.layer = lloronaLayer;
 
         SerializedObject so = new SerializedObject(llorona);
-        SerializedProperty wpsProp = so.FindProperty("waypoints");
-        wpsProp.arraySize = wps.Length;
-        for (int i = 0; i < wps.Length; i++)
-            wpsProp.GetArrayElementAtIndex(i).objectReferenceValue = wps[i];
-
-        if (wallsLayer >= 0) so.FindProperty("obstacleMask").intValue = 1 << wallsLayer;
-
-        LloronaSettings s = AssetDatabase.LoadAssetAtPath<LloronaSettings>("Assets/Settings/LloronaSettings_Level3.asset");
-        if (s != null) so.FindProperty("settings").objectReferenceValue = s;
-
-        so.FindProperty("patrolSpeed").floatValue = pSpeed;
-        so.FindProperty("chaseSpeed").floatValue = cSpeed;
+        SerializedProperty wpProp = so.FindProperty("waypoints");
+        if (wpProp != null)
+        {
+            wpProp.arraySize = wps.Length;
+            for (int i = 0; i < wps.Length; i++)
+                wpProp.GetArrayElementAtIndex(i).objectReferenceValue = wps[i];
+        }
+        so.FindProperty("patrolSpeed").floatValue  = pSpeed;
+        so.FindProperty("chaseSpeed").floatValue   = cSpeed;
         so.FindProperty("viewDistance").floatValue = vDist;
-        so.FindProperty("viewAngle").floatValue = vAngle;
+        so.FindProperty("viewAngle").floatValue    = vAngle;
+
+        LloronaSettings s3 = AssetDatabase.LoadAssetAtPath<LloronaSettings>("Assets/Settings/LloronaSettings_Level3.asset");
+        if (s3 != null) so.FindProperty("settings").objectReferenceValue = s3;
+
         so.ApplyModifiedProperties();
     }
 
-    static void SetupGameManager(int levelNum)
+    static Transform CreateEmpty(Transform parent, string name, float x, float y)
     {
-        GameManager gm = Object.FindAnyObjectByType<GameManager>();
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        Undo.RegisterCreatedObjectUndo(go, name);
+        return go.transform;
+    }
+
+    static void SetupGameManager(int lvl)
+    {
+        GameManager gm = UnityEngine.Object.FindAnyObjectByType<GameManager>();
         if (gm == null)
         {
             GameObject gmGo = new GameObject("GameManager");
             gm = gmGo.AddComponent<GameManager>();
+            Undo.RegisterCreatedObjectUndo(gmGo, "GameManager");
         }
         SerializedObject so = new SerializedObject(gm);
-        so.FindProperty("currentLevelNumber").intValue = levelNum;
+        so.FindProperty("levelNumber").intValue = lvl;
         so.ApplyModifiedProperties();
     }
 }

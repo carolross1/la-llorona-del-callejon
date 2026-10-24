@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsRunning { get; private set; }
     public bool IsHidden { get; set; }
+    public float SpeedMultiplier { get; set; } = 1.0f;
 
     void Awake() => rb = GetComponent<Rigidbody2D>();
 
@@ -40,6 +41,6 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             return;
         }
-        rb.linearVelocity = input * (IsRunning ? runSpeed : walkSpeed);
+        rb.linearVelocity = input * (IsRunning ? runSpeed : walkSpeed) * SpeedMultiplier;
     }
 }

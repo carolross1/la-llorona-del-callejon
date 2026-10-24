@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Gestiona la visualización de datos en pantalla durante el juego:
-/// 3 corazones de vida, cronómetro, puntaje, objetivo y mensajes de tutorial contextual.
+/// Corazones de vida, cronómetro, puntaje, objetivo y mensajes de tutorial contextual.
+/// Presenta la información de forma ordenada, de alto contraste y 100% legible.
 /// </summary>
 public class HUD : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class HUD : MonoBehaviour
 
     [Header("Corazones de Vida")]
     [SerializeField] Image[] heartImages;
-    [SerializeField] Color activeHeartColor = Color.red;
-    [SerializeField] Color lostHeartColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+    [SerializeField] Color activeHeartColor = Color.white;
+    [SerializeField] Color lostHeartColor = new Color(0.25f, 0.25f, 0.25f, 0.45f);
 
     [Header("Indicadores de Texto")]
     [SerializeField] Text timerText;
@@ -57,8 +58,10 @@ public class HUD : MonoBehaviour
             UpdateScore(GameManager.Instance.LevelScore);
         }
 
-        if (objectiveText != null)
+        if (objectiveText != null && string.IsNullOrEmpty(objectiveText.text))
+        {
             objectiveText.text = "Objetivo: Cruza el callejón sin que La Llorona te vea";
+        }
     }
 
     void OnDestroy()
@@ -77,7 +80,7 @@ public class HUD : MonoBehaviour
         if (candleInventoryRoot != null)
             candleInventoryRoot.SetActive(count > 0);
         if (candleCountText != null)
-            candleCountText.text = $"Velas: {count} [F: Colocar]";
+            candleCountText.text = $"🕯 ×{count}   [F] Colocar";
     }
 
     public void UpdateLives(int lives)
@@ -86,7 +89,9 @@ public class HUD : MonoBehaviour
         for (int i = 0; i < heartImages.Length; i++)
         {
             if (heartImages[i] != null)
+            {
                 heartImages[i].color = (i < lives) ? activeHeartColor : lostHeartColor;
+            }
         }
     }
 
@@ -95,19 +100,19 @@ public class HUD : MonoBehaviour
         if (timerText == null) return;
         int min = Mathf.FloorToInt(seconds / 60f);
         int sec = Mathf.FloorToInt(seconds % 60f);
-        timerText.text = $"Tiempo: {min:00}:{sec:00}";
+        timerText.text = $"⏱ {min:00}:{sec:00}";
     }
 
     public void UpdateScore(int score)
     {
         if (scoreText == null) return;
-        scoreText.text = $"Puntos: {score}";
+        scoreText.text = $"★ {score} pts";
     }
 
     public void SetObjective(string text)
     {
         if (objectiveText != null)
-            objectiveText.text = $"Objetivo: {text}";
+            objectiveText.text = text;
     }
 
     /// <summary>
@@ -129,21 +134,21 @@ public class HUD : MonoBehaviour
         if (tutorialCanvasGroup != null)
         {
             float t = 0f;
-            while (t < 0.3f)
+            while (t < 0.25f)
             {
                 t += Time.unscaledDeltaTime;
-                tutorialCanvasGroup.alpha = Mathf.Clamp01(t / 0.3f);
+                tutorialCanvasGroup.alpha = Mathf.Clamp01(t / 0.25f);
                 yield return null;
             }
             tutorialCanvasGroup.alpha = 1f;
 
             yield return new WaitForSecondsRealtime(duration);
 
-            t = 0.3f;
+            t = 0.25f;
             while (t > 0f)
             {
                 t -= Time.unscaledDeltaTime;
-                tutorialCanvasGroup.alpha = Mathf.Clamp01(t / 0.3f);
+                tutorialCanvasGroup.alpha = Mathf.Clamp01(t / 0.25f);
                 yield return null;
             }
             tutorialCanvasGroup.alpha = 0f;

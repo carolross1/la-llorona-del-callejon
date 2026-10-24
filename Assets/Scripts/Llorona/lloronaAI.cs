@@ -153,6 +153,17 @@ public class LloronaAI : MonoBehaviour
         Distract(transform.position, duration);
     }
 
+    /// <summary>
+    /// Alerta a La Llorona por un sonido (lata pisada, perro ladrando) para que investigue el origen.
+    /// </summary>
+    public void AlertNoise(Vector2 soundPos, float alertDuration = 4.0f)
+    {
+        if (state == State.Distracted) return;
+        lastSeenPos = soundPos;
+        state = State.Chase;
+        timer = alertDuration;
+    }
+
     void StartChase()
     {
         state = State.Chase;

@@ -561,12 +561,13 @@ public static class Level4Builder
         GameManager gm = Object.FindAnyObjectByType<GameManager>();
         if (gm == null)
         {
+            GameObject old = GameObject.Find("GameManager");
+            if (old != null) Undo.DestroyObjectImmediate(old);
+
             GameObject gmGo = new GameObject("GameManager");
             gm = gmGo.AddComponent<GameManager>();
         }
-        SerializedObject so = new SerializedObject(gm);
-        SerializedProperty prop = so.FindProperty("currentLevelNumber") ?? so.FindProperty("levelNumber");
-        if (prop != null) prop.intValue = levelNum;
-        so.ApplyModifiedProperties();
+        gm.SetLevelNumber(levelNum);
+        EditorUtility.SetDirty(gm);
     }
 }

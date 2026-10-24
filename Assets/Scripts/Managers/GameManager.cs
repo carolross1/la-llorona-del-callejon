@@ -33,7 +33,8 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState => currentState;
     public float LevelTimer => levelTimer;
     public int LevelScore => levelScore;
-    public int CurrentLevelNumber => currentLevelNumber;
+    public int CurrentLevelNumber { get => currentLevelNumber; set => currentLevelNumber = value; }
+    public void SetLevelNumber(int level) => currentLevelNumber = level;
 
     // Eventos para actualización reactiva del HUD y menús
     public event Action<int> OnLivesChanged;

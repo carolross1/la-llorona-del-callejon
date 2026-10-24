@@ -672,13 +672,14 @@ public static class Level1Builder
         GameManager gm = UnityEngine.Object.FindAnyObjectByType<GameManager>();
         if (gm == null)
         {
+            GameObject old = GameObject.Find("GameManager");
+            if (old != null) Undo.DestroyObjectImmediate(old);
+
             GameObject gmGo = new GameObject("GameManager");
             gm = gmGo.AddComponent<GameManager>();
             Undo.RegisterCreatedObjectUndo(gmGo, "GameManager");
         }
-        SerializedObject so = new SerializedObject(gm);
-        SerializedProperty prop = so.FindProperty("currentLevelNumber") ?? so.FindProperty("levelNumber");
-        if (prop != null) prop.intValue = 1;
-        so.ApplyModifiedProperties();
+        gm.SetLevelNumber(1);
+        EditorUtility.SetDirty(gm);
     }
 }

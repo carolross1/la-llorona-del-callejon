@@ -57,6 +57,10 @@ public static class Level1Builder
         Sprite puestoSprite = LoadSprite("Assets/Sprites/Environment/puesto_mercado.png");
         Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
         Sprite[] hideSprites = LoadSubSprites("Assets/Sprites/Environment/escondites.png");
+        Sprite[] puestosNvl1 = LoadSubSprites("Assets/Sprites/Environment/Puestos_Nivl1.png");
+        Sprite[] sacosNvl1 = LoadSubSprites("Assets/Sprites/Environment/Contenedores_Sacos_Nvl1.png");
+        Sprite[] botellasNvl1 = LoadSubSprites("Assets/Sprites/Environment/Botellas_Nvl1.png");
+        Sprite[] salidas = LoadSubSprites("Assets/Sprites/Environment/Salidas.png");
 
         // 1. Grid y Tilemaps
         GameObject gridGo = GameObject.Find("Grid");
@@ -125,22 +129,24 @@ public static class Level1Builder
         // 5. Props, Escondites y Obstáculos
         Transform propsRoot = FreshRoot("Props");
 
-        // Escondites
-        Sprite h1 = hideSprites != null && hideSprites.Length > 0 ? hideSprites[0] : null;
-        Sprite h2 = hideSprites != null && hideSprites.Length > 1 ? hideSprites[1] : null;
-        Sprite h3 = hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null;
+        // Escondites auténticos de mercado (sacos de grano, huacales, barriles)
+        Sprite h1 = (sacosNvl1 != null && sacosNvl1.Length > 0) ? sacosNvl1[0] : (hideSprites != null && hideSprites.Length > 0 ? hideSprites[0] : null);
+        Sprite h2 = (sacosNvl1 != null && sacosNvl1.Length > 1) ? sacosNvl1[1] : (hideSprites != null && hideSprites.Length > 1 ? hideSprites[1] : null);
+        Sprite h3 = (sacosNvl1 != null && sacosNvl1.Length > 3) ? sacosNvl1[3] : (hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null);
 
         CreateHideSpot(propsRoot, "Escondite_1_Cajas", h1, 8.0f, 11.0f, 1.3f, hideSpotLayer);
         CreateHideSpot(propsRoot, "Escondite_2_Barril", h2, 18.0f, 11.0f, 1.05f, hideSpotLayer);
         CreateHideSpot(propsRoot, "Escondite_3_Puerta", h3, 26.5f, 13.0f, 1.0f, hideSpotLayer);
 
-        // Obstáculos sólidos (Puestos)
-        CreateSolidProp(propsRoot, "Puesto_1", puestoSprite, 14.5f, 6.8f, 1.0f, wallsLayer, new Vector2(2.5f, 0.8f), new Vector2(0f, -0.6f));
-        CreateSolidProp(propsRoot, "Puesto_2", puestoSprite, 21.5f, 3.4f, 1.0f, wallsLayer, new Vector2(2.5f, 0.8f), new Vector2(0f, -0.6f));
+        // Obstáculos sólidos (Puestos de mercado detallados)
+        Sprite p1 = (puestosNvl1 != null && puestosNvl1.Length > 0) ? puestosNvl1[0] : puestoSprite;
+        Sprite p2 = (puestosNvl1 != null && puestosNvl1.Length > 1) ? puestosNvl1[1] : puestoSprite;
+        CreateSolidProp(propsRoot, "Puesto_1", p1, 14.5f, 6.8f, 1.0f, wallsLayer, new Vector2(2.8f, 1.0f), new Vector2(0f, -0.6f));
+        CreateSolidProp(propsRoot, "Puesto_2", p2, 21.5f, 3.4f, 1.0f, wallsLayer, new Vector2(2.8f, 1.0f), new Vector2(0f, -0.6f));
 
         // Sprites de decoración
         Sprite farol = GetDecorSprite(decorSprites, 0);
-        Sprite sacos = GetDecorSprite(decorSprites, 1);
+        Sprite sacos = (sacosNvl1 != null && sacosNvl1.Length > 4) ? sacosNvl1[4] : GetDecorSprite(decorSprites, 1);
         Sprite banca = GetDecorSprite(decorSprites, 2);
         Sprite bote = GetDecorSprite(decorSprites, 3);
         Sprite cartel = GetDecorSprite(decorSprites, 4);
@@ -160,22 +166,27 @@ public static class Level1Builder
         // Obstáculos del entorno con consecuencias
         CreateMudPuddle(propsRoot, 11.0f, 7.0f, 1.2f);
         CreateMudPuddle(propsRoot, 22.0f, 6.5f, 1.1f);
-        CreateNoiseObstacle(propsRoot, 15.0f, 11.2f);
-        CreateNoiseObstacle(propsRoot, 26.5f, 5.0f);
+
+        Sprite b1 = (botellasNvl1 != null && botellasNvl1.Length > 0) ? botellasNvl1[0] : null;
+        Sprite b2 = (botellasNvl1 != null && botellasNvl1.Length > 3) ? botellasNvl1[3] : null;
+        CreateNoiseObstacle(propsRoot, 15.0f, 11.2f, b1);
+        CreateNoiseObstacle(propsRoot, 26.5f, 5.0f, b2);
         CreateStrayDog(propsRoot, 18.0f, 3.6f);
 
         // Decoración secundaria
         CreateSolidProp(propsRoot, "Bote",       bote,  11.5f,  3.8f, 0.7f, wallsLayer, new Vector2(0.6f, 0.4f), new Vector2(0f, -0.3f));
         CreateSolidProp(propsRoot, "Banca",      banca, 12.0f, 12.4f, 0.9f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
         CreateSolidProp(propsRoot, "Costales_1", sacos, 25.0f,  9.7f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
-        CreateSolidProp(propsRoot, "Costales_2", sacos, 34.0f,  2.8f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
+        Sprite sacosExtra = (sacosNvl1 != null && sacosNvl1.Length > 5) ? sacosNvl1[5] : sacos;
+        CreateSolidProp(propsRoot, "Costales_2", sacosExtra, 34.0f,  2.8f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
 
         CreateDecoProp(propsRoot, "Cartel",        cartel, 4.2f, 10.8f, 1.1f);
         CreateDecoProp(propsRoot, "PapelPicado_1", papel,  5.5f, 12.9f, 1.3f);
         CreateDecoProp(propsRoot, "PapelPicado_2", papel, 33.0f, 12.9f, 1.3f);
 
         // ── Portal Monumental de Salida (X ≈ 38.5) ──────────────────────────
-        CreateExitPortal(propsRoot, 38.5f, 7.5f);
+        Sprite exitSprite = (salidas != null && salidas.Length > 0) ? salidas[0] : null;
+        CreateExitPortal(propsRoot, 38.5f, 7.5f, exitSprite);
 
         // 6. Límites laterales invisibles
         Transform limitsRoot = FreshRoot("LimitesInvisibles");
@@ -375,10 +386,10 @@ public static class Level1Builder
         Undo.RegisterCreatedObjectUndo(go, "Charco_Lodo");
     }
 
-    static void CreateNoiseObstacle(Transform parent, float x, float y)
+    static void CreateNoiseObstacle(Transform parent, float x, float y, Sprite customSprite = null)
     {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
-        GameObject go = new GameObject("Basura_Ruido");
+        Sprite sprite = customSprite ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
+        GameObject go = new GameObject("Botellas_Ruido");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
 
@@ -391,7 +402,7 @@ public static class Level1Builder
         bc.size = new Vector2(1.8f, 1.0f);
 
         go.AddComponent<NoiseObstacle>();
-        Undo.RegisterCreatedObjectUndo(go, "Basura_Ruido");
+        Undo.RegisterCreatedObjectUndo(go, "Botellas_Ruido");
     }
 
     static void CreateStrayDog(Transform parent, float x, float y)
@@ -422,9 +433,9 @@ public static class Level1Builder
         Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero");
     }
 
-    static void CreateExitPortal(Transform parent, float x, float y)
+    static void CreateExitPortal(Transform parent, float x, float y, Sprite customSprite = null)
     {
-        Sprite portalSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
+        Sprite portalSprite = customSprite ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
 
         GameObject go = new GameObject("Portal_Salida_Meta");
         go.transform.SetParent(parent, false);

@@ -47,57 +47,6 @@ TextureImporter:
   - first:
       213: 2355107933617225778
     second: interfaz_14
-  - first:
-      213: -8476249302212325158
-    second: interfaz_15
-  - first:
-      213: 5817167582187855655
-    second: interfaz_16
-  - first:
-      213: 7032986072246366317
-    second: interfaz_17
-  - first:
-      213: 366624568735453908
-    second: interfaz_18
-  - first:
-      213: 3682904761829542535
-    second: interfaz_19
-  - first:
-      213: -983126135930233142
-    second: interfaz_20
-  - first:
-      213: 9154815422126665164
-    second: interfaz_21
-  - first:
-      213: 5472307542107663618
-    second: interfaz_22
-  - first:
-      213: 462710552615312618
-    second: interfaz_23
-  - first:
-      213: -7852670188008325259
-    second: interfaz_24
-  - first:
-      213: -2814082431767022929
-    second: interfaz_25
-  - first:
-      213: -1060095489002758596
-    second: interfaz_26
-  - first:
-      213: -7758411318558653222
-    second: interfaz_27
-  - first:
-      213: 682525414088899469
-    second: interfaz_28
-  - first:
-      213: 6449693077889384496
-    second: interfaz_29
-  - first:
-      213: 4957191181344720977
-    second: interfaz_30
-  - first:
-      213: -518052768470609029
-    second: interfaz_31
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -212,11 +161,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 635
-        width: 311
-        height: 389
+        y: 997
+        width: 487
+        height: 602
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -233,12 +182,12 @@ TextureImporter:
       name: interfaz_1
       rect:
         serializedVersion: 2
-        x: 414
-        y: 639
-        width: 229
-        height: 319
+        x: 646
+        y: 997
+        width: 359
+        height: 499
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -255,12 +204,12 @@ TextureImporter:
       name: interfaz_2
       rect:
         serializedVersion: 2
-        x: 771
-        y: 638
-        width: 205
-        height: 313
+        x: 1206
+        y: 997
+        width: 316
+        height: 485
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -277,12 +226,12 @@ TextureImporter:
       name: interfaz_3
       rect:
         serializedVersion: 2
-        x: 1095
-        y: 631
-        width: 441
-        height: 393
+        x: 1712
+        y: 987
+        width: 688
+        height: 612
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -299,12 +248,12 @@ TextureImporter:
       name: interfaz_4
       rect:
         serializedVersion: 2
-        x: 59
-        y: 404
-        width: 1418
-        height: 192
+        x: 2195
+        y: 1174
+        width: 108
+        height: 59
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -321,12 +270,12 @@ TextureImporter:
       name: interfaz_5
       rect:
         serializedVersion: 2
-        x: 55
-        y: 182
-        width: 457
-        height: 169
+        x: 93
+        y: 631
+        width: 2213
+        height: 299
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -343,12 +292,12 @@ TextureImporter:
       name: interfaz_6
       rect:
         serializedVersion: 2
-        x: 539
-        y: 175
-        width: 457
-        height: 183
+        x: 86
+        y: 284
+        width: 714
+        height: 264
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -365,12 +314,12 @@ TextureImporter:
       name: interfaz_7
       rect:
         serializedVersion: 2
-        x: 1023
-        y: 182
-        width: 457
-        height: 169
+        x: 844
+        y: 275
+        width: 712
+        height: 282
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -383,11 +332,165 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: interfaz_8
+      rect:
+        serializedVersion: 2
+        x: 1598
+        y: 284
+        width: 715
+        height: 264
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350a50f7fe60c7e90800000000000000
+      internalID: -7026733692906790829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: interfaz_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 318
+        height: 203
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f572bf62c0321fee0800000000000000
+      internalID: -1229162688194861217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: interfaz_10
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 160
+        width: 151
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 788f56ebf0c8fd920800000000000000
+      internalID: 3017284274608273543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: interfaz_11
+      rect:
+        serializedVersion: 2
+        x: 919
+        y: 159
+        width: 104
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a3b367f5ae0c5070800000000000000
+      internalID: 8096362336088208289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: interfaz_12
+      rect:
+        serializedVersion: 2
+        x: 1379
+        y: 160
+        width: 103
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 179003e046647b600800000000000000
+      internalID: 483932880514320753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: interfaz_13
+      rect:
+        serializedVersion: 2
+        x: 1669
+        y: 159
+        width: 114
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99714c646c65ab950800000000000000
+      internalID: 6465575624634537881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: interfaz_14
+      rect:
+        serializedVersion: 2
+        x: 2152
+        y: 0
+        width: 248
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23085fe00360fa020800000000000000
+      internalID: 2355107933617225778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1e4c6129d4fb56a41ad5d36846f837f7
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -404,25 +507,8 @@ TextureImporter:
       interfaz_12: 483932880514320753
       interfaz_13: 6465575624634537881
       interfaz_14: 2355107933617225778
-      interfaz_15: -8476249302212325158
-      interfaz_16: 5817167582187855655
-      interfaz_17: 7032986072246366317
-      interfaz_18: 366624568735453908
-      interfaz_19: 3682904761829542535
       interfaz_2: -3866084540776588118
-      interfaz_20: -983126135930233142
-      interfaz_21: 9154815422126665164
-      interfaz_22: 5472307542107663618
-      interfaz_23: 462710552615312618
-      interfaz_24: -7852670188008325259
-      interfaz_25: -2814082431767022929
-      interfaz_26: -1060095489002758596
-      interfaz_27: -7758411318558653222
-      interfaz_28: 682525414088899469
-      interfaz_29: 6449693077889384496
       interfaz_3: -2073342591278704176
-      interfaz_30: 4957191181344720977
-      interfaz_31: -518052768470609029
       interfaz_4: 4823597492908078862
       interfaz_5: -3958010941758710621
       interfaz_6: -4306137685424465282

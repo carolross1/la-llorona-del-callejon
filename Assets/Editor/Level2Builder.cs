@@ -38,9 +38,16 @@ public static class Level2Builder
         int playerLayer = LayerMask.NameToLayer("Player");
         int lloronaLayer = LayerMask.NameToLayer("Llorona");
 
-        TileBase[] allTiles = LoadTiles();
+        TileBase[] fallbackTiles = LoadTiles();
+        TileBase[] adoquinTiles = LoadLevel2AdoquinTiles();
+        TileBase[] muroTiles = LoadLevel2MuroTiles();
+
         Sprite[] hideSprites = LoadSubSprites("Assets/Sprites/Environment/escondites.png");
         Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
+        Sprite[] puertasNvl2 = LoadSubSprites("Assets/Sprites/Environment/Puertas_nvl2.png");
+        Sprite[] accesoriosNvl2 = LoadSubSprites("Assets/Sprites/Environment/accesorios_nvl2.png");
+        Sprite[] botellasNvl1 = LoadSubSprites("Assets/Sprites/Environment/Botellas_Nvl1.png");
+        Sprite[] salidas = LoadSubSprites("Assets/Sprites/Environment/Salidas.png");
 
         // 1. Grid y Tilemaps
         GameObject gridGo = GameObject.Find("Grid") ?? new GameObject("Grid");
@@ -51,17 +58,28 @@ public static class Level2Builder
         suelo.ClearAllTiles();
         paredes.ClearAllTiles();
 
-        // 2. Construcción en forma de L
-        TileBase floorTile = allTiles[0];
-        TileBase wallUpper = allTiles[36];
-        TileBase wallLower = allTiles[24];
+        // 2. Construcción en forma de L (Callejón del Beso)
+        // Suelo de adoquines coloniales auténticos
+        bool hasAdoquin = (adoquinTiles != null && adoquinTiles.Length > 0);
+        bool hasMuro = (muroTiles != null && muroTiles.Length > 0);
+
+        TileBase wallUpper = hasMuro ? muroTiles[0] : fallbackTiles[36];
+        TileBase wallLower = hasMuro ? (muroTiles.Length > 1 ? muroTiles[1] : muroTiles[0]) : fallbackTiles[24];
 
         // Tramo Horizontal: X de 0 a 30, Y de 2 a 7
         for (int x = 0; x <= 30; x++)
         {
             for (int y = 2; y <= 7; y++)
             {
-                TileBase t = (x < 3) ? allTiles[12] : allTiles[x % 6];
+                TileBase t;
+                if (hasAdoquin)
+                {
+                    t = adoquinTiles[(x + y * 3) % adoquinTiles.Length];
+                }
+                else
+                {
+                    t = (x < 3) ? fallbackTiles[12] : fallbackTiles[x % 6];
+                }
                 suelo.SetTile(new Vector3Int(x, y, 0), t);
             }
         }
@@ -71,7 +89,15 @@ public static class Level2Builder
         {
             for (int x = 24; x <= 29; x++)
             {
-                TileBase t = (y > 44) ? allTiles[12] : allTiles[(x + y) % 6];
+                TileBase t;
+                if (hasAdoquin)
+                {
+                    t = adoquinTiles[(x * 2 + y) % adoquinTiles.Length];
+                }
+                else
+                {
+                    t = (y > 44) ? fallbackTiles[12] : fallbackTiles[(x + y) % 6];
+                }
                 suelo.SetTile(new Vector3Int(x, y, 0), t);
             }
         }
@@ -79,24 +105,30 @@ public static class Level2Builder
         // Paredes Tramo Horizontal (Abajo Y=0,1 y Arriba Y=8,9 donde no gira)
         for (int x = 0; x <= 31; x++)
         {
-            paredes.SetTile(new Vector3Int(x, 1, 0), wallUpper);
-            paredes.SetTile(new Vector3Int(x, 0, 0), wallLower);
+            TileBase u = hasMuro ? muroTiles[x % muroTiles.Length] : wallUpper;
+            TileBase l = hasMuro ? muroTiles[(x + 1) % muroTiles.Length] : wallLower;
+
+            paredes.SetTile(new Vector3Int(x, 1, 0), u);
+            paredes.SetTile(new Vector3Int(x, 0, 0), l);
 
             if (x < 24)
             {
-                paredes.SetTile(new Vector3Int(x, 9, 0), wallUpper);
-                paredes.SetTile(new Vector3Int(x, 8, 0), wallLower);
+                paredes.SetTile(new Vector3Int(x, 9, 0), u);
+                paredes.SetTile(new Vector3Int(x, 8, 0), l);
             }
         }
 
         // Paredes Tramo Vertical (Izquierda X=22,23 y Derecha X=30,31)
         for (int y = 8; y <= 48; y++)
         {
-            paredes.SetTile(new Vector3Int(23, y, 0), wallUpper);
-            paredes.SetTile(new Vector3Int(22, y, 0), wallLower);
+            TileBase u = hasMuro ? muroTiles[y % muroTiles.Length] : wallUpper;
+            TileBase l = hasMuro ? muroTiles[(y + 2) % muroTiles.Length] : wallLower;
 
-            paredes.SetTile(new Vector3Int(31, y, 0), wallUpper);
-            paredes.SetTile(new Vector3Int(30, y, 0), wallLower);
+            paredes.SetTile(new Vector3Int(23, y, 0), u);
+            paredes.SetTile(new Vector3Int(22, y, 0), l);
+
+            paredes.SetTile(new Vector3Int(31, y, 0), u);
+            paredes.SetTile(new Vector3Int(30, y, 0), l);
         }
 
         // Fondo superior del callejón vertical (pared de cierre en Y=47,48)
@@ -111,14 +143,34 @@ public static class Level2Builder
         // 3. Props, Escondites y Obstáculos
         Transform props = FreshRoot("Props");
 
-        Sprite hDoor = hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null;
-        Sprite hBarrel = hideSprites != null && hideSprites.Length > 1 ? hideSprites[1] : null;
-        Sprite farol = decorSprites != null && decorSprites.Length > 0 ? decorSprites[0] : null;
+        Sprite pDoor1 = (puertasNvl2 != null && puertasNvl2.Length > 0) ? puertasNvl2[0] : (hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null);
+        Sprite pDoor2 = (puertasNvl2 != null && puertasNvl2.Length > 1) ? puertasNvl2[1] : pDoor1;
+        Sprite pDoor3 = (puertasNvl2 != null && puertasNvl2.Length > 2) ? puertasNvl2[2] : pDoor1;
+        Sprite farol = (accesoriosNvl2 != null && accesoriosNvl2.Length > 0) ? accesoriosNvl2[0] : (decorSprites != null && decorSprites.Length > 0 ? decorSprites[0] : null);
+        Sprite maceta = (accesoriosNvl2 != null && accesoriosNvl2.Length > 1) ? accesoriosNvl2[1] : null;
+        Sprite balconGrande = (accesoriosNvl2 != null && accesoriosNvl2.Length > 2) ? accesoriosNvl2[2] : null;
+        Sprite balcon = (accesoriosNvl2 != null && accesoriosNvl2.Length > 3) ? accesoriosNvl2[3] : balconGrande;
 
-        // Escondites
-        CreateHideSpot(props, "Escondite_Puerta_1", hDoor, 10.0f, 7.8f, 1.0f, hideSpotLayer);
-        CreateHideSpot(props, "Escondite_Barril", hBarrel, 22.0f, 3.2f, 1.05f, hideSpotLayer);
-        CreateHideSpot(props, "Escondite_Puerta_2", hDoor, 28.5f, 26.0f, 1.0f, hideSpotLayer);
+        // Escondites auténticos (Portones y Puertas coloniales de madera antigua)
+        CreateHideSpot(props, "Escondite_Puerta_1", pDoor1, 10.0f, 7.8f, 1.0f, hideSpotLayer);
+        CreateHideSpot(props, "Escondite_Puerta_2", pDoor2, 22.0f, 3.2f, 1.0f, hideSpotLayer);
+        CreateHideSpot(props, "Escondite_Puerta_3", pDoor3, 28.5f, 26.0f, 1.0f, hideSpotLayer);
+
+        // Balcones coloniales enfrentados - "El Callejón del Beso"
+        if (balconGrande != null || balcon != null)
+        {
+            CreateDecoProp(props, "Balcon_Oeste_CallejonBeso", balconGrande ?? balcon, 23.4f, 18.0f, 1.1f);
+            CreateDecoProp(props, "Balcon_Este_CallejonBeso",  balcon ?? balconGrande, 29.6f, 18.5f, 1.1f);
+            CreateDecoProp(props, "Balcon_Superior_Vertical",  balcon ?? balconGrande, 29.6f, 32.0f, 1.0f);
+            CreateDecoProp(props, "Balcon_Horizontal",         balconGrande ?? balcon, 14.0f, 8.8f, 1.0f);
+        }
+
+        if (maceta != null)
+        {
+            CreateDecoProp(props, "Maceta_Callejon_1", maceta, 23.6f, 7.5f, 0.7f);
+            CreateDecoProp(props, "Maceta_Callejon_2", maceta, 29.4f, 11.5f, 0.7f);
+            CreateDecoProp(props, "Maceta_Callejon_3", maceta, 29.4f, 24.5f, 0.7f);
+        }
 
         // Faroles con LightFlicker
         CreateFlickeringFarol(props, "Farol_Flicker_1", farol, 4.0f, 7.5f, wallsLayer);
@@ -128,13 +180,16 @@ public static class Level2Builder
 
         // Obstáculos interactivos
         CreateMudPuddle(props, 12.0f, 4.5f, 1.1f);
-        CreateNoiseObstacle(props, 19.5f, 5.0f);
+        Sprite bot1 = (botellasNvl1 != null && botellasNvl1.Length > 1) ? botellasNvl1[1] : null;
+        Sprite bot2 = (botellasNvl1 != null && botellasNvl1.Length > 4) ? botellasNvl1[4] : null;
+        CreateNoiseObstacle(props, 19.5f, 5.0f, bot1);
         CreateStrayDog(props, 28.0f, 18.0f);
         CreateMudPuddle(props, 26.5f, 28.0f, 1.2f);
-        CreateNoiseObstacle(props, 25.5f, 36.0f);
+        CreateNoiseObstacle(props, 25.5f, 36.0f, bot2);
 
         // 4. Portal Monumental de Salida (Y ≈ 45.5)
-        CreateExitPortal(props, 26.5f, 45.5f);
+        Sprite exitSprite = (salidas != null && salidas.Length > 1) ? salidas[1] : (salidas != null && salidas.Length > 0 ? salidas[0] : null);
+        CreateExitPortal(props, 26.5f, 45.5f, exitSprite);
 
         // 5. Luz Global
         EnsureGlobalLight(0.48f);
@@ -196,6 +251,47 @@ public static class Level2Builder
         for (int i = 0; i < 48; i++)
             tiles[i] = AssetDatabase.LoadAssetAtPath<TileBase>($"Assets/Tiles/tiles_{i}.asset");
         return tiles;
+    }
+
+    static TileBase[] LoadLevel2AdoquinTiles()
+    {
+        Sprite[] sprites = LoadSubSprites("Assets/Sprites/Environment/tiles_adoquin_nvl2.png");
+        if (sprites == null || sprites.Length == 0) return null;
+        TileBase[] tiles = new TileBase[sprites.Length];
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            Tile t = ScriptableObject.CreateInstance<Tile>();
+            t.sprite = sprites[i];
+            tiles[i] = t;
+        }
+        return tiles;
+    }
+
+    static TileBase[] LoadLevel2MuroTiles()
+    {
+        Sprite[] sprites = LoadSubSprites("Assets/Sprites/Environment/tiles_nvl2.png");
+        if (sprites == null || sprites.Length == 0) return null;
+        TileBase[] tiles = new TileBase[sprites.Length];
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            Tile t = ScriptableObject.CreateInstance<Tile>();
+            t.sprite = sprites[i];
+            tiles[i] = t;
+        }
+        return tiles;
+    }
+
+    static void CreateDecoProp(Transform parent, string name, Sprite sprite, float x, float y, float scale = 1f)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * scale;
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+        Undo.RegisterCreatedObjectUndo(go, name);
     }
 
     static Sprite[] LoadSubSprites(string path) =>
@@ -313,10 +409,10 @@ public static class Level2Builder
         Undo.RegisterCreatedObjectUndo(go, "Charco_Lodo");
     }
 
-    static void CreateNoiseObstacle(Transform parent, float x, float y)
+    static void CreateNoiseObstacle(Transform parent, float x, float y, Sprite customSprite = null)
     {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
-        GameObject go = new GameObject("Basura_Ruido");
+        Sprite sprite = customSprite ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
+        GameObject go = new GameObject("Botellas_Ruido");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
 
@@ -329,7 +425,7 @@ public static class Level2Builder
         bc.size = new Vector2(1.8f, 1.0f);
 
         go.AddComponent<NoiseObstacle>();
-        Undo.RegisterCreatedObjectUndo(go, "Basura_Ruido");
+        Undo.RegisterCreatedObjectUndo(go, "Botellas_Ruido");
     }
 
     static void CreateStrayDog(Transform parent, float x, float y)
@@ -360,9 +456,9 @@ public static class Level2Builder
         Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero");
     }
 
-    static void CreateExitPortal(Transform parent, float x, float y)
+    static void CreateExitPortal(Transform parent, float x, float y, Sprite customSprite = null)
     {
-        Sprite portalSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
+        Sprite portalSprite = customSprite ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
 
         GameObject go = new GameObject("Portal_Salida_Meta");
         go.transform.SetParent(parent, false);

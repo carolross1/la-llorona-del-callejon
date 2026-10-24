@@ -22,6 +22,9 @@ public static class SpriteAssetGenerator
         GenerateStrayDogSprite();
         GenerateExitPortalSprite();
 
+        // Recortar y configurar con precisión milimétrica todos los spritesheets importados
+        SpriteSheetSlicer.SliceAllSpriteSheets();
+
         AssetDatabase.Refresh();
         Debug.Log("[SpriteAssetGenerator] ¡Todos los sprites generados y actualizados con éxito!");
     }

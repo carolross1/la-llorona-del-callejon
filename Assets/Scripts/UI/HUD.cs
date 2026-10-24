@@ -14,6 +14,8 @@ public class HUD : MonoBehaviour
 
     [Header("Corazones de Vida")]
     [SerializeField] Image[] heartImages;
+    [SerializeField] Sprite activeHeartSprite;
+    [SerializeField] Sprite lostHeartSprite;
     [SerializeField] Color activeHeartColor = Color.white;
     [SerializeField] Color lostHeartColor = new Color(0.25f, 0.25f, 0.25f, 0.45f);
 
@@ -90,7 +92,15 @@ public class HUD : MonoBehaviour
         {
             if (heartImages[i] != null)
             {
-                heartImages[i].color = (i < lives) ? activeHeartColor : lostHeartColor;
+                if (activeHeartSprite != null && lostHeartSprite != null)
+                {
+                    heartImages[i].sprite = (i < lives) ? activeHeartSprite : lostHeartSprite;
+                    heartImages[i].color = Color.white;
+                }
+                else
+                {
+                    heartImages[i].color = (i < lives) ? activeHeartColor : lostHeartColor;
+                }
             }
         }
     }

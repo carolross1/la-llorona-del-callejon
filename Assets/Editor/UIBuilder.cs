@@ -499,6 +499,8 @@ public static class UIBuilder
         SerializedProperty hpArray = soHud.FindProperty("heartImages");
         hpArray.arraySize = 3;
         for (int i = 0; i < 3; i++) hpArray.GetArrayElementAtIndex(i).objectReferenceValue = heartImgs[i];
+        soHud.FindProperty("activeHeartSprite").objectReferenceValue   = Iface(0);
+        soHud.FindProperty("lostHeartSprite").objectReferenceValue     = Iface(1);
         soHud.FindProperty("timerText").objectReferenceValue           = timerTxt;
         soHud.FindProperty("scoreText").objectReferenceValue           = scoreTxt;
         soHud.FindProperty("objectiveText").objectReferenceValue       = objTxt;

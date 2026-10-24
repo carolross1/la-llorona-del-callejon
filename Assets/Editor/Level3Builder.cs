@@ -536,7 +536,7 @@ public static class Level3Builder
 
     static void SetupLloronaCircular(Vector2 pos, Transform[] wps, int wallsLayer, int lloronaLayer, float pSpeed, float cSpeed, float vDist, float vAngle)
     {
-        LloronaAI llorona = Object.FindAnyObjectByType<LloronaAI>();
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona == null) return;
         Undo.RecordObject(llorona.transform, "Posicionar Llorona");
         llorona.transform.position = new Vector3(pos.x, pos.y, 0f);

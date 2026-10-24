@@ -29,10 +29,10 @@ public class GoalCompassUI : MonoBehaviour
 
     void FindTargets()
     {
-        var player = Object.FindAnyObjectByType<PlayerMovement>();
+        var player = UnityEngine.Object.FindAnyObjectByType<PlayerMovement>();
         if (player != null) playerTransform = player.transform;
 
-        var goal = Object.FindAnyObjectByType<LevelGoal>();
+        var goal = UnityEngine.Object.FindAnyObjectByType<LevelGoal>();
         if (goal != null) goalTransform = goal.transform;
     }
 

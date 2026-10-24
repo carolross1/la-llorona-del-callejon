@@ -40,7 +40,7 @@ public class NoiseObstacle : MonoBehaviour
         }
 
         // Buscar a La Llorona y alertarla
-        LloronaAI llorona = Object.FindAnyObjectByType<LloronaAI>();
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona != null)
         {
             float dist = Vector2.Distance(transform.position, llorona.transform.position);

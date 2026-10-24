@@ -30,7 +30,7 @@ public class StrayDogAI : MonoBehaviour
     void Awake()
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
-        player = Object.FindAnyObjectByType<PlayerMovement>();
+        player = UnityEngine.Object.FindAnyObjectByType<PlayerMovement>();
         if (spriteRenderer != null) spriteRenderer.color = sleepColor;
     }
 
@@ -70,7 +70,7 @@ public class StrayDogAI : MonoBehaviour
         }
 
         // Alertar a La Llorona
-        LloronaAI llorona = Object.FindAnyObjectByType<LloronaAI>();
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona != null)
         {
             float dist = Vector2.Distance(transform.position, llorona.transform.position);

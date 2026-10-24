@@ -513,7 +513,7 @@ public static class Level4Builder
     static void SetupLlorona(Vector2 pos, Transform[] waypoints, int wallsLayer, int lloronaLayer,
                               float pSpeed, float cSpeed, float vDist, float vAngle)
     {
-        LloronaAI llorona = Object.FindAnyObjectByType<LloronaAI>();
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona == null)
         {
             GameObject lGo = new GameObject("Llorona");
@@ -558,7 +558,7 @@ public static class Level4Builder
 
     static void SetupGameManager(int levelNum)
     {
-        GameManager gm = Object.FindAnyObjectByType<GameManager>();
+        GameManager gm = UnityEngine.Object.FindAnyObjectByType<GameManager>();
         if (gm == null)
         {
             GameObject old = GameObject.Find("GameManager");

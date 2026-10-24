@@ -670,7 +670,7 @@ public static class UIBuilder
 
     static void EnsureEventSystem()
     {
-        if (Object.FindAnyObjectByType<EventSystem>() == null)
+        if (UnityEngine.Object.FindAnyObjectByType<EventSystem>() == null)
         {
             GameObject es = new GameObject("EventSystem");
             es.AddComponent<EventSystem>();

@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
+[InitializeOnLoad]
 public static class PlayerAnimationFixer
 {
     const string ControllerPath = "Assets/Animations/Player/PlayerController.controller";
@@ -17,6 +18,14 @@ public static class PlayerAnimationFixer
     const string IdleDownPath   = "Assets/Animations/Player/Idle_Down.anim";
     const string IdleLeftPath   = "Assets/Animations/Player/Idle_Left.anim";
     const string IdleRightPath  = "Assets/Animations/Player/Idle_Right.anim";
+
+    static PlayerAnimationFixer()
+    {
+        EditorApplication.delayCall += () =>
+        {
+            FixPlayerAnimations();
+        };
+    }
 
     [MenuItem("La Llorona/Corregir Animaciones Player")]
     public static string FixPlayerAnimations()
@@ -35,13 +44,9 @@ public static class PlayerAnimationFixer
         AnimationClip idleLeft  = AssetDatabase.LoadAssetAtPath<AnimationClip>(IdleLeftPath);
         AnimationClip idleRight = AssetDatabase.LoadAssetAtPath<AnimationClip>(IdleRightPath);
 
-        sb.AppendLine($"Walk_Up clip: {(walkUp != null ? walkUp.name + " (" + walkUp.length + "s, loop=" + walkUp.isLooping + ")" : "NULL")}");
-        sb.AppendLine($"Walk_Down clip: {(walkDown != null ? walkDown.name : "NULL")}");
-        sb.AppendLine($"Walk_Left clip: {(walkLeft != null ? walkLeft.name : "NULL")}");
-        sb.AppendLine($"Walk_Right clip: {(walkRight != null ? walkRight.name : "NULL")}");
-
         // Asegurar que Walk_Right tenga los 4 frames
         EnsureWalkRight4Frames(walkRight);
+        EnsureWalkLeft4Frames(walkLeft);
 
         // 2. Cargar Controller
         var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
@@ -51,46 +56,49 @@ public static class PlayerAnimationFixer
             return sb.ToString();
         }
 
-        // Inspeccionar capas y estados
         var layer = controller.layers[0];
         var sm = layer.stateMachine;
-        sb.AppendLine($"Capa 0: {layer.name}, DefaultState: {sm.defaultState?.name}");
+
+        // Eliminar estados huérfanos que confunden al usuario en el editor visual de Animator
+        var statesToRemove = sm.states
+            .Where(s => s.state.name != "Idle" && s.state.name != "Walk")
+            .Select(s => s.state)
+            .ToList();
+
+        foreach (var st in statesToRemove)
+        {
+            sb.AppendLine($"Removiendo estado huérfano suelto: {st.name}");
+            sm.RemoveState(st);
+        }
+
+        // Configurar BlendTrees y transiciones
+        AnimatorState idleState = null;
+        AnimatorState walkState = null;
 
         foreach (var stateChild in sm.states)
         {
             var state = stateChild.state;
-            sb.AppendLine($"\nEstado: {state.name}");
+            if (state.name == "Idle") idleState = state;
+            if (state.name == "Walk") walkState = state;
+
             if (state.motion is BlendTree bt)
             {
-                sb.AppendLine($"  -> BlendTree: {bt.name}, BlendType: {bt.blendType}, Parameters: {bt.blendParameter}, {bt.blendParameterY}");
-                for (int i = 0; i < bt.children.Length; i++)
+                if (state.name == "Walk")
                 {
-                    var cm = bt.children[i];
-                    sb.AppendLine($"     Child {i}: Motion={cm.motion?.name}, Pos=({cm.position.x}, {cm.position.y})");
-                }
-
-                // Si es el BlendTree de Caminata (Walk)
-                if (state.name.ToLower().Contains("walk") || state.name.ToLower().Contains("camin"))
-                {
-                    sb.AppendLine("  -> Corrigiendo BlendTree de Caminata...");
                     bt.blendType = BlendTreeType.SimpleDirectional2D;
                     bt.blendParameter = "MoveX";
                     bt.blendParameterY = "MoveY";
 
-                    // Reemplazar o asignar hijos correctamente
                     var children = new ChildMotion[4];
                     children[0] = new ChildMotion { motion = walkDown,  position = new Vector2(0f, -1f), timeScale = 1f };
                     children[1] = new ChildMotion { motion = walkUp,    position = new Vector2(0f,  1f), timeScale = 1f };
                     children[2] = new ChildMotion { motion = walkLeft,  position = new Vector2(-1f, 0f), timeScale = 1f };
                     children[3] = new ChildMotion { motion = walkRight, position = new Vector2( 1f, 0f), timeScale = 1f };
                     bt.children = children;
-                    sb.AppendLine("  -> BlendTree de Caminata reconfigurado: Down(0,-1), Up(0,1), Left(-1,0), Right(1,0)");
+                    sb.AppendLine("Walk BlendTree configurado: Down(0,-1), Up(0,1), Left(-1,0), Right(1,0)");
                 }
-
-                // Si es el BlendTree de Idle
-                if (state.name.ToLower().Contains("idle") || state.name.ToLower().Contains("quieto"))
+                else if (state.name == "Idle")
                 {
-                    sb.AppendLine("  -> Corrigiendo BlendTree de Idle...");
                     bt.blendType = BlendTreeType.SimpleDirectional2D;
                     bt.blendParameter = "MoveX";
                     bt.blendParameterY = "MoveY";
@@ -101,8 +109,27 @@ public static class PlayerAnimationFixer
                     children[2] = new ChildMotion { motion = idleLeft,  position = new Vector2(-1f, 0f), timeScale = 1f };
                     children[3] = new ChildMotion { motion = idleRight, position = new Vector2( 1f, 0f), timeScale = 1f };
                     bt.children = children;
-                    sb.AppendLine("  -> BlendTree de Idle reconfigurado: Down(0,-1), Up(0,1), Left(-1,0), Right(1,0)");
+                    sb.AppendLine("Idle BlendTree configurado: Down(0,-1), Up(0,1), Left(-1,0), Right(1,0)");
                 }
+            }
+        }
+
+        // Asegurar transiciones inmediatas sin retraso (0s duración para pixel art)
+        if (idleState != null && walkState != null)
+        {
+            sm.defaultState = idleState;
+
+            foreach (var tr in idleState.transitions)
+            {
+                tr.duration = 0f;
+                tr.hasExitTime = false;
+                tr.exitTime = 0f;
+            }
+            foreach (var tr in walkState.transitions)
+            {
+                tr.duration = 0f;
+                tr.hasExitTime = false;
+                tr.exitTime = 0f;
             }
         }
 
@@ -110,8 +137,39 @@ public static class PlayerAnimationFixer
         AssetDatabase.SaveAssets();
         AssetDatabase.ImportAsset(ControllerPath, ImportAssetOptions.ForceUpdate);
 
-        sb.AppendLine("\n¡Controlador guardado y reimportado exitosamente!");
+        sb.AppendLine("¡PlayerController y BlendTrees actualizados con éxito!");
         return sb.ToString();
+    }
+
+    static void EnsureWalkLeft4Frames(AnimationClip walkLeft)
+    {
+        if (walkLeft == null) return;
+        var bindings = AnimationUtility.GetObjectReferenceCurveBindings(walkLeft);
+        if (bindings.Length == 0) return;
+
+        var keyframes = AnimationUtility.GetObjectReferenceCurve(walkLeft, bindings[0]);
+        if (keyframes.Length < 4)
+        {
+            Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Player/Carlos_Caminando.png").OfType<Sprite>().ToArray();
+            var s8  = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_8");
+            var s9  = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_9");
+            var s10 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_10");
+            var s11 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_11");
+
+            if (s8 != null && s9 != null && s10 != null && s11 != null)
+            {
+                var newKeys = new ObjectReferenceKeyframe[4];
+                newKeys[0] = new ObjectReferenceKeyframe { time = 0.000f, value = s8 };
+                newKeys[1] = new ObjectReferenceKeyframe { time = 0.125f, value = s9 };
+                newKeys[2] = new ObjectReferenceKeyframe { time = 0.250f, value = s10 };
+                newKeys[3] = new ObjectReferenceKeyframe { time = 0.375f, value = s11 };
+
+                AnimationUtility.SetObjectReferenceCurve(walkLeft, bindings[0], newKeys);
+                EditorUtility.SetDirty(walkLeft);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.ImportAsset(WalkLeftPath, ImportAssetOptions.ForceUpdate);
+            }
+        }
     }
 
     static void EnsureWalkRight4Frames(AnimationClip walkRight)
@@ -123,7 +181,6 @@ public static class PlayerAnimationFixer
         var keyframes = AnimationUtility.GetObjectReferenceCurve(walkRight, bindings[0]);
         if (keyframes.Length < 4)
         {
-            // Cargar los 4 sprites de la fila 3 (Carlos_Caminando_12..15)
             Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Player/Carlos_Caminando.png").OfType<Sprite>().ToArray();
             var s12 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_12");
             var s13 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_13");

@@ -30,14 +30,13 @@ public class PlayerAnimation : MonoBehaviour
             lastDir = Mathf.Abs(activeDir.x) > Mathf.Abs(activeDir.y)
                 ? new Vector2(Mathf.Sign(activeDir.x), 0)
                 : new Vector2(0, Mathf.Sign(activeDir.y));
+        }
 
-            if (sr != null)
-            {
-                if (Mathf.Abs(activeDir.x) > 0.1f)
-                    sr.flipX = (activeDir.x < 0);
-                else
-                    sr.flipX = false;
-            }
+        // Carlos cuenta con sprites nativos para todas las direcciones (fila 2: izquierda, fila 3: derecha).
+        // flipX debe permanecer siempre en false para no invertir ni quebrar la animación hacia la izquierda.
+        if (sr != null && sr.flipX)
+        {
+            sr.flipX = false;
         }
 
         if (anim != null && anim.runtimeAnimatorController != null)

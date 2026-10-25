@@ -178,28 +178,25 @@ public static class PlayerAnimationFixer
         var bindings = AnimationUtility.GetObjectReferenceCurveBindings(walkRight);
         if (bindings.Length == 0) return;
 
-        var keyframes = AnimationUtility.GetObjectReferenceCurve(walkRight, bindings[0]);
-        if (keyframes.Length < 4)
+        Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Player/Carlos_Caminando.png").OfType<Sprite>().ToArray();
+        var s12 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_12");
+        var s13 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_13");
+
+        // IMPORTANTE: En el sprite sheet original, Carlos_Caminando_14 y 15 están dibujados mirando a la IZQUIERDA.
+        // Si se incluyen en Walk_Right, el personaje parpadea volteándose hacia atrás al caminar o correr a la derecha.
+        // Por ello Walk_Right debe componerse exclusivamente de s12 y s13 (ambos mirando 100% a la derecha).
+        if (s12 != null && s13 != null)
         {
-            Sprite[] sprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Player/Carlos_Caminando.png").OfType<Sprite>().ToArray();
-            var s12 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_12");
-            var s13 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_13");
-            var s14 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_14");
-            var s15 = sprites.FirstOrDefault(s => s.name == "Carlos_Caminando_15");
+            var newKeys = new ObjectReferenceKeyframe[4];
+            newKeys[0] = new ObjectReferenceKeyframe { time = 0.000f, value = s12 };
+            newKeys[1] = new ObjectReferenceKeyframe { time = 0.125f, value = s13 };
+            newKeys[2] = new ObjectReferenceKeyframe { time = 0.250f, value = s12 };
+            newKeys[3] = new ObjectReferenceKeyframe { time = 0.375f, value = s13 };
 
-            if (s12 != null && s13 != null && s14 != null && s15 != null)
-            {
-                var newKeys = new ObjectReferenceKeyframe[4];
-                newKeys[0] = new ObjectReferenceKeyframe { time = 0.000f, value = s12 };
-                newKeys[1] = new ObjectReferenceKeyframe { time = 0.125f, value = s13 };
-                newKeys[2] = new ObjectReferenceKeyframe { time = 0.250f, value = s14 };
-                newKeys[3] = new ObjectReferenceKeyframe { time = 0.375f, value = s15 };
-
-                AnimationUtility.SetObjectReferenceCurve(walkRight, bindings[0], newKeys);
-                EditorUtility.SetDirty(walkRight);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.ImportAsset(WalkRightPath, ImportAssetOptions.ForceUpdate);
-            }
+            AnimationUtility.SetObjectReferenceCurve(walkRight, bindings[0], newKeys);
+            EditorUtility.SetDirty(walkRight);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.ImportAsset(WalkRightPath, ImportAssetOptions.ForceUpdate);
         }
     }
 }

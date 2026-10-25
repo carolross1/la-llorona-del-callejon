@@ -8,6 +8,18 @@ TextureImporter:
   - first:
       213: -2342620295979842007
     second: Puestos_Nivl1_1
+  - first:
+      213: -6354155303890113501
+    second: Puesto_0
+  - first:
+      213: -2497459859818571714
+    second: Puesto_1
+  - first:
+      213: 7934685976853917577
+    second: Puesto_frutas
+  - first:
+      213: 2572970483928277084
+    second: Puesto_verduras
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,7 +52,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -54,7 +66,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 126
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -80,7 +92,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -118,45 +130,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Puestos_Nivl1_0
+      name: Puesto_frutas
       rect:
         serializedVersion: 2
-        x: 81
-        y: 195
-        width: 632
-        height: 646
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 84
+        y: 198
+        width: 628
+        height: 641
+      alignment: 9
+      pivot: {x: 0.5, y: 0.12}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 028f69779912b2850800000000000000
-      internalID: 6353208642356312096
+      spriteID: 98fa6ae2bdaad1e60800000000000000
+      internalID: 7934685976853917577
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Puestos_Nivl1_1
+      name: Puesto_verduras
       rect:
         serializedVersion: 2
-        x: 819
-        y: 186
-        width: 639
-        height: 655
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 821
+        y: 189
+        width: 635
+        height: 650
+      alignment: 9
+      pivot: {x: 0.5, y: 0.12}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9264086a0475d7fd0800000000000000
-      internalID: -2342620295979842007
+      spriteID: c502c10e50705b320800000000000000
+      internalID: 2572970483928277084
       vertices: []
       indices: 
       edges: []
@@ -175,6 +187,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Puesto_0: -6354155303890113501
+      Puesto_1: -2497459859818571714
+      Puesto_frutas: 7934685976853917577
+      Puesto_verduras: 2572970483928277084
       Puestos_Nivl1_0: 6353208642356312096
       Puestos_Nivl1_1: -2342620295979842007
   mipmapLimitGroupName: 

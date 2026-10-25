@@ -47,6 +47,30 @@ TextureImporter:
   - first:
       213: 2355107933617225778
     second: interfaz_14
+  - first:
+      213: 2616604422387014842
+    second: Corazon_lleno
+  - first:
+      213: 5249732557364212421
+    second: Corazon_vacio
+  - first:
+      213: 7048196627222154973
+    second: Icono_vela
+  - first:
+      213: 5775968916149858724
+    second: Icono_ojo
+  - first:
+      213: 7448896690590206866
+    second: Barra_marco
+  - first:
+      213: 303255890616391423
+    second: Placa_normal
+  - first:
+      213: -2382957213616447671
+    second: Placa_resaltada
+  - first:
+      213: -3812204410716361287
+    second: Placa_presionada
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -79,7 +103,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -119,7 +143,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -157,331 +181,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: interfaz_0
+      name: Corazon_lleno
       rect:
         serializedVersion: 2
-        x: 0
-        y: 997
-        width: 487
-        height: 602
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 116
+        y: 770
+        width: 369
+        height: 493
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcd8a07870b809ed0800000000000000
-      internalID: -2409272936196567603
+      spriteID: abc181adbdb005420800000000000000
+      internalID: 2616604422387014842
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_1
+      name: Corazon_vacio
       rect:
         serializedVersion: 2
-        x: 646
-        y: 997
-        width: 359
-        height: 499
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 649
+        y: 770
+        width: 352
+        height: 493
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6ebad41a74a0c3140800000000000000
-      internalID: 4700643413833133030
+      spriteID: 5c23f7752fbcad840800000000000000
+      internalID: 5249732557364212421
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_2
+      name: Icono_vela
       rect:
         serializedVersion: 2
-        x: 1206
-        y: 997
-        width: 316
-        height: 485
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1209
+        y: 769
+        width: 310
+        height: 473
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aacd163f798e85ac0800000000000000
-      internalID: -3866084540776588118
+      spriteID: ddecea05d7930d160800000000000000
+      internalID: 7048196627222154973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_3
+      name: Icono_ojo
       rect:
         serializedVersion: 2
-        x: 1712
-        y: 987
-        width: 688
-        height: 612
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1715
+        y: 760
+        width: 584
+        height: 461
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0d91525f5e10a33e0800000000000000
-      internalID: -2073342591278704176
+      spriteID: 4a17fc8702d582050800000000000000
+      internalID: 5775968916149858724
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_4
+      name: Barra_marco
       rect:
         serializedVersion: 2
-        x: 2195
-        y: 1174
-        width: 108
-        height: 59
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 96
+        y: 404
+        width: 2208
+        height: 293
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 40, y: 20, z: 40, w: 20}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e0730400d5cd0f240800000000000000
-      internalID: 4823597492908078862
+      spriteID: 29b463bf21ccf5760800000000000000
+      internalID: 7448896690590206866
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_5
+      name: Placa_normal
       rect:
         serializedVersion: 2
-        x: 93
-        y: 631
-        width: 2213
-        height: 299
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 89
+        y: 57
+        width: 708
+        height: 258
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 35, y: 25, z: 35, w: 25}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3acdc57d4025219c0800000000000000
-      internalID: -3958010941758710621
+      spriteID: ff61c3430a1653400800000000000000
+      internalID: 303255890616391423
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_6
+      name: Placa_resaltada
       rect:
         serializedVersion: 2
-        x: 86
-        y: 284
-        width: 714
-        height: 264
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 846
+        y: 48
+        width: 707
+        height: 276
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 35, y: 25, z: 35, w: 25}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7a1a5a07968d34c0800000000000000
-      internalID: -4306137685424465282
+      spriteID: 94fdf672a090eeed0800000000000000
+      internalID: -2382957213616447671
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_7
+      name: Placa_presionada
       rect:
         serializedVersion: 2
-        x: 844
-        y: 275
-        width: 712
-        height: 282
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 1602
+        y: 57
+        width: 708
+        height: 258
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 35, y: 25, z: 35, w: 25}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7867cbaba8db4a0b0800000000000000
-      internalID: -5718237223317637497
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_8
-      rect:
-        serializedVersion: 2
-        x: 1598
-        y: 284
-        width: 715
-        height: 264
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 350a50f7fe60c7e90800000000000000
-      internalID: -7026733692906790829
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_9
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 318
-        height: 203
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f572bf62c0321fee0800000000000000
-      internalID: -1229162688194861217
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_10
-      rect:
-        serializedVersion: 2
-        x: 573
-        y: 160
-        width: 151
-        height: 43
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 788f56ebf0c8fd920800000000000000
-      internalID: 3017284274608273543
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_11
-      rect:
-        serializedVersion: 2
-        x: 919
-        y: 159
-        width: 104
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1a3b367f5ae0c5070800000000000000
-      internalID: 8096362336088208289
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_12
-      rect:
-        serializedVersion: 2
-        x: 1379
-        y: 160
-        width: 103
-        height: 43
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 179003e046647b600800000000000000
-      internalID: 483932880514320753
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_13
-      rect:
-        serializedVersion: 2
-        x: 1669
-        y: 159
-        width: 114
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 99714c646c65ab950800000000000000
-      internalID: 6465575624634537881
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: interfaz_14
-      rect:
-        serializedVersion: 2
-        x: 2152
-        y: 0
-        width: 248
-        height: 204
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 23085fe00360fa020800000000000000
-      internalID: 2355107933617225778
+      spriteID: 9bde2105944581bc0800000000000000
+      internalID: -3812204410716361287
       vertices: []
       indices: 
       edges: []
@@ -500,6 +370,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Barra_marco: 7448896690590206866
+      Corazon_lleno: 2616604422387014842
+      Corazon_vacio: 5249732557364212421
+      Icono_ojo: 5775968916149858724
+      Icono_vela: 7048196627222154973
+      Placa_normal: 303255890616391423
+      Placa_presionada: -3812204410716361287
+      Placa_resaltada: -2382957213616447671
       interfaz_0: -2409272936196567603
       interfaz_1: 4700643413833133030
       interfaz_10: 3017284274608273543

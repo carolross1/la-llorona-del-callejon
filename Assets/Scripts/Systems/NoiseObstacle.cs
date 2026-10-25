@@ -2,16 +2,26 @@
 using UnityEngine;
 
 /// <summary>
-/// Obstáculo del entorno: Montón de latas y botellas rotas.
-/// Si el jugador lo pisa o pasa corriendo encima, genera un estruendo metálico
-/// que alerta inmediatamente a La Llorona hacia esa posición.
+/// Obstáculo del entorno: Botellas y vidrios en el suelo.
+/// Al pisar botellas, emite sonido de vidrio roto, cambia el sprite a Vidrios_rotos
+/// y alerta a La Llorona hacia esa posición exacta.
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class NoiseObstacle : MonoBehaviour
 {
-    [SerializeField] float alertRadius = 16f;
+    [SerializeField] float alertRadius = 18f;
     [SerializeField] float cooldown = 3f;
+    [SerializeField] Sprite brokenSprite;
+    [SerializeField] AudioClip glassBreakSound;
+
+    SpriteRenderer spriteRenderer;
     float lastTriggerTime = -99f;
+    bool isBroken = false;
+
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -28,26 +38,48 @@ public class NoiseObstacle : MonoBehaviour
         if (Time.time < lastTriggerTime + cooldown) return;
         if (!other.CompareTag("Player")) return;
 
-        var player = other.GetComponent<PlayerMovement>();
+        var player = other.GetComponent<PlayerMovement>() ?? other.GetComponentInParent<PlayerMovement>();
         if (player == null || player.IsHidden) return;
+
+        // Protección contra activación lejana: solo se activa si los pies de Carlos pisan directamente sobre las botellas (< 0.40 u)
+        Vector2 feetPos = (Vector2)player.transform.position + new Vector2(0f, -0.35f);
+        float distToFeet = Vector2.Distance((Vector2)transform.position, feetPos);
+        if (distToFeet > 0.40f) return;
 
         lastTriggerTime = Time.time;
 
-        // Mostrar aviso en HUD si está disponible
-        if (HUD.Instance != null)
+        // Cambio visual a vidrios rotos al pisarse
+        if (!isBroken && brokenSprite != null && spriteRenderer != null)
         {
-            HUD.Instance.ShowTutorial("¡CLANG! ¡Pisaste latas! La Llorona escuchó el ruido...", 3.0f);
+            spriteRenderer.sprite = brokenSprite;
+            isBroken = true;
         }
 
-        // Buscar a La Llorona y alertarla
+        // Sonido de vidrio
+        if (AudioManager.Instance != null)
+        {
+            if (glassBreakSound != null)
+                AudioManager.Instance.PlaySFX(glassBreakSound, 1.0f);
+            else
+                AudioManager.Instance.PlayFootstep(); // Respaldo acústico
+        }
+
+        // Aviso oficial en la franja superior del HUD
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.ShowEventNotice("¡Cristales! La Llorona te oyó", 2.5f);
+        }
+
+        // Alertar a La Llorona hacia esta posición exacta
         LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona != null)
         {
             float dist = Vector2.Distance(transform.position, llorona.transform.position);
             if (dist <= alertRadius)
             {
-                llorona.AlertNoise(transform.position, 4.5f);
+                llorona.AlertNoise(transform.position, 5.0f);
             }
         }
     }
 }
+

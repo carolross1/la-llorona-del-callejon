@@ -59,7 +59,7 @@ public class Offering : MonoBehaviour
             }
         }
 
-        Destroy(gameObject, 0.5f);
+        Destroy(gameObject, Mathf.Max(0.5f, lifetimeAfterDistraction - distractionDuration));
     }
 
     void OnDrawGizmosSelected()

@@ -10,84 +10,131 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 /// <summary>
-/// Constructor automatizado del Nivel 1 (El Mercado Vacío).
-/// Incluye mapa de 40 x 16, iluminación URP 2D, escondites,
-/// obstáculos de lodo ralentizante, latas ruidosas, perro callejero territorial
-/// y portal monumental de salida claramente señalizado.
+/// Constructor oficial del Nivel 1 (El Mercado Vacío - 56 × 20 unidades).
+/// Cumple estrictamente con la especificación visual y jugabilidad de PROMPT_VISUAL.md:
+/// - Dimensiones 56 × 20 (zona jugable y=2 a y=18, fachadas en y=0-1 y y=18-19, muros en x=-1 y x=56).
+/// - 4 zonas diferenciadas: Zona 1 Entrada (tierra), Zona 2 Calle de puestos (adoquín), Zona 3 Rincón del perro (tierra), Zona 4 Salida (adoquín).
+/// - 7 puestos grandes alternando Puesto_frutas y Puesto_verduras con colisión únicamente en la base.
+/// - 5 escondites funcionales organizados como clústeres.
+/// - Laberinto suave de huacales y costales con rutas transitables (pasillos >= 2.5 u).
+/// - 6 charcos oficiales (Charco_0 a Charco_5) y montones de botellas de vidrio reactivas.
+/// - Perro callejero durmiendo en (45, 3.8) con ruta alterna superior libre.
+/// - Salida_0 como escena monumental de cierre conectada sin cortes, con luz cálida interior y sin flechas.
+/// - CERO BANCAS.
+/// - Iluminación Global URP 2D a 0.55 y faroles cálidos con LightFlicker.
 /// </summary>
 public static class Level1Builder
 {
     const string ScenePath = "Assets/Scenes/Level1_Mercado.unity";
 
+    // ── Spritesheets oficiales ────────────────────────────────────────────────
+    const string PuestosPath    = "Assets/Sprites/Environment/Puestos_Nivl1.png";
+    const string SacosPath      = "Assets/Sprites/Environment/Contenedores_Sacos_Nvl1.png";
+    const string BotellasPath   = "Assets/Sprites/Environment/Botellas_charcolodo_Nvl1.png";
+    const string SalidasPath    = "Assets/Sprites/Environment/Salidas.png";
+    const string PerroPath      = "Assets/Sprites/Perro/perro.png";
+    const string DecoracionPath = "Assets/Sprites/Environment/decoracion.png";
+    const string EsconditesPath = "Assets/Sprites/Environment/escondites.png";
+
+    static Sprite GetSpriteByName(string path, string name, int fallbackIndex = 0)
+    {
+        if (!File.Exists(path)) return null;
+        var sprites = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().ToArray();
+        var match = sprites.FirstOrDefault(s => s.name == name);
+        if (match != null) return match;
+        if (fallbackIndex >= 0 && fallbackIndex < sprites.Length) return sprites[fallbackIndex];
+        return sprites.FirstOrDefault() ?? AssetDatabase.LoadAssetAtPath<Sprite>(path);
+    }
+
     [MenuItem("La Llorona/Construir Nivel 1 Completo")]
     public static void BuildLevel1Scene()
     {
-        Debug.Log("[Level1Builder] Iniciando construcción del Nivel 1...");
-
-        // Asegurar que existan todos los sprites del juego
-        SpriteAssetGenerator.GenerateAllSprites();
-
-        // Abrir o crear la escena
-        Scene scene;
-        if (File.Exists(ScenePath))
+        if (EditorApplication.isPlaying)
         {
-            scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            Debug.LogWarning("[Level1Builder] Deteniendo Modo Juego antes de construir el Nivel 1...");
+            EditorApplication.isPlaying = false;
+            EditorApplication.delayCall += () => BuildLevel1Scene();
+            return;
         }
-        else
-        {
-            Directory.CreateDirectory("Assets/Scenes");
-            scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-        }
+
+        Debug.Log("[Level1Builder] Iniciando reconstrucción oficial del Nivel 1 (56 × 20)...");
+
+        // Asegurar que las hojas de sprites estén debidamente recortadas
+        SpriteSheetSlicer.SliceAllSpriteSheets();
+
+        Scene scene = File.Exists(ScenePath)
+            ? EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single)
+            : EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
         Undo.IncrementCurrentGroup();
-        int group = Undo.GetCurrentGroup();
-        Undo.SetCurrentGroupName("Construir Nivel 1 Completo");
+        Undo.SetCurrentGroupName("Construir Nivel 1 Mercado");
 
-        // Capas y tags
-        int wallsLayer = LayerMask.NameToLayer("Walls");
+        // Limpiar TODOS los objetos antiguos o duplicados dentro de la escena abierta
+        string[] oldNames = { "puesto_mercado", "puesto_mercado2", "HidePoint", "WP_A", "WP_B", "Arriba", "Abajo", "Derecha", "Izquierda", "TutorialTriggers", "Meta" };
+        foreach (var oldName in oldNames)
+        {
+            var oldObjs = UnityEngine.Object.FindObjectsByType<GameObject>().Where(g => g != null && g.name == oldName).ToArray();
+            foreach (var o in oldObjs) Undo.DestroyObjectImmediate(o);
+        }
+
+        // Eliminar cualquier LevelGoal invisible residual que no pertenezca a la puerta monumental
+        var oldGoals = UnityEngine.Object.FindObjectsByType<LevelGoal>();
+        foreach (var g in oldGoals)
+        {
+            if (g != null && (g.transform.parent == null || !g.transform.parent.name.Contains("Salida")))
+            {
+                Undo.DestroyObjectImmediate(g.gameObject);
+            }
+        }
+
+        // Capas físicas
+        int wallsLayer    = LayerMask.NameToLayer("Walls");
         int hideSpotLayer = LayerMask.NameToLayer("HideSpot");
-        int playerLayer = LayerMask.NameToLayer("Player");
-        int lloronaLayer = LayerMask.NameToLayer("Llorona");
+        int playerLayer   = LayerMask.NameToLayer("Player");
+        int lloronaLayer  = LayerMask.NameToLayer("Llorona");
 
         if (wallsLayer < 0) wallsLayer = 0;
         if (hideSpotLayer < 0) hideSpotLayer = 0;
 
-        // Cargar recursos
+        // Cargar baldosas oficiales (0..47)
         TileBase[] allTiles = LoadTiles();
-        Sprite puestoSprite = LoadSprite("Assets/Sprites/Environment/puesto_mercado.png");
-        Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
-        Sprite[] hideSprites = LoadSubSprites("Assets/Sprites/Environment/escondites.png");
-        Sprite[] puestosNvl1 = LoadSubSprites("Assets/Sprites/Environment/Puestos_Nivl1.png");
-        Sprite[] sacosNvl1 = LoadSubSprites("Assets/Sprites/Environment/Contenedores_Sacos_Nvl1.png");
-        Sprite[] botellasNvl1 = LoadSubSprites("Assets/Sprites/Environment/Botellas_Nvl1.png");
-        Sprite[] salidas = LoadSubSprites("Assets/Sprites/Environment/Salidas.png");
+        TileBase[] floorTiles   = allTiles.Take(12).ToArray();               // Adoquín (filas 0-1)
+        TileBase[] dirtTiles    = allTiles.Skip(12).Take(12).ToArray();      // Tierra (filas 2-3)
+        TileBase[] wallConcrete = allTiles.Skip(24).Take(12).ToArray();      // Muro de concreto (filas 4-5)
+        TileBase[] wallFacade   = allTiles.Skip(36).Take(12).ToArray();      // Fachadas con ventanas (filas 6-7)
 
-        // 1. Grid y Tilemaps
-        GameObject gridGo = GameObject.Find("Grid");
-        if (gridGo == null)
-        {
-            gridGo = new GameObject("Grid");
-            gridGo.AddComponent<Grid>();
-            Undo.RegisterCreatedObjectUndo(gridGo, "Grid");
-        }
+        // ════════════════════════════════════════════════════════════════════════
+        // 1. GRID Y TILEMAPS (Ground y Walls)
+        // ════════════════════════════════════════════════════════════════════════
+        GameObject gridGo = GameObject.Find("Grid") ?? new GameObject("Grid");
+        if (gridGo.GetComponent<Grid>() == null) gridGo.AddComponent<Grid>();
+        Undo.RegisterCreatedObjectUndo(gridGo, "Grid");
 
-        Tilemap sueloMap = GetOrCreateTilemap(gridGo.transform, "Suelo", 0, -1, false);
-        Tilemap paredesMap = GetOrCreateTilemap(gridGo.transform, "Paredes", 1, wallsLayer, true);
+        Tilemap sueloMap   = GetOrCreateTilemap(gridGo.transform, "Suelo",   -5, -1, false);
+        Tilemap paredesMap = GetOrCreateTilemap(gridGo.transform, "Paredes",  3, wallsLayer, true);
+
+        // Ajuste de contraste/post-procesado del suelo:
+        // Se atenúa ligeramente el microcontraste y la saturación del empedrado
+        // para que Carlos, los puestos, las botellas y los charcos destaquen nítidamente como elementos de juego
+        sueloMap.color = new Color(0.64f, 0.65f, 0.72f, 1.0f);
+        paredesMap.color = new Color(0.88f, 0.88f, 0.90f, 1.0f);
 
         sueloMap.ClearAllTiles();
         paredesMap.ClearAllTiles();
 
-        // 2. Construir Suelo (40 x 16)
-        TileBase[] dirtTiles = allTiles.Skip(12).Take(12).ToArray();
-        TileBase[] floorTiles = allTiles.Take(6).ToArray();
-        TileBase[] puddleTiles = allTiles.Skip(6).Take(6).ToArray();
+        System.Random rnd = new System.Random(42);
 
-        System.Random rnd = new System.Random(17);
-        for (int x = 0; x < 40; x++)
+        // A. Suelo (x: 0 a 55, y: 2 a 17)
+        for (int x = 0; x < 56; x++)
         {
-            for (int y = 2; y <= 13; y++)
+            for (int y = 2; y <= 17; y++)
             {
-                bool isDirt = (x < 4 || x >= 36);
+                // Zona 1 (Entrada x: 0..8) -> Tierra
+                // Zona 2 (Calle de puestos x: 8..40) -> Adoquín
+                // Zona 3 (Rincón del perro x: 40..48) -> Tierra
+                // Zona 4 (Salida x: 48..55) -> Adoquín sin cortes
+                bool isDirt = (x <= 8) || (x >= 40 && x < 48);
+
                 TileBase t;
                 if (isDirt)
                 {
@@ -95,177 +142,774 @@ public static class Level1Builder
                 }
                 else
                 {
-                    bool hasPuddle = (puddleTiles.Length > 0 && rnd.NextDouble() < 0.12);
-                    t = hasPuddle
-                        ? puddleTiles[rnd.Next(puddleTiles.Length)]
-                        : (floorTiles.Length > 0 ? floorTiles[rnd.Next(floorTiles.Length)] : null);
+                    t = floorTiles.Length > 0 ? floorTiles[rnd.Next(floorTiles.Length)] : null;
                 }
+
                 if (t != null)
                     sueloMap.SetTile(new Vector3Int(x, y, 0), t);
             }
         }
 
-        // 3. Fachadas y Muros (Filas 0-1 abajo y 14-15 arriba)
-        TileBase[] wallUpper = allTiles.Skip(36).Take(12).ToArray();
-        TileBase[] wallLower = allTiles.Skip(24).Take(12).ToArray();
-
-        for (int x = 0; x < 40; x++)
+        // B. Fachadas Superior (y = 18 y 19) e Inferior (y = 0 y 1)
+        for (int x = -1; x <= 56; x++)
         {
-            if (wallUpper.Length > 0)
+            if (wallFacade.Length > 0)
             {
-                paredesMap.SetTile(new Vector3Int(x, 15, 0), wallUpper[x % wallUpper.Length]);
-                paredesMap.SetTile(new Vector3Int(x, 1, 0), wallUpper[x % wallUpper.Length]);
-            }
-            if (wallLower.Length > 0)
-            {
-                paredesMap.SetTile(new Vector3Int(x, 14, 0), wallLower[x % wallLower.Length]);
-                paredesMap.SetTile(new Vector3Int(x, 0, 0), wallLower[x % wallLower.Length]);
+                int idx = Math.Abs(x) % wallFacade.Length;
+                paredesMap.SetTile(new Vector3Int(x, 19, 0), wallFacade[idx]);
+                paredesMap.SetTile(new Vector3Int(x, 18, 0), wallFacade[(idx + 1) % wallFacade.Length]);
+                paredesMap.SetTile(new Vector3Int(x,  1, 0), wallFacade[idx]);
+                paredesMap.SetTile(new Vector3Int(x,  0, 0), wallFacade[(idx + 1) % wallFacade.Length]);
             }
         }
 
-        // 4. Configurar CompositeCollider2D en Paredes (Unity 6)
+        // C. Muros Laterales de Concreto (x = -1 y x = 56, para y = 0 a 19)
+        for (int y = 0; y <= 19; y++)
+        {
+            if (wallConcrete.Length > 0)
+            {
+                int idx = y % wallConcrete.Length;
+                paredesMap.SetTile(new Vector3Int(-1, y, 0), wallConcrete[idx]);
+                paredesMap.SetTile(new Vector3Int(56, y, 0), wallConcrete[idx]);
+            }
+        }
+
         ConfigureCompositeCollider(paredesMap.gameObject);
 
-        // 5. Props, Escondites y Obstáculos
-        Transform propsRoot = FreshRoot("Props");
+        // ════════════════════════════════════════════════════════════════════════
+        // 2. ELEMENTOS DEL ESCENARIO (Props, Puestos, Escondites, Obstáculos)
+        // ════════════════════════════════════════════════════════════════════════
+        Transform propsRoot   = FreshRoot("Props");
+        Transform decalsRoot  = FreshRoot("Decals");
+        Transform decorRoot   = FreshRoot("Decoracion");
+        Transform limitsRoot  = FreshRoot("LimitesInvisibles");
 
-        // Escondites auténticos de mercado (sacos de grano, huacales, barriles)
-        Sprite h1 = (sacosNvl1 != null && sacosNvl1.Length > 0) ? sacosNvl1[0] : (hideSprites != null && hideSprites.Length > 0 ? hideSprites[0] : null);
-        Sprite h2 = (sacosNvl1 != null && sacosNvl1.Length > 1) ? sacosNvl1[1] : (hideSprites != null && hideSprites.Length > 1 ? hideSprites[1] : null);
-        Sprite h3 = (sacosNvl1 != null && sacosNvl1.Length > 3) ? sacosNvl1[3] : (hideSprites != null && hideSprites.Length > 2 ? hideSprites[2] : null);
+        // Cargar sprites individuales de los spritesheets
+        Sprite puestoFrutas   = GetSpriteByName(PuestosPath, "Puesto_frutas", 0);
+        Sprite puestoVerduras = GetSpriteByName(PuestosPath, "Puesto_verduras", 1);
 
-        CreateHideSpot(propsRoot, "Escondite_1_Cajas", h1, 8.0f, 11.0f, 1.3f, hideSpotLayer);
-        CreateHideSpot(propsRoot, "Escondite_2_Barril", h2, 18.0f, 11.0f, 1.05f, hideSpotLayer);
-        CreateHideSpot(propsRoot, "Escondite_3_Puerta", h3, 26.5f, 13.0f, 1.0f, hideSpotLayer);
+        Sprite huacales       = GetSpriteByName(SacosPath, "Huacales_apilados", 0);
+        Sprite huacalRoto     = GetSpriteByName(SacosPath, "Huacal_roto_paja", 1);
+        Sprite canastaVacia   = GetSpriteByName(SacosPath, "Canasta_vacia", 2);
+        Sprite canastaChiles  = GetSpriteByName(SacosPath, "Canasta_chiles", 3);
+        Sprite costales       = GetSpriteByName(SacosPath, "Costales_apilados", 4);
+        Sprite costalMaiz     = GetSpriteByName(SacosPath, "Costal_maiz_abierto", 5);
 
-        // Obstáculos sólidos (Puestos de mercado detallados)
-        Sprite p1 = (puestosNvl1 != null && puestosNvl1.Length > 0) ? puestosNvl1[0] : puestoSprite;
-        Sprite p2 = (puestosNvl1 != null && puestosNvl1.Length > 1) ? puestosNvl1[1] : puestoSprite;
-        CreateSolidProp(propsRoot, "Puesto_1", p1, 14.5f, 6.8f, 1.0f, wallsLayer, new Vector2(2.8f, 1.0f), new Vector2(0f, -0.6f));
-        CreateSolidProp(propsRoot, "Puesto_2", p2, 21.5f, 3.4f, 1.0f, wallsLayer, new Vector2(2.8f, 1.0f), new Vector2(0f, -0.6f));
+        Sprite escCajas       = GetSpriteByName(EsconditesPath, "Escondite_cajas", 0) ?? huacales;
+        Sprite escBarril      = GetSpriteByName(EsconditesPath, "Escondite_barril", 1) ?? canastaVacia;
 
-        // Sprites de decoración
-        Sprite farol = GetDecorSprite(decorSprites, 0);
-        Sprite sacos = (sacosNvl1 != null && sacosNvl1.Length > 4) ? sacosNvl1[4] : GetDecorSprite(decorSprites, 1);
-        Sprite banca = GetDecorSprite(decorSprites, 2);
-        Sprite bote = GetDecorSprite(decorSprites, 3);
-        Sprite cartel = GetDecorSprite(decorSprites, 4);
-        Sprite papel = GetDecorSprite(decorSprites, 5);
+        Sprite farolSprite    = GetSpriteByName(DecoracionPath, "Farol", 0);
+        Sprite boteSprite     = GetSpriteByName(DecoracionPath, "Bote", 1);
+        Sprite cartelSprite   = GetSpriteByName(DecoracionPath, "Cartel_feria", 4);
+        Sprite papelSprite    = GetSpriteByName(DecoracionPath, "Papel_picado", 5);
 
-        // Faroles con Light2D puntual cálida marcando el sendero principal
-        CreateFarol(propsRoot, "Farol_1", farol,  2.2f, 11.0f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_2", farol, 10.0f,  2.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_3", farol, 10.0f, 12.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_4", farol, 17.0f,  2.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_5", farol, 17.0f, 12.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_6", farol, 24.0f,  7.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_7", farol, 30.5f, 12.0f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_8", farol, 30.5f,  2.5f, wallsLayer);
-        CreateFarol(propsRoot, "Farol_9", farol, 37.0f,  7.5f, wallsLayer);
+        Sprite salida0        = GetSpriteByName(SalidasPath, "Salida_0", 0);
 
-        // Obstáculos del entorno con consecuencias
-        CreateMudPuddle(propsRoot, 11.0f, 7.0f, 1.2f);
-        CreateMudPuddle(propsRoot, 22.0f, 6.5f, 1.1f);
+        // ── A. PUESTOS DE MERCADO (7 en total, 3 y 4 por hilera) ──────────────
+        // Hilera Superior (3 puestos, base y ≈ 12, dejando libre el corredor x=33)
+        CreatePuesto(propsRoot, "Puesto_Sup_1", puestoFrutas,   13.0f, 12.0f, wallsLayer);
+        CreatePuesto(propsRoot, "Puesto_Sup_2", puestoVerduras, 22.0f, 12.0f, wallsLayer);
+        CreatePuesto(propsRoot, "Puesto_Sup_3", puestoFrutas,   29.5f, 12.0f, wallsLayer);
 
-        Sprite b1 = (botellasNvl1 != null && botellasNvl1.Length > 0) ? botellasNvl1[0] : null;
-        Sprite b2 = (botellasNvl1 != null && botellasNvl1.Length > 3) ? botellasNvl1[3] : null;
-        CreateNoiseObstacle(propsRoot, 15.0f, 11.2f, b1);
-        CreateNoiseObstacle(propsRoot, 26.5f, 5.0f, b2);
-        CreateStrayDog(propsRoot, 18.0f, 3.6f);
+        // Hilera Inferior (4 puestos, base y ≈ 4, dejando libre el corredor x=33)
+        CreatePuesto(propsRoot, "Puesto_Inf_1", puestoVerduras, 11.0f, 4.0f, wallsLayer);
+        CreatePuesto(propsRoot, "Puesto_Inf_2", puestoFrutas,   19.0f, 4.0f, wallsLayer);
+        CreatePuesto(propsRoot, "Puesto_Inf_3", puestoVerduras, 27.0f, 4.0f, wallsLayer);
+        CreatePuesto(propsRoot, "Puesto_Inf_4", puestoFrutas,   36.5f, 4.0f, wallsLayer);
 
-        // Decoración secundaria
-        CreateSolidProp(propsRoot, "Bote",       bote,  11.5f,  3.8f, 0.7f, wallsLayer, new Vector2(0.6f, 0.4f), new Vector2(0f, -0.3f));
-        CreateSolidProp(propsRoot, "Banca",      banca, 12.0f, 12.4f, 0.9f, wallsLayer, new Vector2(1.2f, 0.4f), new Vector2(0f, -0.3f));
-        CreateSolidProp(propsRoot, "Costales_1", sacos, 25.0f,  9.7f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
-        Sprite sacosExtra = (sacosNvl1 != null && sacosNvl1.Length > 5) ? sacosNvl1[5] : sacos;
-        CreateSolidProp(propsRoot, "Costales_2", sacosExtra, 34.0f,  2.8f, 0.95f, wallsLayer, new Vector2(1.0f, 0.5f), new Vector2(0f, -0.2f));
+        // ── B. LABERINTO DE HUACALES Y COSTALES (Pasillos >= 2.5 u, corredor vertical x=33 libre)
+        CreateSolidStack(propsRoot, "Barricada_1", huacales, costales, 16.0f, 8.0f, wallsLayer);
+        CreateSolidStack(propsRoot, "Barricada_2", costales, canastaChiles, 24.5f, 7.8f, wallsLayer);
+        CreateSolidStack(propsRoot, "Barricada_3", huacales, costalMaiz, 26.5f, 7.8f, wallsLayer);
+        CreateSolidStack(propsRoot, "Cajas_Paso_1", huacalRoto, canastaVacia, 7.5f, 5.0f, wallsLayer);
+        CreateSolidStack(propsRoot, "Cajas_Paso_2", costales, huacales, 39.5f, 10.5f, wallsLayer);
 
-        CreateDecoProp(propsRoot, "Cartel",        cartel, 4.2f, 10.8f, 1.1f);
-        CreateDecoProp(propsRoot, "PapelPicado_1", papel,  5.5f, 12.9f, 1.3f);
-        CreateDecoProp(propsRoot, "PapelPicado_2", papel, 33.0f, 12.9f, 1.3f);
+        // ── C. ESCONDITES FUNCIONALES (5 en total, clústeres) ──────────────────
+        // 1. Cerca de la entrada (9.5, 14.5)
+        CreateClusterHideSpot(propsRoot, "Escondite_Entrada_Cajas", escCajas, huacales, canastaVacia,
+            9.5f, 14.5f, hideSpotLayer, wallsLayer);
 
-        // ── Portal Monumental de Salida (X ≈ 38.5) ──────────────────────────
-        Sprite exitSprite = (salidas != null && salidas.Length > 0) ? salidas[0] : null;
-        CreateExitPortal(propsRoot, 38.5f, 7.5f, exitSprite);
+        // 2. Clúster de huacales y costales (17.5, 8.5)
+        CreateClusterHideSpot(propsRoot, "Escondite_Huacales_Costales", huacales, costales, canastaChiles,
+            17.5f, 8.5f, hideSpotLayer, wallsLayer);
 
-        // 6. Límites laterales invisibles
-        Transform limitsRoot = FreshRoot("LimitesInvisibles");
-        CreateInvisibleWall(limitsRoot, "Limite_Izquierdo", -0.5f, 8.0f, wallsLayer);
-        CreateInvisibleWall(limitsRoot, "Limite_Derecho",   40.5f, 8.0f, wallsLayer);
+        // 3. Escondite barril (26.5, 12.8)
+        CreateClusterHideSpot(propsRoot, "Escondite_Barril_Mercado", escBarril, huacalRoto, costalMaiz,
+            26.5f, 12.8f, hideSpotLayer, wallsLayer);
 
-        // 7. Iluminación Global URP 2D (más brillante para visibilidad clara)
-        EnsureGlobalLight();
+        // 4. Clúster de costales (36.5, 9.0)
+        CreateClusterHideSpot(propsRoot, "Escondite_Costales_Cluster", costales, costalMaiz, huacales,
+            36.5f, 9.0f, hideSpotLayer, wallsLayer);
 
-        // 8. Waypoints de patrulla de La Llorona
+        // 5. Junto a la zona del perro (42.0, 6.0)
+        CreateClusterHideSpot(propsRoot, "Escondite_ZonaPerro_Cajas", escCajas, canastaChiles, huacalRoto,
+            42.0f, 6.0f, hideSpotLayer, wallsLayer);
+
+        // ── D. CHARCOS OFICIALES (6 en total: Charco_0 a Charco_5) ─────────────
+        CreateMudPuddle(decalsRoot, "Charco_0_Entrada",
+            GetSpriteByName(BotellasPath, "Charco_0", 0), 5.0f, 6.0f, 1.1f);
+
+        CreateMudPuddle(decalsRoot, "Charco_1_Pasillo",
+            GetSpriteByName(BotellasPath, "Charco_1", 1), 15.0f, 7.8f, 1.2f);
+
+        CreateMudPuddle(decalsRoot, "Charco_2_JuntoPuesto",
+            GetSpriteByName(BotellasPath, "Charco_2", 2), 23.0f, 5.0f, 1.0f);
+
+        CreateMudPuddle(decalsRoot, "Charco_3_Pasillo",
+            GetSpriteByName(BotellasPath, "Charco_3", 3), 29.0f, 8.2f, 1.2f);
+
+        CreateMudPuddle(decalsRoot, "Charco_4_Perro",
+            GetSpriteByName(BotellasPath, "Charco_4", 4), 42.5f, 4.0f, 1.3f);
+
+        CreateMudPuddle(decalsRoot, "Charco_5_Perro",
+            GetSpriteByName(BotellasPath, "Charco_5", 5), 46.0f, 5.5f, 1.3f);
+
+        // ── E. BOTELLAS DE VIDRIO REACTIVAS (6 montones con Vidrios_rotos) ──────
+        Sprite vidriosRotos = GetSpriteByName(BotellasPath, "Vidrios_rotos", 5);
+
+        // Ubicadas estratégicamente junto a huacales y puestos (evitando invadir el centro del pasillo)
+        CreateNoiseObstacle(decalsRoot, "Botellas_1",
+            GetSpriteByName(BotellasPath, "Botella_verde", 2), vidriosRotos, 19.5f, 8.0f);
+
+        CreateNoiseObstacle(decalsRoot, "Botellas_2",
+            GetSpriteByName(BotellasPath, "Botella_azul", 7), vidriosRotos, 28.0f, 11.2f);
+
+        CreateNoiseObstacle(decalsRoot, "Botellas_3",
+            GetSpriteByName(BotellasPath, "Botella_ambar_etiqueta_acostada", 4), vidriosRotos, 30.5f, 15.0f);
+
+        CreateNoiseObstacle(decalsRoot, "Botellas_4",
+            GetSpriteByName(BotellasPath, "Botella_transparente_acostada", 3), vidriosRotos, 38.0f, 6.0f);
+
+        CreateNoiseObstacle(decalsRoot, "Botellas_5",
+            GetSpriteByName(BotellasPath, "Botella_rota", 6), vidriosRotos, 43.0f, 5.0f);
+
+        CreateNoiseObstacle(decalsRoot, "Botellas_6",
+            GetSpriteByName(BotellasPath, "Botellas_caidas", 8), vidriosRotos, 47.0f, 4.5f);
+
+        // ── F. PERRO CALLEJERO (Zona 3: Rincón del perro en 45, 3.8) ───────────
+        // Cama de paja en el suelo que enmarca visualmente el rincón del perro
+        GameObject dogBed = new GameObject("Cama_Perro");
+        dogBed.transform.SetParent(propsRoot, false);
+        dogBed.transform.position = new Vector3(45.0f, 3.6f, 0f);
+        SpriteRenderer bedSr = dogBed.AddComponent<SpriteRenderer>();
+        bedSr.sprite = huacalRoto;
+        bedSr.sortingOrder = 2; // Detrás del perro
+        bedSr.color = new Color(0.95f, 0.88f, 0.75f, 1f);
+
+        Sprite perroLatDer = GetSpriteByName(PerroPath, "Perro_lado_der", 3);
+        Sprite perroFrente = GetSpriteByName(PerroPath, "Perro_frente", 0);
+        Sprite perroEspalda = GetSpriteByName(PerroPath, "Perro_espalda", 1);
+        CreateStrayDog(propsRoot, 45.0f, 3.8f, perroLatDer, perroFrente, perroEspalda);
+
+        // ── G. SALIDA MONUMENTAL (Zona 4: Salida_0 integrada al final de la calle) ──────
+        CreateExitScene(propsRoot, 52.0f, 7.2f, salida0, wallsLayer);
+
+        // ── H. DECORACIÓN: FAROLES, PAPEL PICADO Y BOTES (CERO BANCAS) ──────────
+        // 7 Faroles con Point Light 2D cálida (incluyendo farol que baña el rincón del perro)
+        CreateFarol(decorRoot, "Farol_1", farolSprite,  2.0f, 15.0f, wallsLayer);
+        CreateFarol(decorRoot, "Farol_2", farolSprite,  2.0f,  5.0f, wallsLayer);
+        CreateFarol(decorRoot, "Farol_3", farolSprite, 16.0f, 17.0f, wallsLayer);
+        CreateFarol(decorRoot, "Farol_4", farolSprite, 30.0f, 17.0f, wallsLayer);
+        CreateFarol(decorRoot, "Farol_5", farolSprite, 38.0f, 17.0f, wallsLayer);
+        CreateFarol(decorRoot, "Farol_6", farolSprite, 44.0f, 15.0f, wallsLayer);
+        CreateFarol(decorRoot, "Farol_Perro", farolSprite, 42.0f, 4.0f, wallsLayer);
+
+        // Papel picado tradicional colgando en Foreground (Order 10)
+        CreateForegroundProp(decorRoot, "Papel_1", papelSprite,  6.0f, 17.0f, 1.3f);
+        CreateForegroundProp(decorRoot, "Papel_2", papelSprite, 17.0f, 16.0f, 1.3f);
+        CreateForegroundProp(decorRoot, "Papel_3", papelSprite, 26.0f, 16.0f, 1.3f);
+        CreateForegroundProp(decorRoot, "Papel_4", papelSprite, 33.0f, 16.0f, 1.3f);
+
+        // Cartel feria en la entrada y botes de basura sólidos
+        CreateDecoProp(decorRoot, "Cartel_Feria", cartelSprite, 4.0f, 14.0f, 1.0f, wallsLayer);
+        CreateBote(decorRoot, "Bote_1", boteSprite, 8.0f, 3.0f, wallsLayer);
+        CreateBote(decorRoot, "Bote_2", boteSprite, 39.0f, 15.0f, wallsLayer);
+
+        // Límites invisibles
+        CreateInvisibleWall(limitsRoot, "Limite_Oeste", -1.5f, 10.0f, wallsLayer);
+        CreateInvisibleWall(limitsRoot, "Limite_Este",  56.5f, 10.0f, wallsLayer);
+
+        // ════════════════════════════════════════════════════════════════════════
+        // 3. ILUMINACIÓN GLOBAL URP 2D (0.55 Tenue Cálido)
+        // ════════════════════════════════════════════════════════════════════════
+        EnsureGlobalLight(0.55f);
+
+        // ════════════════════════════════════════════════════════════════════════
+        // 4. WAYPOINTS Y PATRULLA DE LA LLORONA (x ≈ 33, vertical entre y=4 y y=16)
+        // ════════════════════════════════════════════════════════════════════════
         Transform wpRoot = FreshRoot("Waypoints");
-        Transform wpA = CreateEmpty(wpRoot, "WP_A", 29.0f, 12.4f);
-        Transform wpB = CreateEmpty(wpRoot, "WP_B", 29.0f,  3.6f);
+        Transform wpA = CreateEmpty(wpRoot, "WP_Llorona_A", 33.0f, 15.5f);
+        Transform wpB = CreateEmpty(wpRoot, "WP_Llorona_B", 33.0f,  4.5f);
 
-        // 9. Meta de seguridad en X ≈ 39.0 (columna de escape)
-        GameObject oldGoal = GameObject.Find("Meta");
-        if (oldGoal != null) Undo.DestroyObjectImmediate(oldGoal);
+        SetupLlorona(new Vector2(33.0f, 10.0f), wpA, wpB, wallsLayer, lloronaLayer);
 
-        GameObject goal = new GameObject("Meta");
-        goal.transform.position = new Vector3(39.0f, 7.5f, 0f);
-        BoxCollider2D goalCol = goal.AddComponent<BoxCollider2D>();
-        goalCol.isTrigger = true;
-        goalCol.size = new Vector2(2.5f, 12.0f);
-        goal.AddComponent<LevelGoal>();
-        Undo.RegisterCreatedObjectUndo(goal, "Meta");
+        // ════════════════════════════════════════════════════════════════════════
+        // 5. CARLOS (PLAYER) Y CÁMARA CONFINER (Bounds 56 × 20)
+        // ════════════════════════════════════════════════════════════════════════
+        SetupPlayer(new Vector2(3.0f, 10.0f), playerLayer);
+        SetupCamera(new Vector2(3.0f, 10.0f));
 
-        // 10. Triggers de Tutorial Contextual
-        Transform tutRoot = FreshRoot("TutorialTriggers");
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
-            new Vector2(2.5f, 7.0f), new Vector2(4f, 8f),
-            "Usa WASD para moverte y SHIFT para correr.\n¡Sigue la flecha en la brújula para no perderte!",
-            showOnStart: true);
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Charco",
-            new Vector2(10.5f, 7.0f), new Vector2(3f, 4f),
-            "¡Charco de lodo! Te ralentiza al cruzarlo.\nEvítalo si La Llorona está cerca.");
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Escondite",
-            new Vector2(8.0f, 11.0f), new Vector2(3f, 4f),
-            "Presiona E cerca de un escondite para ocultarte.\nVuelve a presionar E para salir.");
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Ruido",
-            new Vector2(14.5f, 11.0f), new Vector2(3f, 3f),
-            "¡Cuidado con las latas en el suelo!\nSi las pisas, La Llorona escuchará el ruido.");
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Perro",
-            new Vector2(17.5f, 4.5f), new Vector2(4f, 3f),
-            "¡Un perro callejero vigila la esquina!\nCamina despacio; si corres, ladrará y alertará a La Llorona.");
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Peligro",
-            new Vector2(24.0f, 7.5f), new Vector2(2f, 8f),
-            "¡Cuidado! Se escucha un llanto cercano.\nEspera a que La Llorona se aleje antes de cruzar.");
-
-        CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
-            new Vector2(35.5f, 7.5f), new Vector2(3f, 8f),
-            "¡La salida está justo enfrente! Cruza el arco verde luminoso.");
-
-        // 11. Jugador (Carlos)
-        SetupPlayer(new Vector2(2.5f, 7.0f), playerLayer);
-
-        // 12. La Llorona
-        SetupLlorona(new Vector2(29.0f, 3.6f), wpA, wpB, wallsLayer, lloronaLayer);
-
-        // 13. Cámara
-        SetupCamera(new Vector2(2.5f, 7.0f));
-
-        // 14. Managers de la escena
         SetupManagers();
 
-        Undo.CollapseUndoOperations(group);
-        EditorSceneManager.SaveScene(scene, ScenePath);
-
-        // Construir HUD
+        // ════════════════════════════════════════════════════════════════════════
+        // 6. GENERAR Y CONECTAR HUD OFICIAL (FASE 2)
+        // ════════════════════════════════════════════════════════════════════════
         UIBuilder.BuildLevel1UICanvas();
-        Debug.Log("[Level1Builder] ¡Nivel 1 construido y guardado con éxito en: " + ScenePath + "!");
+
+        EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), ScenePath);
+        Debug.Log("[Level1Builder] ¡Nivel 1 (El Mercado Vacío) reconstruido con éxito bajo PROMPT_VISUAL.md!");
     }
 
-    // ---------------- Métodos Auxiliares ----------------
+    // ── Métodos de Ayuda de Construcción ─────────────────────────────────────
+
+    static void CreatePuesto(Transform parent, string name, Sprite sprite, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+
+        // Colisión sólida sobre el mostrador/mesa (y in [-0.5, 1.3])
+        // Bloquea totalmente el paso físico a través de la mercancía y la estructura
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size   = new Vector2(4.4f, 1.8f);
+        col.offset = new Vector2(0f, 0.45f);
+
+        if (layer >= 0) go.layer = layer;
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateClusterHideSpot(Transform parent, string name, Sprite mainSprite, Sprite decorA, Sprite decorB,
+        float x, float y, int hideSpotLayer, int wallsLayer)
+    {
+        GameObject root = new GameObject(name);
+        root.transform.SetParent(parent, false);
+        root.transform.position = new Vector3(x, y, 0f);
+
+        // Pieza principal
+        GameObject mainGo = new GameObject("Cuerpo_Principal");
+        mainGo.transform.SetParent(root.transform, false);
+        SpriteRenderer srMain = mainGo.AddComponent<SpriteRenderer>();
+        srMain.sprite = mainSprite;
+        srMain.sortingOrder = 3;
+
+        // Decoración lateral A
+        if (decorA != null)
+        {
+            GameObject decAGo = new GameObject("Deco_Izq");
+            decAGo.transform.SetParent(root.transform, false);
+            decAGo.transform.localPosition = new Vector3(-0.9f, -0.2f, 0f);
+            SpriteRenderer srA = decAGo.AddComponent<SpriteRenderer>();
+            srA.sprite = decorA;
+            srA.sortingOrder = 3;
+        }
+
+        // Decoración lateral B
+        if (decorB != null)
+        {
+            GameObject decBGo = new GameObject("Deco_Der");
+            decBGo.transform.SetParent(root.transform, false);
+            decBGo.transform.localPosition = new Vector3(0.9f, -0.2f, 0f);
+            SpriteRenderer srB = decBGo.AddComponent<SpriteRenderer>();
+            srB.sprite = decorB;
+            srB.sortingOrder = 3;
+        }
+
+        // Base sólida que bloquea el paso físico (NO se puede atravesar)
+        BoxCollider2D solidCol = root.AddComponent<BoxCollider2D>();
+        solidCol.size   = new Vector2(2.8f, 1.7f);
+        solidCol.offset = new Vector2(0f, 0.45f);
+        if (wallsLayer >= 0) root.layer = wallsLayer;
+
+        // Trigger frontal que sobresale hacia abajo para activación de [E]
+        GameObject trigGo = new GameObject("TriggerOcultarse");
+        trigGo.transform.SetParent(root.transform, false);
+        BoxCollider2D trigCol = trigGo.AddComponent<BoxCollider2D>();
+        trigCol.isTrigger = true;
+        trigCol.size   = new Vector2(3.2f, 1.4f);
+        trigCol.offset = new Vector2(0f, -0.6f);
+        if (hideSpotLayer >= 0) trigGo.layer = hideSpotLayer;
+
+        // Punto detrás del clúster donde se oculta Carlos
+        GameObject hidePt = new GameObject("HidePoint");
+        hidePt.transform.SetParent(root.transform, false);
+        hidePt.transform.localPosition = new Vector3(0f, 0.35f, 0f);
+
+        HideSpot hs = root.AddComponent<HideSpot>();
+        SerializedObject so = new SerializedObject(hs);
+        so.FindProperty("hidePoint").objectReferenceValue = hidePt.transform;
+        so.ApplyModifiedProperties();
+
+        Undo.RegisterCreatedObjectUndo(root, name);
+    }
+
+    static void CreateSolidStack(Transform parent, string name, Sprite main, Sprite sec, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = main;
+        sr.sortingOrder = 3;
+
+        if (sec != null)
+        {
+            GameObject secGo = new GameObject("Secundario");
+            secGo.transform.SetParent(go.transform, false);
+            secGo.transform.localPosition = new Vector3(0.6f, -0.2f, 0f);
+            SpriteRenderer srSec = secGo.AddComponent<SpriteRenderer>();
+            srSec.sprite = sec;
+            srSec.sortingOrder = 3;
+        }
+
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size   = new Vector2(sec != null ? 2.6f : 1.8f, 1.7f);
+        col.offset = new Vector2(sec != null ? 0.25f : 0f, 0.45f);
+        if (layer >= 0) go.layer = layer;
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateMudPuddle(Transform parent, string name, Sprite sprite, float x, float y, float scale = 1.0f)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * scale;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 1; // Decals
+        sr.color = new Color(0.85f, 0.78f, 0.70f, 0.95f); // Tinte terroso que distingue el lodo del empedrado
+
+        // Colisionador elíptico compacto ajustado exactamente a la mancha de lodo interior
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(1.1f, 0.40f);
+        bc.offset = new Vector2(0f, -0.05f);
+
+        go.AddComponent<MudPuddle>();
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateNoiseObstacle(Transform parent, string name, Sprite sprite, Sprite brokenSprite, float x, float y)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 2; // Decal superior
+        sr.color = new Color(1.15f, 1.25f, 1.15f, 1.0f); // Brillo verde cristalino para destacar sobre el suelo oscuro
+
+        // Colisionador ceñido milimétricamente al montoncito de botellas
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(0.40f, 0.25f);
+
+        NoiseObstacle no = go.AddComponent<NoiseObstacle>();
+        SerializedObject so = new SerializedObject(no);
+        so.FindProperty("brokenSprite").objectReferenceValue = brokenSprite;
+        so.ApplyModifiedProperties();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateStrayDog(Transform parent, float x, float y, Sprite lateral, Sprite frente, Sprite espalda)
+    {
+        GameObject go = new GameObject("Perro_Callejero_Mercado");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = lateral;
+        sr.sortingOrder = 4;
+
+        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
+        cc.isTrigger = true;
+        cc.radius = 1.2f;
+
+        StrayDogAI dogAI = go.AddComponent<StrayDogAI>();
+        SerializedObject so = new SerializedObject(dogAI);
+
+        var latProp = so.FindProperty("lateralView");
+        if (latProp != null) latProp.objectReferenceValue = lateral;
+
+        var frontProp = so.FindProperty("frontView");
+        if (frontProp != null) frontProp.objectReferenceValue = frente;
+
+        var backProp = so.FindProperty("backView");
+        if (backProp != null) backProp.objectReferenceValue = espalda;
+
+        var runProp = so.FindProperty("runWakeRadius");
+        if (runProp != null) runProp.floatValue = 4.0f;
+
+        var walkProp = so.FindProperty("walkWakeRadius");
+        if (walkProp != null) walkProp.floatValue = 2.5f;
+
+        so.ApplyModifiedProperties();
+
+        Rigidbody2D rb = go.AddComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.freezeRotation = true;
+
+        // Luz suave localizada que permite ver al perro durmiendo en la penumbra
+        GameObject dogLightGo = new GameObject("LuzPerro");
+        dogLightGo.transform.SetParent(go.transform, false);
+        dogLightGo.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+        Light2D dogLight = dogLightGo.AddComponent<Light2D>();
+        dogLight.lightType = Light2D.LightType.Point;
+        dogLight.color = new Color(1.0f, 0.85f, 0.55f);
+        dogLight.intensity = 0.85f;
+        dogLight.pointLightInnerRadius = 0.4f;
+        dogLight.pointLightOuterRadius = 2.4f;
+
+        Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero_Mercado");
+    }
+
+    static void CreateExitScene(Transform parent, float x, float y, Sprite exitSprite, int wallsLayer)
+    {
+        GameObject go = new GameObject("Salida_Mercado_Meta");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = exitSprite ?? GetSpriteByName(SalidasPath, "Salida_0", 0);
+        sr.sortingOrder = 3;
+
+        // Muros y pilares laterales sólidos (ajustados al pivote Bottom-Center)
+        BoxCollider2D leftCol = go.AddComponent<BoxCollider2D>();
+        leftCol.size   = new Vector2(2.5f, 5.0f);
+        leftCol.offset = new Vector2(-2.6f, 2.5f);
+
+        BoxCollider2D rightCol = go.AddComponent<BoxCollider2D>();
+        rightCol.size   = new Vector2(2.5f, 5.0f);
+        rightCol.offset = new Vector2(2.6f, 2.5f);
+
+        if (wallsLayer >= 0) go.layer = wallsLayer;
+
+        // Hueco central como trigger que dispara LevelGoal
+        GameObject goalGo = new GameObject("MetaTrigger");
+        goalGo.transform.SetParent(go.transform, false);
+        goalGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
+
+        BoxCollider2D centerTrigger = goalGo.AddComponent<BoxCollider2D>();
+        centerTrigger.isTrigger = true;
+        centerTrigger.size = new Vector2(2.2f, 4.0f);
+        goalGo.AddComponent<LevelGoal>();
+
+        // Point Light 2D cálida interior brillante con pulso suave (sin flechas)
+        GameObject lightGo = new GameObject("LuzSalida");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.88f, 0.55f);
+        l2d.intensity = 2.4f;
+        l2d.pointLightInnerRadius = 1.0f;
+        l2d.pointLightOuterRadius = 6.5f;
+        lightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, "Salida_Mercado_Meta");
+    }
+
+    static void CreateFarol(Transform parent, string name, Sprite sprite, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 4;
+
+        // Colisión sólida vertical ajustada a las proporciones reales del poste
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.8f, 2.2f);
+        col.offset = new Vector2(0f, -0.4f);
+        if (layer >= 0) go.layer = layer;
+
+        GameObject lightGo = new GameObject("Luz");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 0.4f, 0f);
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.84f, 0.48f);
+        l2d.intensity = 1.6f;
+        l2d.pointLightInnerRadius = 0.8f;
+        l2d.pointLightOuterRadius = 5.2f;
+        lightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateBote(Transform parent, string name, Sprite sprite, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(1.2f, 1.8f);
+        col.offset = new Vector2(0f, 0f);
+        if (layer >= 0) go.layer = layer;
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateForegroundProp(Transform parent, string name, Sprite sprite, float x, float y, float scale)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * scale;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 10; // Foreground
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateDecoProp(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer = -1)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * scale;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(2.2f, 1.8f);
+        col.offset = new Vector2(0f, 0f);
+        if (layer >= 0) go.layer = layer;
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateInvisibleWall(Transform parent, string name, float x, float y, int layer)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(1f, 20f);
+
+        if (layer >= 0) go.layer = layer;
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void EnsureGlobalLight(float intensity = 0.50f)
+    {
+        var allLights = UnityEngine.Object.FindObjectsByType<Light2D>(FindObjectsInactive.Include);
+        Light2D mainGlobal = null;
+        foreach (var l in allLights)
+        {
+            if (l == null) continue;
+            if (l.lightType == Light2D.LightType.Global || l.gameObject.name.ToLower().Contains("global"))
+            {
+                if (mainGlobal == null)
+                {
+                    mainGlobal = l;
+                }
+                else
+                {
+                    Undo.DestroyObjectImmediate(l.gameObject);
+                }
+            }
+        }
+
+        if (mainGlobal == null)
+        {
+            GameObject glGo = new GameObject("Global Light 2D");
+            mainGlobal = glGo.AddComponent<Light2D>();
+            Undo.RegisterCreatedObjectUndo(glGo, "Global Light 2D");
+        }
+
+        mainGlobal.gameObject.name = "Global Light 2D";
+        mainGlobal.lightType = Light2D.LightType.Global;
+        // Tinte azul pizarra nocturno tenue: separa el fondo ambiental frío de las luces cálidas de Carlos y faroles
+        mainGlobal.color = new Color(0.38f, 0.42f, 0.58f, 1.0f);
+        mainGlobal.intensity = intensity;
+    }
+
+    static Transform CreateEmpty(Transform parent, string name, float x, float y)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        Undo.RegisterCreatedObjectUndo(go, name);
+        return go.transform;
+    }
+
+    static void SetupPlayer(Vector2 pos, int playerLayer)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Undo.RecordObject(player.transform, "Posicionar Player");
+            player.transform.position = new Vector3(pos.x, pos.y, 0f);
+            player.transform.rotation = Quaternion.identity;
+            if (playerLayer >= 0) player.layer = playerLayer;
+
+            SpriteRenderer sr = player.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sortingOrder = 10;
+                // Leve realce luminoso para despegar a Carlos del empedrado oscuro
+                sr.color = new Color(1.08f, 1.04f, 0.98f, 1.0f);
+            }
+
+            // Asegurar Animator y PlayerController
+            Animator anim = player.GetComponent<Animator>();
+            if (anim == null) anim = player.AddComponent<Animator>();
+            RuntimeAnimatorController ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animations/Player/PlayerController.controller");
+            if (ctrl != null)
+            {
+                anim.runtimeAnimatorController = ctrl;
+                anim.enabled = true;
+            }
+
+            if (player.GetComponent<PlayerMovement>() == null)
+                player.AddComponent<PlayerMovement>();
+
+            if (player.GetComponent<PlayerAnimation>() == null)
+                player.AddComponent<PlayerAnimation>();
+
+            // Luz 2D puntual suave y cálida que sigue al jugador (halo tenue de linterna/vela)
+            Transform existingLight = player.transform.Find("LuzCarlos");
+            GameObject pLightGo = existingLight != null ? existingLight.gameObject : new GameObject("LuzCarlos");
+            pLightGo.transform.SetParent(player.transform, false);
+            pLightGo.transform.localPosition = new Vector3(0f, 0.15f, 0f);
+
+            Light2D pLight = pLightGo.GetComponent<Light2D>() ?? pLightGo.AddComponent<Light2D>();
+            pLight.lightType = Light2D.LightType.Point;
+            pLight.color = new Color(1.0f, 0.88f, 0.62f, 1.0f);
+            pLight.intensity = 1.25f;
+            pLight.pointLightInnerRadius = 0.8f;
+            pLight.pointLightOuterRadius = 3.8f;
+
+            if (pLightGo.GetComponent<LightFlicker>() == null)
+                pLightGo.AddComponent<LightFlicker>();
+
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.freezeRotation = true;
+                rb.gravityScale = 0f;
+                rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            }
+
+            BoxCollider2D col = player.GetComponent<BoxCollider2D>();
+            if (col != null)
+            {
+                col.size = new Vector2(0.6f, 0.8f);
+                col.offset = new Vector2(0f, -0.3f);
+            }
+        }
+    }
+
+    static void SetupLlorona(Vector2 pos, Transform wpA, Transform wpB, int wallsLayer, int lloronaLayer)
+    {
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
+        if (llorona == null) return;
+
+        Undo.RecordObject(llorona.transform, "Posicionar Llorona");
+        llorona.transform.position = new Vector3(pos.x, pos.y, 0f);
+        llorona.transform.rotation = Quaternion.identity;
+        if (lloronaLayer >= 0) llorona.gameObject.layer = lloronaLayer;
+
+        Rigidbody2D rb = llorona.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+            rb.gravityScale = 0f;
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        }
+
+        Collider2D col = llorona.GetComponent<Collider2D>();
+        if (col != null)
+        {
+            if (col is CapsuleCollider2D cap)
+            {
+                cap.size = new Vector2(0.8f, 1.2f);
+                cap.offset = new Vector2(0f, -0.3f);
+            }
+            else if (col is BoxCollider2D box)
+            {
+                box.size = new Vector2(0.8f, 1.2f);
+                box.offset = new Vector2(0f, -0.3f);
+            }
+        }
+
+        SerializedObject so = new SerializedObject(llorona);
+        SerializedProperty wpProp = so.FindProperty("waypoints");
+        if (wpProp != null)
+        {
+            wpProp.arraySize = 2;
+            wpProp.GetArrayElementAtIndex(0).objectReferenceValue = wpA;
+            wpProp.GetArrayElementAtIndex(1).objectReferenceValue = wpB;
+        }
+
+        SerializedProperty maskProp = so.FindProperty("obstacleMask");
+        if (maskProp != null && wallsLayer >= 0)
+            maskProp.intValue = 1 << wallsLayer;
+
+        LloronaSettings s1 = AssetDatabase.LoadAssetAtPath<LloronaSettings>("Assets/Settings/LloronaSettings_Level1.asset");
+        if (s1 != null)
+            so.FindProperty("settings").objectReferenceValue = s1;
+
+        so.ApplyModifiedProperties();
+    }
+
+    static void SetupCamera(Vector2 pos)
+    {
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            GameObject camGo = new GameObject("Main Camera");
+            camGo.tag = "MainCamera";
+            cam = camGo.AddComponent<Camera>();
+            camGo.AddComponent<AudioListener>();
+            Undo.RegisterCreatedObjectUndo(camGo, "Main Camera");
+        }
+        cam.orthographic = true;
+        cam.orthographicSize = 5f;
+        cam.transform.position = new Vector3(pos.x, pos.y, -10f);
+
+        CameraFollow2D follow = cam.GetComponent<CameraFollow2D>() ?? cam.gameObject.AddComponent<CameraFollow2D>();
+        // Confinar a los límites 56 × 20 permitiendo visibilidad completa de la salida
+        follow.SetBounds(new Vector2(8.8f, 5.0f), new Vector2(48.5f, 15.0f));
+    }
+
+    static void SetupManagers()
+    {
+        GameManager gm = UnityEngine.Object.FindAnyObjectByType<GameManager>();
+        if (gm == null)
+        {
+            GameObject old = GameObject.Find("GameManager");
+            if (old != null) Undo.DestroyObjectImmediate(old);
+
+            GameObject gmGo = new GameObject("GameManager");
+            gm = gmGo.AddComponent<GameManager>();
+            Undo.RegisterCreatedObjectUndo(gmGo, "GameManager");
+        }
+        gm.SetLevelNumber(1);
+        EditorUtility.SetDirty(gm);
+    }
 
     static TileBase[] LoadTiles()
     {
@@ -277,14 +921,6 @@ public static class Level1Builder
         }
         return tiles;
     }
-
-    static Sprite LoadSprite(string path) => AssetDatabase.LoadAssetAtPath<Sprite>(path);
-
-    static Sprite[] LoadSubSprites(string path) =>
-        AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().OrderBy(s => s.name).ToArray();
-
-    static Sprite GetDecorSprite(Sprite[] arr, int index) =>
-        (arr != null && index < arr.Length) ? arr[index] : null;
 
     static Transform FreshRoot(string name)
     {
@@ -298,16 +934,11 @@ public static class Level1Builder
     static Tilemap GetOrCreateTilemap(Transform parent, string name, int order, int layer, bool hasCollider)
     {
         Transform child = parent.Find(name);
-        GameObject go;
+        GameObject go = (child != null) ? child.gameObject : new GameObject(name);
         if (child == null)
         {
-            go = new GameObject(name);
             go.transform.SetParent(parent, false);
             Undo.RegisterCreatedObjectUndo(go, name);
-        }
-        else
-        {
-            go = child.gameObject;
         }
 
         Tilemap tm = go.GetComponent<Tilemap>() ?? go.AddComponent<Tilemap>();
@@ -334,363 +965,5 @@ public static class Level1Builder
             rb.bodyType = RigidbodyType2D.Static;
             rb.simulated = true;
         }
-    }
-
-    static void CreateFarol(Transform parent, string name, Sprite sprite, float x, float y, int layer)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 2;
-
-        CircleCollider2D col = go.AddComponent<CircleCollider2D>();
-        col.radius = 0.3f;
-        col.offset = new Vector2(0f, -0.6f);
-        if (layer >= 0) go.layer = layer;
-
-        GameObject lightGo = new GameObject("Luz");
-        lightGo.transform.SetParent(go.transform, false);
-        lightGo.transform.localPosition = new Vector3(0f, 0.4f, 0f);
-
-        Light2D l2d = lightGo.AddComponent<Light2D>();
-        l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.82f, 0.45f);
-        l2d.intensity = 1.35f;
-        l2d.pointLightInnerRadius = 0.5f;
-        l2d.pointLightOuterRadius = 4.2f;
-
-        lightGo.AddComponent<LightFlicker>();
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void CreateMudPuddle(Transform parent, float x, float y, float scale = 1.0f)
-    {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/charco_lodo.png");
-        GameObject go = new GameObject("Charco_Lodo");
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = Vector3.one * scale;
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 1;
-
-        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
-        cc.isTrigger = true;
-        cc.radius = 1.1f;
-
-        go.AddComponent<MudPuddle>();
-        Undo.RegisterCreatedObjectUndo(go, "Charco_Lodo");
-    }
-
-    static void CreateNoiseObstacle(Transform parent, float x, float y, Sprite customSprite = null)
-    {
-        Sprite sprite = customSprite ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
-        GameObject go = new GameObject("Botellas_Ruido");
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 2;
-
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.isTrigger = true;
-        bc.size = new Vector2(1.8f, 1.0f);
-
-        go.AddComponent<NoiseObstacle>();
-        Undo.RegisterCreatedObjectUndo(go, "Botellas_Ruido");
-    }
-
-    static void CreateStrayDog(Transform parent, float x, float y)
-    {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/perro_callejero.png");
-        GameObject go = new GameObject("Perro_Callejero");
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 3;
-
-        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
-        cc.isTrigger = true;
-        cc.radius = 0.9f;
-
-        go.AddComponent<StrayDogAI>();
-
-        GameObject eyeLight = new GameObject("LuzOjos");
-        eyeLight.transform.SetParent(go.transform, false);
-        Light2D l2d = eyeLight.AddComponent<Light2D>();
-        l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.25f, 0.15f);
-        l2d.intensity = 0.9f;
-        l2d.pointLightOuterRadius = 1.8f;
-
-        Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero");
-    }
-
-    static void CreateExitPortal(Transform parent, float x, float y, Sprite customSprite = null)
-    {
-        Sprite portalSprite = customSprite ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
-
-        GameObject go = new GameObject("Portal_Salida_Meta");
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = portalSprite;
-        sr.sortingOrder = 4;
-
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.isTrigger = true;
-        bc.size = new Vector2(3.0f, 4.5f);
-        go.AddComponent<LevelGoal>();
-
-        // Luz esmeralda mística pulsante
-        GameObject lightGo = new GameObject("LuzSalida");
-        lightGo.transform.SetParent(go.transform, false);
-        lightGo.transform.localPosition = Vector3.zero;
-        Light2D l2d = lightGo.AddComponent<Light2D>();
-        l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(0.2f, 1.0f, 0.45f);
-        l2d.intensity = 2.4f;
-        l2d.pointLightOuterRadius = 5.5f;
-        lightGo.AddComponent<LightFlicker>();
-
-        // Cartel flotante superior
-        GameObject labelGo = new GameObject("LabelSalida");
-        labelGo.transform.SetParent(go.transform, false);
-        labelGo.transform.localPosition = new Vector3(0f, 2.8f, 0f);
-        TextMesh tm = labelGo.AddComponent<TextMesh>();
-        tm.text = "SALIDA ➔";
-        tm.fontSize = 32;
-        tm.characterSize = 0.12f;
-        tm.anchor = TextAnchor.MiddleCenter;
-        tm.alignment = TextAlignment.Center;
-        tm.color = new Color(0.35f, 1f, 0.55f);
-        MeshRenderer mr = labelGo.GetComponent<MeshRenderer>();
-        mr.sortingOrder = 15;
-
-        Undo.RegisterCreatedObjectUndo(go, "Portal_Salida_Meta");
-    }
-
-    static void CreateHideSpot(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = Vector3.one * scale;
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 2;
-
-        BoxCollider2D triggerCol = go.AddComponent<BoxCollider2D>();
-        triggerCol.isTrigger = true;
-        triggerCol.size = new Vector2(1.2f, 1.2f);
-
-        BoxCollider2D solidCol = go.AddComponent<BoxCollider2D>();
-        solidCol.isTrigger = false;
-        solidCol.size = new Vector2(0.8f, 0.4f);
-        solidCol.offset = new Vector2(0f, -0.4f);
-
-        GameObject hidePt = new GameObject("HidePoint");
-        hidePt.transform.SetParent(go.transform, false);
-        hidePt.transform.localPosition = new Vector3(0f, -0.1f, 0f);
-
-        HideSpot hs = go.AddComponent<HideSpot>();
-        SerializedObject so = new SerializedObject(hs);
-        so.FindProperty("hidePoint").objectReferenceValue = hidePt.transform;
-        so.ApplyModifiedProperties();
-
-        if (layer >= 0) go.layer = layer;
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void CreateSolidProp(Transform parent, string name, Sprite sprite, float x, float y, float scale,
-        int layer, Vector2 colSize, Vector2 colOffset)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = Vector3.one * scale;
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 2;
-
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = colSize;
-        col.offset = colOffset;
-
-        if (layer >= 0) go.layer = layer;
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void CreateDecoProp(Transform parent, string name, Sprite sprite, float x, float y, float scale)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = Vector3.one * scale;
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 3;
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void CreateInvisibleWall(Transform parent, string name, float x, float y, int layer)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1f, 16f);
-
-        if (layer >= 0) go.layer = layer;
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void EnsureGlobalLight()
-    {
-        Light2D gl = UnityEngine.Object.FindAnyObjectByType<Light2D>();
-        GameObject glGo = null;
-        if (gl != null && gl.lightType == Light2D.LightType.Global)
-        {
-            glGo = gl.gameObject;
-        }
-        else
-        {
-            glGo = new GameObject("LuzGlobal2D");
-            gl = glGo.AddComponent<Light2D>();
-            Undo.RegisterCreatedObjectUndo(glGo, "LuzGlobal2D");
-        }
-        gl.lightType = Light2D.LightType.Global;
-        gl.color = new Color(0.95f, 0.88f, 0.72f);
-        gl.intensity = 0.55f;
-    }
-
-    static Transform CreateEmpty(Transform parent, string name, float x, float y)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        Undo.RegisterCreatedObjectUndo(go, name);
-        return go.transform;
-    }
-
-    static void CreateTutorialTrigger(Transform parent, string name, Vector2 pos, Vector2 size,
-        string text, bool showOnStart = false)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(pos.x, pos.y, 0f);
-
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.isTrigger = true;
-        bc.size = size;
-
-        TutorialTrigger tt = go.AddComponent<TutorialTrigger>();
-        SerializedObject so = new SerializedObject(tt);
-        so.FindProperty("tutorialMessage").stringValue = text;
-        so.FindProperty("displayDuration").floatValue  = showOnStart ? 5.0f : 4.5f;
-        so.FindProperty("showOnStart").boolValue       = showOnStart;
-        so.ApplyModifiedProperties();
-
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void SetupPlayer(Vector2 pos, int playerLayer)
-    {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            Undo.RecordObject(player.transform, "Posicionar Player");
-            player.transform.position = new Vector3(pos.x, pos.y, 0f);
-            if (playerLayer >= 0) player.layer = playerLayer;
-        }
-        else
-        {
-            Debug.LogWarning("[Level1Builder] No se encontró GameObject con tag 'Player'.");
-        }
-    }
-
-    static void SetupLlorona(Vector2 pos, Transform wpA, Transform wpB, int wallsLayer, int lloronaLayer)
-    {
-        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
-        if (llorona == null)
-        {
-            Debug.LogWarning("[Level1Builder] No se encontró LloronaAI en la escena.");
-            return;
-        }
-
-        Undo.RecordObject(llorona.transform, "Posicionar Llorona");
-        llorona.transform.position = new Vector3(pos.x, pos.y, 0f);
-        if (lloronaLayer >= 0) llorona.gameObject.layer = lloronaLayer;
-
-        SerializedObject so = new SerializedObject(llorona);
-        SerializedProperty wpProp = so.FindProperty("waypoints");
-        if (wpProp != null)
-        {
-            wpProp.arraySize = 2;
-            wpProp.GetArrayElementAtIndex(0).objectReferenceValue = wpA;
-            wpProp.GetArrayElementAtIndex(1).objectReferenceValue = wpB;
-        }
-
-        SerializedProperty maskProp = so.FindProperty("obstacleMask");
-        if (maskProp != null && wallsLayer >= 0)
-        {
-            maskProp.intValue = 1 << wallsLayer;
-        }
-
-        LloronaSettings s1 = AssetDatabase.LoadAssetAtPath<LloronaSettings>("Assets/Settings/LloronaSettings_Level1.asset");
-        if (s1 != null)
-        {
-            so.FindProperty("settings").objectReferenceValue = s1;
-        }
-
-        so.ApplyModifiedProperties();
-    }
-
-    static void SetupCamera(Vector2 pos)
-    {
-        Camera cam = Camera.main;
-        if (cam == null)
-        {
-            GameObject camGo = new GameObject("Main Camera");
-            camGo.tag = "MainCamera";
-            cam = camGo.AddComponent<Camera>();
-            camGo.AddComponent<AudioListener>();
-            Undo.RegisterCreatedObjectUndo(camGo, "Main Camera");
-        }
-        cam.orthographic = true;
-        cam.orthographicSize = 5f;
-        cam.transform.position = new Vector3(pos.x, pos.y, -10f);
-
-        CameraFollow2D follow = cam.GetComponent<CameraFollow2D>();
-        if (follow == null) follow = cam.gameObject.AddComponent<CameraFollow2D>();
-        follow.SetBounds(new Vector2(8.8f, 5.0f), new Vector2(31.2f, 11.0f));
-    }
-
-    static void SetupManagers()
-    {
-        GameManager gm = UnityEngine.Object.FindAnyObjectByType<GameManager>();
-        if (gm == null)
-        {
-            GameObject old = GameObject.Find("GameManager");
-            if (old != null) Undo.DestroyObjectImmediate(old);
-
-            GameObject gmGo = new GameObject("GameManager");
-            gm = gmGo.AddComponent<GameManager>();
-            Undo.RegisterCreatedObjectUndo(gmGo, "GameManager");
-        }
-        gm.SetLevelNumber(1);
-        EditorUtility.SetDirty(gm);
     }
 }

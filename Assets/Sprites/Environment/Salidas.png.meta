@@ -14,6 +14,18 @@ TextureImporter:
   - first:
       213: -1143622692284649908
     second: Salidas_3
+  - first:
+      213: 1340692387902676038
+    second: Salida_0
+  - first:
+      213: -3003366695348173246
+    second: Salida_1
+  - first:
+      213: 3445995881905450963
+    second: Salida_2
+  - first:
+      213: 4112925973003025954
+    second: Salida_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +58,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -60,7 +72,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 72
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -86,7 +98,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -124,89 +136,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Salidas_0
+      name: Salida_0
       rect:
         serializedVersion: 2
-        x: 153
-        y: 557
-        width: 575
-        height: 398
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 156
+        y: 561
+        width: 569
+        height: 392
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d99113abb8902ba0800000000000000
-      internalID: -6115720362306987567
+      spriteID: 64c520e9f981b9210800000000000000
+      internalID: 1340692387902676038
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Salidas_1
+      name: Salida_1
       rect:
         serializedVersion: 2
-        x: 916
-        y: 521
-        width: 412
-        height: 491
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 919
+        y: 528
+        width: 407
+        height: 481
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b8576f65548696330800000000000000
-      internalID: 3704606815509968267
+      spriteID: 246888137e5e156d0800000000000000
+      internalID: -3003366695348173246
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Salidas_2
+      name: Salida_2
       rect:
         serializedVersion: 2
-        x: 148
-        y: 37
-        width: 549
-        height: 456
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 151
+        y: 40
+        width: 543
+        height: 451
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7d655a4abdbe4b240800000000000000
-      internalID: 4806726030903826135
+      spriteID: 3dfee663ff2a2df20800000000000000
+      internalID: 3445995881905450963
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Salidas_3
+      name: Salida_3
       rect:
         serializedVersion: 2
-        x: 870
-        y: 47
-        width: 518
-        height: 425
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 873
+        y: 51
+        width: 512
+        height: 418
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c4e2c4578390120f0800000000000000
-      internalID: -1143622692284649908
+      spriteID: 22eb258916c041930800000000000000
+      internalID: 4112925973003025954
       vertices: []
       indices: 
       edges: []
@@ -225,6 +237,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Salida_0: 1340692387902676038
+      Salida_1: -3003366695348173246
+      Salida_2: 3445995881905450963
+      Salida_3: 4112925973003025954
       Salidas_0: -6115720362306987567
       Salidas_1: 3704606815509968267
       Salidas_2: 4806726030903826135

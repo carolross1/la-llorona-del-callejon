@@ -5,33 +5,37 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Configura y recorta con máxima precisión milimétrica los spritesheets del proyecto:
-/// la interfaz de usuario (interfaz.png) y los nuevos sprites temáticos de los niveles.
+/// Corta y configura con máxima precisión milimétrica todas las hojas de sprites del proyecto
+/// según la especificación oficial de PROMPT_VISUAL.md:
+/// - Filtro Point (no filter)
+/// - Sin compresión (Compression None)
+/// - Pivotes correctos (Bottom Center para elementos verticales, Center para charcos/botellas/tiles)
+/// - PPU normalizado respecto a Carlos (1.2 u de alto)
 /// </summary>
 public static class SpriteSheetSlicer
 {
-    [MenuItem("La Llorona/Recortar y Configurar Spritesheets")]
+    [MenuItem("La Llorona/Cortar hojas de sprites")]
     public static void SliceAllSpriteSheets()
     {
-        Debug.Log("[SpriteSheetSlicer] Iniciando recorte de spritesheets...");
+        Debug.Log("[SpriteSheetSlicer] Iniciando corte y configuración oficial de sprites...");
 
         SliceInterfaz();
         SlicePuestosNvl1();
         SliceContenedoresSacosNvl1();
-        SliceBotellasNvl1();
+        SliceBotellasCharcolodoNvl1();
         SliceSalidas();
-        SliceTilesAdoquinNvl2();
+        SlicePerro();
         SliceTilesNvl2();
+        SliceTilesAdoquinNvl2();
         SlicePuertasNvl2();
         SliceAccesoriosNvl2();
 
-        GenerateLevel2TileAssets();
-
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[SpriteSheetSlicer] ¡Todos los spritesheets fueron recortados y configurados exitosamente!");
+        Debug.Log("[SpriteSheetSlicer] ¡Todas las hojas de sprites fueron cortadas y configuradas exitosamente!");
     }
 
+    // ── 1. UI/interfaz.png (2400 × 1368) ─────────────────────────────────────
     public static void SliceInterfaz()
     {
         string path = "Assets/Sprites/UI/interfaz.png";
@@ -39,34 +43,21 @@ public static class SpriteSheetSlicer
 
         SliceData[] slices = new[]
         {
-            // 0: Corazón rojo activo
-            new SliceData("interfaz_0", new Rect(116, 1000, 369, 493), new Vector2(0.5f, 0.5f)),
-            // 1: Corazón negro / vida perdida
-            new SliceData("interfaz_1", new Rect(649, 1000, 352, 493), new Vector2(0.5f, 0.5f)),
-            // 2: Vela encendida / icono ofrenda
-            new SliceData("interfaz_2", new Rect(1209, 999, 310, 473), new Vector2(0.5f, 0.5f)),
-            // 3: Ojo detector / tutorial
-            new SliceData("interfaz_3", new Rect(1715, 990, 584, 461), new Vector2(0.5f, 0.5f)),
-            // 4: Barra de madera horizontal (tarjetas y paneles)
-            new SliceData("interfaz_4", new Rect(96, 634, 2208, 293), new Vector2(0.5f, 0.5f), new Vector4(40, 20, 40, 20)),
-            // 5: Botón de madera normal
-            new SliceData("interfaz_5", new Rect(89, 287, 708, 258), new Vector2(0.5f, 0.5f), new Vector4(35, 25, 35, 25)),
-            // 6: Botón de madera iluminado / hover
-            new SliceData("interfaz_6", new Rect(846, 278, 707, 276), new Vector2(0.5f, 0.5f), new Vector4(35, 25, 35, 25)),
-            // 7: Botón de madera presionado
-            new SliceData("interfaz_7", new Rect(1602, 287, 708, 258), new Vector2(0.5f, 0.5f), new Vector4(35, 25, 35, 25)),
-            // 8..13: Pequeños letreros de texto del menú inferior
-            new SliceData("interfaz_8", new Rect(173, 162, 142, 38), new Vector2(0.5f, 0.5f)),
-            new SliceData("interfaz_9", new Rect(577, 163, 144, 37), new Vector2(0.5f, 0.5f)),
-            new SliceData("interfaz_10", new Rect(921, 163, 98, 37), new Vector2(0.5f, 0.5f)),
-            new SliceData("interfaz_11", new Rect(1383, 163, 96, 37), new Vector2(0.5f, 0.5f)),
-            new SliceData("interfaz_12", new Rect(1672, 162, 108, 38), new Vector2(0.5f, 0.5f)),
-            new SliceData("interfaz_13", new Rect(2155, 165, 86, 36), new Vector2(0.5f, 0.5f))
+            new SliceData("Corazon_lleno",    new Rect(116, 770, 369, 493), new Vector2(0.5f, 0.5f)),
+            new SliceData("Corazon_vacio",    new Rect(649, 770, 352, 493), new Vector2(0.5f, 0.5f)),
+            new SliceData("Icono_vela",       new Rect(1209, 769, 310, 473), new Vector2(0.5f, 0.5f)),
+            new SliceData("Icono_ojo",        new Rect(1715, 760, 584, 461), new Vector2(0.5f, 0.5f)),
+            new SliceData("Barra_marco",      new Rect(96, 404, 2208, 293),  new Vector2(0.5f, 0.5f), new Vector4(40, 20, 40, 20)),
+            new SliceData("Placa_normal",     new Rect(89, 57, 708, 258),    new Vector2(0.5f, 0.5f), new Vector4(35, 25, 35, 25)),
+            new SliceData("Placa_resaltada",  new Rect(846, 48, 707, 276),   new Vector2(0.5f, 0.5f), new Vector4(35, 25, 35, 25)),
+            new SliceData("Placa_presionada", new Rect(1602, 57, 708, 258),  new Vector2(0.5f, 0.5f), new Vector4(35, 25, 35, 25))
         };
 
         ApplySlicing(path, slices, 100f);
     }
 
+    // ── 2. Environment/Puestos_Nivl1.png (1536 × 1024) ───────────────────────
+    // Escala objetivo: 5 u de ancho -> PPU ≈ 126f
     public static void SlicePuestosNvl1()
     {
         string path = "Assets/Sprites/Environment/Puestos_Nivl1.png";
@@ -74,13 +65,15 @@ public static class SpriteSheetSlicer
 
         SliceData[] slices = new[]
         {
-            new SliceData("Puesto_0", new Rect(84, 198, 628, 641), new Vector2(0.5f, 0.25f)),
-            new SliceData("Puesto_1", new Rect(821, 189, 635, 650), new Vector2(0.5f, 0.25f))
+            new SliceData("Puesto_frutas",   new Rect(84, 198, 628, 641), new Vector2(0.5f, 0.12f)),
+            new SliceData("Puesto_verduras", new Rect(821, 189, 635, 650), new Vector2(0.5f, 0.12f))
         };
 
-        ApplySlicing(path, slices, 100f);
+        ApplySlicing(path, slices, 126f);
     }
 
+    // ── 3. Environment/Contenedores_Sacos_Nvl1.png (1536 × 1024) ─────────────
+    // Escala objetivo: huacales 1.8-2 u, canastas 1.2 u, costales 1.6 u -> PPU ≈ 190f
     public static void SliceContenedoresSacosNvl1()
     {
         string path = "Assets/Sprites/Environment/Contenedores_Sacos_Nvl1.png";
@@ -88,43 +81,54 @@ public static class SpriteSheetSlicer
 
         SliceData[] slices = new[]
         {
-            new SliceData("Sacos_0", new Rect(116, 571, 341, 398), new Vector2(0.5f, 0.3f)),
-            new SliceData("Sacos_1", new Rect(572, 570, 393, 387), new Vector2(0.5f, 0.3f)),
-            new SliceData("Sacos_2", new Rect(1079, 599, 335, 310), new Vector2(0.5f, 0.3f)),
-            new SliceData("Sacos_3", new Rect(594, 88, 362, 411), new Vector2(0.5f, 0.3f)),
-            new SliceData("Sacos_4", new Rect(1072, 76, 341, 419), new Vector2(0.5f, 0.3f)),
-            new SliceData("Sacos_5", new Rect(137, 130, 334, 337), new Vector2(0.5f, 0.3f))
+            // Fila 1 (arriba)
+            new SliceData("Huacales_apilados",    new Rect(116, 571, 341, 398), new Vector2(0.5f, 0.15f)),
+            new SliceData("Huacal_roto_paja",     new Rect(572, 570, 393, 387), new Vector2(0.5f, 0.15f)),
+            new SliceData("Canasta_vacia",        new Rect(1079, 599, 335, 310), new Vector2(0.5f, 0.15f)),
+            // Fila 2 (abajo)
+            new SliceData("Canasta_chiles",       new Rect(137, 130, 334, 337), new Vector2(0.5f, 0.15f)),
+            new SliceData("Costales_apilados",    new Rect(594, 88, 362, 411), new Vector2(0.5f, 0.15f)),
+            new SliceData("Costal_maiz_abierto",  new Rect(1072, 76, 341, 419), new Vector2(0.5f, 0.15f))
         };
 
-        ApplySlicing(path, slices, 100f);
+        ApplySlicing(path, slices, 190f);
     }
 
-    public static void SliceBotellasNvl1()
+    // ── 4. Environment/Botellas_charcolodo_Nvl1.png (1536 × 1024) ───────────
+    // Escala objetivo: charcos 1.4, 2.6, 3.8 u; botellas 0.55 u alto -> PPU ≈ 165f
+    public static void SliceBotellasCharcolodoNvl1()
     {
-        string path = "Assets/Sprites/Environment/Botellas_Nvl1.png";
+        string path = "Assets/Sprites/Environment/Botellas_charcolodo_Nvl1.png";
         if (!File.Exists(path)) return;
 
         SliceData[] slices = new[]
         {
-            new SliceData("Botellas_0", new Rect(926, 761, 510, 223), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_1", new Rect(475, 765, 358, 191), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_2", new Rect(121, 789, 238, 154), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_3", new Rect(856, 463, 595, 272), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_4", new Rect(425, 501, 372, 197), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_5", new Rect(113, 531, 234, 159), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_6", new Rect(118, 264, 78, 189), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_7", new Rect(398, 264, 80, 188), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_8", new Rect(664, 279, 212, 132), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_9", new Rect(1058, 273, 244, 136), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_10", new Rect(1135, 48, 80, 199), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_11", new Rect(79, 49, 168, 179), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_12", new Rect(664, 49, 257, 165), new Vector2(0.5f, 0.5f)),
-            new SliceData("Botellas_13", new Rect(359, 51, 241, 154), new Vector2(0.5f, 0.5f))
+            // Filas 1 y 2: Charcos (3 por fila: pequeño, mediano, grande)
+            new SliceData("Charco_0", new Rect(121, 789, 238, 154), new Vector2(0.5f, 0.5f)),
+            new SliceData("Charco_1", new Rect(475, 765, 358, 191), new Vector2(0.5f, 0.5f)),
+            new SliceData("Charco_2", new Rect(800, 725, 636, 250), new Vector2(0.5f, 0.5f)),
+            new SliceData("Charco_3", new Rect(113, 425, 337, 266), new Vector2(0.5f, 0.5f)),
+            new SliceData("Charco_4", new Rect(425, 425, 372, 274), new Vector2(0.5f, 0.5f)),
+            new SliceData("Charco_5", new Rect(856, 463, 595, 272), new Vector2(0.5f, 0.5f)),
+
+            // Fila 3: Botellas de pie y acostadas
+            new SliceData("Botella_verde",                     new Rect(79, 49, 168, 179),  new Vector2(0.5f, 0.5f)),
+            new SliceData("Botella_ambar",                     new Rect(359, 51, 241, 154), new Vector2(0.5f, 0.5f)),
+            new SliceData("Botella_transparente_acostada",     new Rect(664, 49, 257, 165), new Vector2(0.5f, 0.5f)),
+            new SliceData("Botella_ambar_etiqueta_acostada",   new Rect(1135, 48, 80, 199), new Vector2(0.5f, 0.5f)),
+
+            // Fila 4: Botella rota, vidrios rotos y caídas
+            new SliceData("Botella_rota",    new Rect(118, 264, 78, 189),  new Vector2(0.5f, 0.5f)),
+            new SliceData("Vidrios_rotos",   new Rect(398, 264, 80, 188),  new Vector2(0.5f, 0.5f)),
+            new SliceData("Botellas_caidas", new Rect(664, 279, 212, 132), new Vector2(0.5f, 0.5f)),
+            new SliceData("Botella_azul",    new Rect(1058, 273, 244, 136), new Vector2(0.5f, 0.5f))
         };
 
-        ApplySlicing(path, slices, 100f);
+        ApplySlicing(path, slices, 165f);
     }
 
+    // ── 5. Environment/Salidas.png (1536 × 1024) ─────────────────────────────
+    // Escala objetivo: 7 a 8 u de ancho -> PPU ≈ 72f
     public static void SliceSalidas()
     {
         string path = "Assets/Sprites/Environment/Salidas.png";
@@ -132,58 +136,84 @@ public static class SpriteSheetSlicer
 
         SliceData[] slices = new[]
         {
-            new SliceData("Salida_0", new Rect(919, 528, 407, 481), new Vector2(0.5f, 0.15f)),
-            new SliceData("Salida_1", new Rect(156, 561, 569, 392), new Vector2(0.5f, 0.15f)),
-            new SliceData("Salida_2", new Rect(151, 40, 543, 451), new Vector2(0.5f, 0.15f)),
-            new SliceData("Salida_3", new Rect(873, 51, 512, 418), new Vector2(0.5f, 0.15f))
+            // Salida_0 (arriba izq): Arco de cantera del mercado al callejón (N1)
+            new SliceData("Salida_0", new Rect(156, 561, 569, 392), new Vector2(0.5f, 0.0f)),
+            // Salida_1 (arriba der): Pasaje angosto del callejón al atrio (N2)
+            new SliceData("Salida_1", new Rect(919, 528, 407, 481), new Vector2(0.5f, 0.0f)),
+            // Salida_2 (abajo izq): Portón de cantera y cruces del atrio al panteón (N3)
+            new SliceData("Salida_2", new Rect(151, 40, 543, 451),  new Vector2(0.5f, 0.0f)),
+            // Salida_3 (abajo der): Casa de Carlos con puerta y ventana (N4)
+            new SliceData("Salida_3", new Rect(873, 51, 512, 418),  new Vector2(0.5f, 0.0f))
         };
 
-        ApplySlicing(path, slices, 100f);
+        ApplySlicing(path, slices, 72f);
     }
 
-    public static void SliceTilesAdoquinNvl2()
+    // ── 6. Perro/perro.png (2400 × 1340) ─────────────────────────────────────
+    // Escala objetivo: vista lateral de 1.1 u de largo -> PPU ≈ 820f
+    public static void SlicePerro()
     {
-        string path = "Assets/Sprites/Environment/tiles_adoquin_nvl2.png";
+        string path = "Assets/Sprites/Perro/perro.png";
         if (!File.Exists(path)) return;
 
         SliceData[] slices = new[]
         {
-            new SliceData("Adoquin_0", new Rect(34, 571, 220, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_1", new Rect(286, 571, 219, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_2", new Rect(535, 571, 219, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_3", new Rect(784, 571, 218, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_4", new Rect(1031, 571, 219, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_5", new Rect(1282, 571, 219, 237), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_6", new Rect(34, 286, 220, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_7", new Rect(286, 286, 219, 240), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_8", new Rect(535, 286, 219, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_9", new Rect(784, 286, 218, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_10", new Rect(1031, 286, 219, 238), new Vector2(0.5f, 0.5f)),
-            new SliceData("Adoquin_11", new Rect(1282, 286, 219, 238), new Vector2(0.5f, 0.5f))
+            new SliceData("Perro_frente",   new Rect(149, 175, 422, 902), new Vector2(0.5f, 0.05f)),
+            new SliceData("Perro_espalda",  new Rect(749, 184, 372, 1023), new Vector2(0.5f, 0.05f)),
+            new SliceData("Perro_lado_izq", new Rect(1329, 685, 912, 582), new Vector2(0.5f, 0.05f)),
+            new SliceData("Perro_lado_der", new Rect(1389, 55, 903, 602),  new Vector2(0.5f, 0.05f))
         };
 
-        ApplySlicing(path, slices, 200f);
+        ApplySlicing(path, slices, 820f);
     }
 
+    // ── 7. Environment/tiles_nvl2.png (1536 × 1024) ──────────────────────────
+    // Solo 7 utilizables: fila 1 (0..5) y fila 2 col 1 (6)
     public static void SliceTilesNvl2()
     {
         string path = "Assets/Sprites/Environment/tiles_nvl2.png";
         if (!File.Exists(path)) return;
 
+        int tileW = 256;
+        int tileH = 512;
+
         SliceData[] slices = new[]
         {
-            new SliceData("MuroNvl2_0", new Rect(25, 684, 223, 255), new Vector2(0.5f, 0.5f)),
-            new SliceData("MuroNvl2_1", new Rect(276, 684, 222, 255), new Vector2(0.5f, 0.5f)),
-            new SliceData("MuroNvl2_2", new Rect(528, 684, 477, 255), new Vector2(0.5f, 0.5f)),
-            new SliceData("MuroNvl2_3", new Rect(1034, 684, 224, 255), new Vector2(0.5f, 0.5f)),
-            new SliceData("MuroNvl2_4", new Rect(1286, 684, 223, 255), new Vector2(0.5f, 0.5f)),
-            new SliceData("MuroNvl2_5", new Rect(26, 383, 223, 256), new Vector2(0.5f, 0.5f)),
-            new SliceData("MuroNvl2_6", new Rect(275, 76, 1233, 563), new Vector2(0.5f, 0.5f))
+            new SliceData("Fachada_balcon_roja_0", new Rect(0 * tileW, 512, tileW, tileH), new Vector2(0.5f, 0.0f)),
+            new SliceData("Fachada_ocre_1",        new Rect(1 * tileW, 512, tileW, tileH), new Vector2(0.5f, 0.0f)),
+            new SliceData("Fachada_azul_2",        new Rect(2 * tileW, 512, tileW, tileH), new Vector2(0.5f, 0.0f)),
+            new SliceData("Fachada_roja_3",        new Rect(3 * tileW, 512, tileW, tileH), new Vector2(0.5f, 0.0f)),
+            new SliceData("Fachada_ocre_4",        new Rect(4 * tileW, 512, tileW, tileH), new Vector2(0.5f, 0.0f)),
+            new SliceData("Fachada_morada_5",      new Rect(5 * tileW, 512, tileW, tileH), new Vector2(0.5f, 0.0f)),
+            new SliceData("Fachada_ventana_roja_6", new Rect(0 * tileW,   0, tileW, tileH), new Vector2(0.5f, 0.0f))
         };
 
-        ApplySlicing(path, slices, 200f);
+        ApplySlicing(path, slices, 160f);
     }
 
+    // ── 8. Environment/tiles_adoquin_nvl2.png (1536 × 512) ───────────────────
+    public static void SliceTilesAdoquinNvl2()
+    {
+        string path = "Assets/Sprites/Environment/tiles_adoquin_nvl2.png";
+        if (!File.Exists(path)) return;
+
+        SliceData[] slices = new SliceData[12];
+        int w = 256;
+        int h = 256;
+        int idx = 0;
+        for (int row = 1; row >= 0; row--)
+        {
+            for (int col = 0; col < 6; col++)
+            {
+                slices[idx] = new SliceData($"Adoquin_{idx}", new Rect(col * w, row * h, w, h), new Vector2(0.5f, 0.5f));
+                idx++;
+            }
+        }
+
+        ApplySlicing(path, slices, 160f);
+    }
+
+    // ── 9. Environment/Puertas_nvl2.png (1536 × 1024) ────────────────────────
     public static void SlicePuertasNvl2()
     {
         string path = "Assets/Sprites/Environment/Puertas_nvl2.png";
@@ -191,14 +221,15 @@ public static class SpriteSheetSlicer
 
         SliceData[] slices = new[]
         {
-            new SliceData("PuertaNvl2_0", new Rect(40, 281, 462, 523), new Vector2(0.5f, 0.2f)),
-            new SliceData("PuertaNvl2_1", new Rect(541, 286, 453, 530), new Vector2(0.5f, 0.2f)),
-            new SliceData("PuertaNvl2_2", new Rect(1034, 286, 458, 530), new Vector2(0.5f, 0.2f))
+            new SliceData("Puerta_0", new Rect(60,  180, 420, 680), new Vector2(0.5f, 0.0f)),
+            new SliceData("Puerta_1", new Rect(550, 180, 420, 680), new Vector2(0.5f, 0.0f)),
+            new SliceData("Puerta_2", new Rect(1040,180, 420, 680), new Vector2(0.5f, 0.0f))
         };
 
-        ApplySlicing(path, slices, 100f);
+        ApplySlicing(path, slices, 140f);
     }
 
+    // ── 10. Environment/accesorios_nvl2.png (1536 × 1024) ────────────────────
     public static void SliceAccesoriosNvl2()
     {
         string path = "Assets/Sprites/Environment/accesorios_nvl2.png";
@@ -206,110 +237,69 @@ public static class SpriteSheetSlicer
 
         SliceData[] slices = new[]
         {
-            new SliceData("Accesorio_Farol", new Rect(365, 574, 256, 410), new Vector2(0.5f, 0.5f)),
-            new SliceData("Accesorio_Maceta", new Rect(868, 543, 281, 436), new Vector2(0.5f, 0.5f)),
-            new SliceData("Accesorio_BalconGrande", new Rect(265, 54, 444, 445), new Vector2(0.5f, 0.5f)),
-            new SliceData("Accesorio_Balcon", new Rect(901, 94, 267, 394), new Vector2(0.5f, 0.5f))
+            new SliceData("Maceta_colgante",   new Rect(90,  550, 280, 400), new Vector2(0.5f, 0.5f)),
+            new SliceData("Maceta_suelo_seca", new Rect(450, 550, 280, 360), new Vector2(0.5f, 0.0f)),
+            new SliceData("Balcon_hierro",     new Rect(800, 520, 650, 380), new Vector2(0.5f, 0.0f)),
+            new SliceData("Farol_pared",       new Rect(100,  80, 260, 380), new Vector2(0.5f, 0.5f))
         };
 
-        ApplySlicing(path, slices, 100f);
+        ApplySlicing(path, slices, 150f);
     }
 
-    public static void GenerateLevel2TileAssets()
+    // ── Aplicación mediante TextureImporter ───────────────────────────────────
+
+    public struct SliceData
     {
-        string dir = "Assets/Tiles/Level2";
-        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-
-        var adoquines = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/tiles_adoquin_nvl2.png")
-            .OfType<Sprite>().OrderBy(s => s.name).ToArray();
-
-        for (int i = 0; i < adoquines.Length; i++)
-        {
-            string assetPath = $"{dir}/adoquin_{i}.asset";
-            UnityEngine.Tilemaps.Tile tile = AssetDatabase.LoadAssetAtPath<UnityEngine.Tilemaps.Tile>(assetPath);
-            if (tile == null)
-            {
-                tile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-                tile.sprite = adoquines[i];
-                AssetDatabase.CreateAsset(tile, assetPath);
-            }
-            else
-            {
-                tile.sprite = adoquines[i];
-                EditorUtility.SetDirty(tile);
-            }
-        }
-
-        var muros = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/tiles_nvl2.png")
-            .OfType<Sprite>().OrderBy(s => s.name).ToArray();
-
-        for (int i = 0; i < muros.Length; i++)
-        {
-            string assetPath = $"{dir}/muro_{i}.asset";
-            UnityEngine.Tilemaps.Tile tile = AssetDatabase.LoadAssetAtPath<UnityEngine.Tilemaps.Tile>(assetPath);
-            if (tile == null)
-            {
-                tile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-                tile.sprite = muros[i];
-                AssetDatabase.CreateAsset(tile, assetPath);
-            }
-            else
-            {
-                tile.sprite = muros[i];
-                EditorUtility.SetDirty(tile);
-            }
-        }
-    }
-
-    static void ApplySlicing(string assetPath, SliceData[] slices, float ppu)
-    {
-        AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
-        TextureImporter ti = AssetImporter.GetAtPath(assetPath) as TextureImporter;
-        if (ti == null)
-        {
-            Debug.LogError($"[SpriteSheetSlicer] No se pudo obtener TextureImporter para {assetPath}");
-            return;
-        }
-
-        ti.textureType = TextureImporterType.Sprite;
-        ti.spriteImportMode = SpriteImportMode.Multiple;
-        ti.spritePixelsPerUnit = ppu;
-        ti.filterMode = FilterMode.Point;
-        ti.textureCompression = TextureImporterCompression.Uncompressed;
-        ti.alphaIsTransparency = true;
-
-        SpriteMetaData[] metaArray = new SpriteMetaData[slices.Length];
-        for (int i = 0; i < slices.Length; i++)
-        {
-            metaArray[i] = new SpriteMetaData
-            {
-                name = slices[i].Name,
-                rect = slices[i].Rect,
-                alignment = (int)SpriteAlignment.Custom,
-                pivot = slices[i].Pivot,
-                border = slices[i].Border
-            };
-        }
-
-        ti.spritesheet = metaArray;
-        EditorUtility.SetDirty(ti);
-        ti.SaveAndReimport();
-        Debug.Log($"[SpriteSheetSlicer] {slices.Length} sub-sprites configurados en: {assetPath}");
-    }
-
-    struct SliceData
-    {
-        public string Name;
-        public Rect Rect;
-        public Vector2 Pivot;
-        public Vector4 Border;
+        public string name;
+        public Rect rect;
+        public Vector2 pivot;
+        public Vector4 border;
 
         public SliceData(string name, Rect rect, Vector2 pivot, Vector4 border = default)
         {
-            Name = name;
-            Rect = rect;
-            Pivot = pivot;
-            Border = border;
+            this.name = name;
+            this.rect = rect;
+            this.pivot = pivot;
+            this.border = border;
         }
+    }
+
+    static void ApplySlicing(string assetPath, SliceData[] slices, float pixelsPerUnit)
+    {
+        TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+        if (importer == null)
+        {
+            Debug.LogError($"[SpriteSheetSlicer] No se encontró el TextureImporter en: {assetPath}");
+            return;
+        }
+
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.spritePixelsPerUnit = pixelsPerUnit;
+        importer.filterMode = FilterMode.Point;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.alphaIsTransparency = true;
+        importer.mipmapEnabled = false;
+
+        SpriteMetaData[] meta = new SpriteMetaData[slices.Length];
+        for (int i = 0; i < slices.Length; i++)
+        {
+            meta[i] = new SpriteMetaData
+            {
+                name = slices[i].name,
+                rect = slices[i].rect,
+                alignment = (int)SpriteAlignment.Custom,
+                pivot = slices[i].pivot,
+                border = slices[i].border
+            };
+        }
+
+#pragma warning disable CS0618
+        importer.spritesheet = meta;
+#pragma warning restore CS0618
+
+        EditorUtility.SetDirty(importer);
+        importer.SaveAndReimport();
+        Debug.Log($"[SpriteSheetSlicer] Cortado exitoso: {assetPath} ({slices.Length} sprites, PPU {pixelsPerUnit}).");
     }
 }

@@ -2,109 +2,231 @@
 using UnityEngine;
 
 /// <summary>
-/// Enemigo secundario: Perro callejero territorial.
-/// Duerme o vigila su territorio en callejones y esquinas.
-/// Si el jugador corre cerca o se acerca sin sigilo:
-///   1. Ladra furiosamente ("¡GUAU! ¡GUAU!"), alertando a La Llorona.
-///   2. Si el jugador lo toca o choca con él, arremete y le quita una vida.
-/// Se puede evitar caminando despacio (sin SHIFT) o usando escondites.
+/// Enemigo secundario: Perro callejero territorial (según especificación Sección 8 de PROMPT_VISUAL.md).
+/// Duerme en una esquina del mercado o callejón.
+/// Estados:
+///   - Dormido: escala (1, 0.7), tinte oscuro, respiración leve oscilando en Y, texto 'Z'.
+///   - Alerta / Ladrando: Carlos corre a < 4 u o pasa a < 2.5 u sin sigilo. Sacudida horizontal,
+///     alerta durante 4 s a La Llorona enviándola a ese punto exacto.
+///   - Redormido: tras 8 s sin ruido cerca o si Carlos se esconde con [E].
 /// </summary>
 [RequireComponent(typeof(CircleCollider2D))]
 public class StrayDogAI : MonoBehaviour
 {
-    [Header("Rangos de Detección")]
-    [SerializeField] float sleepWakeRadius = 4.5f;   // Distancia para despertar si el jugador corre
-    [SerializeField] float runWakeRadius = 6.0f;     // Si el jugador corre
-    [SerializeField] float alertLloronaRadius = 20.0f;
-    [SerializeField] float barkCooldown = 3.5f;
+    [Header("Rangos de Detección (Sección 8)")]
+    [SerializeField] float runWakeRadius = 4.0f;     // Carlos corre a menos de 4 u
+    [SerializeField] float walkWakeRadius = 2.5f;    // Pasa a menos de 2.5 u a velocidad mayor que caminar
+    [SerializeField] float alertLloronaRadius = 25.0f;
+    [SerializeField] float barkDuration = 4.0f;      // Ladrido dura 4 s
+    [SerializeField] float returnToSleepTime = 8.0f; // Vuelve a dormir tras 8 s sin ruido
 
-    [Header("Visual")]
+    [Header("Sprites de Referencia (4 Vistas de perro.png)")]
     [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Color sleepColor = new Color(0.7f, 0.7f, 0.7f, 1f);
-    [SerializeField] Color alertColor = Color.white;
+    [SerializeField] Sprite lateralView;
+    [SerializeField] Sprite frontView;
+    [SerializeField] Sprite backView;
+
+    [Header("Visual Dormido / Alerta")]
+    [SerializeField] Color sleepColor = new Color(0.98f, 0.92f, 0.82f, 1f); // Tono cálido natural para no perderse en el suelo
+    [SerializeField] Color alertColor = new Color(1.15f, 1.10f, 1.0f, 1f);
+
+    enum DogState { Sleeping, Barking }
+    DogState currentState = DogState.Sleeping;
 
     PlayerMovement player;
-    float lastBarkTime = -99f;
-    bool isAwake = false;
+    float stateTimer = 0f;
+    float lastDisturbanceTime = -99f;
+    Vector3 basePosition;
+    TextMesh zTextMesh;
+    GameObject alertIconGo;
 
     void Awake()
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+
+        var rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+            rb.gravityScale = 0f;
+        }
+        transform.rotation = Quaternion.identity;
+        basePosition = transform.position;
+
+        CreateFloatingZ();
+        CreateAlertExclamation();
+
+        SetSleepingVisuals();
+    }
+
+    void Start()
+    {
         player = UnityEngine.Object.FindAnyObjectByType<PlayerMovement>();
-        if (spriteRenderer != null) spriteRenderer.color = sleepColor;
     }
 
     void Update()
     {
-        if (player == null || player.IsHidden)
+        if (player == null)
         {
-            if (isAwake && Time.time > lastBarkTime + 4f)
-            {
-                isAwake = false;
-                if (spriteRenderer != null) spriteRenderer.color = sleepColor;
-            }
-            return;
+            player = UnityEngine.Object.FindAnyObjectByType<PlayerMovement>();
+            if (player == null) return;
         }
 
         float dist = Vector2.Distance(transform.position, player.transform.position);
+        bool playerHidden = player.IsHidden;
         bool playerRunning = player.IsRunning;
 
-        // Despertar si corre cerca o camina muy pegado a él
-        bool shouldBark = (playerRunning && dist <= runWakeRadius) || (dist <= sleepWakeRadius * 0.6f);
-
-        if (shouldBark && Time.time > lastBarkTime + barkCooldown)
+        // Orientar el sprite hacia Carlos
+        if (spriteRenderer != null)
         {
-            BarkAndAlert();
+            spriteRenderer.flipX = (player.transform.position.x < transform.position.x);
+        }
+
+        switch (currentState)
+        {
+            case DogState.Sleeping:
+                UpdateSleeping(dist, playerHidden, playerRunning);
+                break;
+
+            case DogState.Barking:
+                UpdateBarking(dist, playerHidden, playerRunning);
+                break;
         }
     }
 
-    void BarkAndAlert()
+    void UpdateSleeping(float dist, bool playerHidden, bool playerRunning)
     {
-        lastBarkTime = Time.time;
-        isAwake = true;
-        if (spriteRenderer != null) spriteRenderer.color = alertColor;
+        // Animación procedural de respiración durmiendo con presencia visual sólida
+        float breatheY = 1.05f + Mathf.Sin(Time.time * 2.2f) * 0.05f;
+        transform.localScale = new Vector3(1.35f, breatheY, 1.0f);
 
-        if (HUD.Instance != null)
+        // Animación de texto flotante 'Z z z' luminoso y claro
+        if (zTextMesh != null)
         {
-            HUD.Instance.ShowTutorial("¡GUAU! ¡GUAU! ¡El perro callejero alertó a La Llorona!", 3.5f);
+            zTextMesh.gameObject.SetActive(true);
+            float zY = 1.15f + Mathf.PingPong(Time.time * 0.5f, 0.35f);
+            zTextMesh.transform.localPosition = new Vector3(0.2f, zY, 0f);
         }
 
-        // Alertar a La Llorona
-        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
-        if (llorona != null)
+        if (alertIconGo != null) alertIconGo.SetActive(false);
+
+        // Despertar si Carlos corre a < 4 u o pasa a < 2.5 u sin sigilo (no escondido)
+        if (!playerHidden)
         {
-            float dist = Vector2.Distance(transform.position, llorona.transform.position);
-            if (dist <= alertLloronaRadius)
+            if ((playerRunning && dist <= runWakeRadius) || (dist <= walkWakeRadius))
             {
-                llorona.AlertNoise(transform.position, 5.0f);
+                WakeUpAndBark();
             }
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void UpdateBarking(float dist, bool playerHidden, bool playerRunning)
     {
-        CheckBite(collision.collider);
+        stateTimer += Time.deltaTime;
+
+        // Sacudida horizontal rápida ladrando
+        float shakeX = Mathf.Sin(Time.time * 28f) * 0.08f;
+        transform.position = basePosition + new Vector3(shakeX, 0f, 0f);
+        transform.localScale = new Vector3(1.35f, 1.35f, 1.0f);
+
+        if (zTextMesh != null) zTextMesh.gameObject.SetActive(false);
+        if (alertIconGo != null) alertIconGo.SetActive(true);
+
+        if (playerRunning || (dist <= runWakeRadius && !playerHidden))
+        {
+            lastDisturbanceTime = Time.time;
+        }
+
+        // Si Carlos se esconde con [E], lo despista
+        if (playerHidden)
+        {
+            ReturnToSleep();
+            return;
+        }
+
+        // Tras 8 s sin ruido cerca, vuelve a dormir
+        if (stateTimer >= barkDuration && (Time.time - lastDisturbanceTime >= returnToSleepTime))
+        {
+            ReturnToSleep();
+        }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void WakeUpAndBark()
     {
-        CheckBite(other);
-    }
+        currentState = DogState.Barking;
+        stateTimer = 0f;
+        lastDisturbanceTime = Time.time;
 
-    void CheckBite(Collider2D collider)
-    {
-        if (!collider.CompareTag("Player")) return;
-        if (player != null && player.IsHidden) return;
+        if (spriteRenderer != null)
+        {
+            if (lateralView != null) spriteRenderer.sprite = lateralView;
+            spriteRenderer.color = alertColor;
+        }
 
-        // Muerde al jugador
         if (HUD.Instance != null)
         {
-            HUD.Instance.ShowTutorial("¡El perro callejero te mordió!", 2.5f);
+            HUD.Instance.ShowEventNotice("¡El perro callejero despertó y comenzó a ladrar!");
         }
 
-        if (GameManager.Instance != null)
+        // Alertar a La Llorona hacia este punto exacto
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
+        if (llorona != null)
         {
-            GameManager.Instance.OnPlayerCaught();
+            float distToLlorona = Vector2.Distance(transform.position, llorona.transform.position);
+            if (distToLlorona <= alertLloronaRadius)
+            {
+                llorona.AlertNoise(transform.position, 6.0f);
+            }
         }
+    }
+
+    void ReturnToSleep()
+    {
+        currentState = DogState.Sleeping;
+        transform.position = basePosition;
+        SetSleepingVisuals();
+    }
+
+    void SetSleepingVisuals()
+    {
+        if (spriteRenderer != null)
+        {
+            if (lateralView != null) spriteRenderer.sprite = lateralView;
+            spriteRenderer.color = sleepColor;
+        }
+        transform.localScale = new Vector3(1.35f, 1.05f, 1.0f);
+        if (alertIconGo != null) alertIconGo.SetActive(false);
+        if (zTextMesh != null) zTextMesh.gameObject.SetActive(true);
+    }
+
+    void CreateFloatingZ()
+    {
+        GameObject zGo = new GameObject("TextoZ");
+        zGo.transform.SetParent(transform, false);
+        zGo.transform.localPosition = new Vector3(0.2f, 1.15f, 0f);
+        zTextMesh = zGo.AddComponent<TextMesh>();
+        zTextMesh.text = "Z z z";
+        zTextMesh.fontSize = 32;
+        zTextMesh.characterSize = 0.12f;
+        zTextMesh.anchor = TextAnchor.MiddleCenter;
+        zTextMesh.color = new Color(0.55f, 0.90f, 1.0f, 0.95f); // Celeste brillante luminoso
+        var mr = zGo.GetComponent<MeshRenderer>();
+        if (mr != null) mr.sortingOrder = 15;
+    }
+
+    void CreateAlertExclamation()
+    {
+        alertIconGo = new GameObject("IconoAlerta");
+        alertIconGo.transform.SetParent(transform, false);
+        alertIconGo.transform.localPosition = new Vector3(0f, 1.45f, 0f);
+        TextMesh tm = alertIconGo.AddComponent<TextMesh>();
+        tm.text = "!";
+        tm.fontSize = 46;
+        tm.characterSize = 0.16f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.color = new Color(1.0f, 0.15f, 0.15f, 1.0f);
+        var mr = alertIconGo.GetComponent<MeshRenderer>();
+        if (mr != null) mr.sortingOrder = 15;
+        alertIconGo.SetActive(false);
     }
 }

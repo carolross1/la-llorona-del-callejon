@@ -18,7 +18,13 @@ public class HideSystem : MonoBehaviour
         player = GetComponent<PlayerMovement>();
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
-        savedConstraints = rb.constraints;
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+            rb.gravityScale = 0f;
+        }
+        savedConstraints = RigidbodyConstraints2D.FreezeRotation;
+        transform.rotation = Quaternion.identity;
     }
 
     void Update()
@@ -57,6 +63,7 @@ public class HideSystem : MonoBehaviour
             sr.sortingLayerID = savedLayerId;
             sr.sortingOrder = savedOrder;
             Teleport(savedPos);
+            transform.rotation = Quaternion.identity;
         }
     }
 

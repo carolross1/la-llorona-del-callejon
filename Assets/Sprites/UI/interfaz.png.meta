@@ -48,56 +48,29 @@ TextureImporter:
       213: 2355107933617225778
     second: interfaz_14
   - first:
-      213: -8476249302212325158
-    second: interfaz_15
+      213: 2616604422387014842
+    second: Corazon_lleno
   - first:
-      213: 5817167582187855655
-    second: interfaz_16
+      213: 5249732557364212421
+    second: Corazon_vacio
   - first:
-      213: 7032986072246366317
-    second: interfaz_17
+      213: 7048196627222154973
+    second: Icono_vela
   - first:
-      213: 366624568735453908
-    second: interfaz_18
+      213: 5775968916149858724
+    second: Icono_ojo
   - first:
-      213: 3682904761829542535
-    second: interfaz_19
+      213: 7448896690590206866
+    second: Barra_marco
   - first:
-      213: -983126135930233142
-    second: interfaz_20
+      213: 303255890616391423
+    second: Placa_normal
   - first:
-      213: 9154815422126665164
-    second: interfaz_21
+      213: -2382957213616447671
+    second: Placa_resaltada
   - first:
-      213: 5472307542107663618
-    second: interfaz_22
-  - first:
-      213: 462710552615312618
-    second: interfaz_23
-  - first:
-      213: -7852670188008325259
-    second: interfaz_24
-  - first:
-      213: -2814082431767022929
-    second: interfaz_25
-  - first:
-      213: -1060095489002758596
-    second: interfaz_26
-  - first:
-      213: -7758411318558653222
-    second: interfaz_27
-  - first:
-      213: 682525414088899469
-    second: interfaz_28
-  - first:
-      213: 6449693077889384496
-    second: interfaz_29
-  - first:
-      213: 4957191181344720977
-    second: interfaz_30
-  - first:
-      213: -518052768470609029
-    second: interfaz_31
+      213: -3812204410716361287
+    second: Placa_presionada
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -130,7 +103,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -170,7 +143,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -208,14 +181,14 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: interfaz_0
+      name: Corazon_lleno
       rect:
         serializedVersion: 2
-        x: 0
-        y: 635
-        width: 311
-        height: 389
-      alignment: 0
+        x: 116
+        y: 770
+        width: 369
+        height: 493
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -223,21 +196,21 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcd8a07870b809ed0800000000000000
-      internalID: -2409272936196567603
+      spriteID: abc181adbdb005420800000000000000
+      internalID: 2616604422387014842
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_1
+      name: Corazon_vacio
       rect:
         serializedVersion: 2
-        x: 414
-        y: 639
-        width: 229
-        height: 319
-      alignment: 0
+        x: 649
+        y: 770
+        width: 352
+        height: 493
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -245,21 +218,21 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6ebad41a74a0c3140800000000000000
-      internalID: 4700643413833133030
+      spriteID: 5c23f7752fbcad840800000000000000
+      internalID: 5249732557364212421
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_2
+      name: Icono_vela
       rect:
         serializedVersion: 2
-        x: 771
-        y: 638
-        width: 205
-        height: 313
-      alignment: 0
+        x: 1209
+        y: 769
+        width: 310
+        height: 473
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -267,21 +240,21 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aacd163f798e85ac0800000000000000
-      internalID: -3866084540776588118
+      spriteID: ddecea05d7930d160800000000000000
+      internalID: 7048196627222154973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_3
+      name: Icono_ojo
       rect:
         serializedVersion: 2
-        x: 1095
-        y: 631
-        width: 441
-        height: 393
-      alignment: 0
+        x: 1715
+        y: 760
+        width: 584
+        height: 461
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -289,96 +262,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0d91525f5e10a33e0800000000000000
-      internalID: -2073342591278704176
+      spriteID: 4a17fc8702d582050800000000000000
+      internalID: 5775968916149858724
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_4
+      name: Barra_marco
       rect:
         serializedVersion: 2
-        x: 59
+        x: 96
         y: 404
-        width: 1418
-        height: 192
-      alignment: 0
+        width: 2208
+        height: 293
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 40, y: 20, z: 40, w: 20}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e0730400d5cd0f240800000000000000
-      internalID: 4823597492908078862
+      spriteID: 29b463bf21ccf5760800000000000000
+      internalID: 7448896690590206866
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_5
+      name: Placa_normal
       rect:
         serializedVersion: 2
-        x: 55
-        y: 182
-        width: 457
-        height: 169
-      alignment: 0
+        x: 89
+        y: 57
+        width: 708
+        height: 258
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 35, y: 25, z: 35, w: 25}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3acdc57d4025219c0800000000000000
-      internalID: -3958010941758710621
+      spriteID: ff61c3430a1653400800000000000000
+      internalID: 303255890616391423
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_6
+      name: Placa_resaltada
       rect:
         serializedVersion: 2
-        x: 539
-        y: 175
-        width: 457
-        height: 183
-      alignment: 0
+        x: 846
+        y: 48
+        width: 707
+        height: 276
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 35, y: 25, z: 35, w: 25}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7a1a5a07968d34c0800000000000000
-      internalID: -4306137685424465282
+      spriteID: 94fdf672a090eeed0800000000000000
+      internalID: -2382957213616447671
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: interfaz_7
+      name: Placa_presionada
       rect:
         serializedVersion: 2
-        x: 1023
-        y: 182
-        width: 457
-        height: 169
-      alignment: 0
+        x: 1602
+        y: 57
+        width: 708
+        height: 258
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 35, y: 25, z: 35, w: 25}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7867cbaba8db4a0b0800000000000000
-      internalID: -5718237223317637497
+      spriteID: 9bde2105944581bc0800000000000000
+      internalID: -3812204410716361287
       vertices: []
       indices: 
       edges: []
@@ -387,7 +360,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1e4c6129d4fb56a41ad5d36846f837f7
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -397,6 +370,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Barra_marco: 7448896690590206866
+      Corazon_lleno: 2616604422387014842
+      Corazon_vacio: 5249732557364212421
+      Icono_ojo: 5775968916149858724
+      Icono_vela: 7048196627222154973
+      Placa_normal: 303255890616391423
+      Placa_presionada: -3812204410716361287
+      Placa_resaltada: -2382957213616447671
       interfaz_0: -2409272936196567603
       interfaz_1: 4700643413833133030
       interfaz_10: 3017284274608273543
@@ -404,25 +385,8 @@ TextureImporter:
       interfaz_12: 483932880514320753
       interfaz_13: 6465575624634537881
       interfaz_14: 2355107933617225778
-      interfaz_15: -8476249302212325158
-      interfaz_16: 5817167582187855655
-      interfaz_17: 7032986072246366317
-      interfaz_18: 366624568735453908
-      interfaz_19: 3682904761829542535
       interfaz_2: -3866084540776588118
-      interfaz_20: -983126135930233142
-      interfaz_21: 9154815422126665164
-      interfaz_22: 5472307542107663618
-      interfaz_23: 462710552615312618
-      interfaz_24: -7852670188008325259
-      interfaz_25: -2814082431767022929
-      interfaz_26: -1060095489002758596
-      interfaz_27: -7758411318558653222
-      interfaz_28: 682525414088899469
-      interfaz_29: 6449693077889384496
       interfaz_3: -2073342591278704176
-      interfaz_30: 4957191181344720977
-      interfaz_31: -518052768470609029
       interfaz_4: 4823597492908078862
       interfaz_5: -3958010941758710621
       interfaz_6: -4306137685424465282

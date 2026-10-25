@@ -6,8 +6,29 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Splash.unity
+    guid: f0ea86156b7df9f419f02d2a0a54e0a5
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 6b9bf8dbf42d3434f8682c8d4d3aa9b1
+  - enabled: 1
+    path: Assets/Scenes/LevelSelect.unity
+    guid: 0900a6ae3e574e240bb3417baf818b39
+  - enabled: 1
     path: Assets/Scenes/Level1_Mercado.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Level2_Callejon.unity
+    guid: 28c74efb3a6b3b14886e499b81f1e278
+  - enabled: 1
+    path: Assets/Scenes/Level3_Atrio.unity
+    guid: a60c21ffbcbf00d4e99d499af0f4bd2a
+  - enabled: 1
+    path: Assets/Scenes/Level4_Cementerio.unity
+    guid: f317ffb723a44cf459bcf3be356684d5
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: 0366d3bf98f20e346850452930d66e1b
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

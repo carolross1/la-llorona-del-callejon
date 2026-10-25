@@ -1,0 +1,596 @@
+fileFormatVersion: 2
+guid: c1a77602bd426a24ba779be65db6c85f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4074174273247414531
+    second: Botellas_charcolodo_Nvl1_0
+  - first:
+      213: 3361213705063818028
+    second: Botellas_charcolodo_Nvl1_1
+  - first:
+      213: -5551970673423187864
+    second: Botellas_charcolodo_Nvl1_2
+  - first:
+      213: -8298886238668999520
+    second: Botellas_charcolodo_Nvl1_3
+  - first:
+      213: 4977500036544306397
+    second: Botellas_charcolodo_Nvl1_4
+  - first:
+      213: 6839495979372030624
+    second: Botellas_charcolodo_Nvl1_5
+  - first:
+      213: 8487579009032702187
+    second: Botellas_charcolodo_Nvl1_6
+  - first:
+      213: 6453169016319980467
+    second: Botellas_charcolodo_Nvl1_7
+  - first:
+      213: -2768656220445340976
+    second: Botellas_charcolodo_Nvl1_8
+  - first:
+      213: -3395165145103458943
+    second: Botellas_charcolodo_Nvl1_9
+  - first:
+      213: -1115347931167588289
+    second: Botellas_charcolodo_Nvl1_10
+  - first:
+      213: 6420569617771254492
+    second: Botellas_charcolodo_Nvl1_11
+  - first:
+      213: 111328803437274520
+    second: Botellas_charcolodo_Nvl1_12
+  - first:
+      213: 5982715876616421603
+    second: Botellas_charcolodo_Nvl1_13
+  - first:
+      213: -4279580731377595388
+    second: Botellas_charcolodo_Nvl1_14
+  - first:
+      213: 2372830473574318459
+    second: Botellas_charcolodo_Nvl1_15
+  - first:
+      213: 7181179822767952271
+    second: Botellas_charcolodo_Nvl1_16
+  - first:
+      213: 1166327640692242081
+    second: Charco_0
+  - first:
+      213: -9183845813423704007
+    second: Charco_1
+  - first:
+      213: -833661765867563983
+    second: Charco_2
+  - first:
+      213: -6111835899939858239
+    second: Charco_3
+  - first:
+      213: -433073277875214936
+    second: Charco_4
+  - first:
+      213: -6014380447743093337
+    second: Charco_5
+  - first:
+      213: 6621269108871871932
+    second: Botella_0
+  - first:
+      213: -2176477371184306051
+    second: Botella_1
+  - first:
+      213: 4509949678261678953
+    second: Botella_2
+  - first:
+      213: -7161791373059898468
+    second: Botella_3
+  - first:
+      213: -687396201950346467
+    second: Botella_4
+  - first:
+      213: -1894571251569686062
+    second: Botella_5
+  - first:
+      213: -5291618423968664416
+    second: Botella_6
+  - first:
+      213: -855377781750972076
+    second: Botella_7
+  - first:
+      213: 5395140078321462668
+    second: Botella_verde
+  - first:
+      213: -7482810945818883117
+    second: Botella_ambar
+  - first:
+      213: 7401739401963354044
+    second: Botella_transparente_acostada
+  - first:
+      213: 670746926360656783
+    second: Botella_ambar_etiqueta_acostada
+  - first:
+      213: 2563686742898943008
+    second: Botella_rota
+  - first:
+      213: 6890081438637268488
+    second: Vidrios_rotos
+  - first:
+      213: 2846463474443584426
+    second: Botellas_caidas
+  - first:
+      213: 4274941351476404113
+    second: Botella_azul
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 165
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Charco_0
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 789
+        width: 238
+        height: 154
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a63e2b4fc0af2010800000000000000
+      internalID: 1166327640692242081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Charco_1
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 765
+        width: 358
+        height: 191
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 938fbea04ec6c8080800000000000000
+      internalID: -9183845813423704007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Charco_2
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 725
+        width: 636
+        height: 250
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13493a67a0d3e64f0800000000000000
+      internalID: -833661765867563983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Charco_3
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 425
+        width: 337
+        height: 266
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c8da9281a56e2ba0800000000000000
+      internalID: -6111835899939858239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Charco_4
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 425
+        width: 372
+        height: 274
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a5a886f52a6df9f0800000000000000
+      internalID: -433073277875214936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Charco_5
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 463
+        width: 595
+        height: 272
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a5d73c29d0a88ca0800000000000000
+      internalID: -6014380447743093337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botella_verde
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 49
+        width: 168
+        height: 179
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8de2d901536fda40800000000000000
+      internalID: 5395140078321462668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botella_ambar
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 51
+        width: 241
+        height: 154
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3db8f052717b72890800000000000000
+      internalID: -7482810945818883117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botella_transparente_acostada
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 49
+        width: 257
+        height: 165
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb7b90e15c248b660800000000000000
+      internalID: 7401739401963354044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botella_ambar_etiqueta_acostada
+      rect:
+        serializedVersion: 2
+        x: 1135
+        y: 48
+        width: 80
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8b79e796c8fe4900800000000000000
+      internalID: 670746926360656783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botella_rota
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 264
+        width: 78
+        height: 189
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024aed9728b049320800000000000000
+      internalID: 2563686742898943008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vidrios_rotos
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 264
+        width: 80
+        height: 188
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e9c7f209c7e9f50800000000000000
+      internalID: 6890081438637268488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_caidas
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 279
+        width: 212
+        height: 132
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa38554e27ba08720800000000000000
+      internalID: 2846463474443584426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botella_azul
+      rect:
+        serializedVersion: 2
+        x: 1058
+        y: 273
+        width: 244
+        height: 136
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19f11627284a35b30800000000000000
+      internalID: 4274941351476404113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Botella_0: 6621269108871871932
+      Botella_1: -2176477371184306051
+      Botella_2: 4509949678261678953
+      Botella_3: -7161791373059898468
+      Botella_4: -687396201950346467
+      Botella_5: -1894571251569686062
+      Botella_6: -5291618423968664416
+      Botella_7: -855377781750972076
+      Botella_ambar: -7482810945818883117
+      Botella_ambar_etiqueta_acostada: 670746926360656783
+      Botella_azul: 4274941351476404113
+      Botella_rota: 2563686742898943008
+      Botella_transparente_acostada: 7401739401963354044
+      Botella_verde: 5395140078321462668
+      Botellas_caidas: 2846463474443584426
+      Botellas_charcolodo_Nvl1_0: 4074174273247414531
+      Botellas_charcolodo_Nvl1_1: 3361213705063818028
+      Botellas_charcolodo_Nvl1_10: -1115347931167588289
+      Botellas_charcolodo_Nvl1_11: 6420569617771254492
+      Botellas_charcolodo_Nvl1_12: 111328803437274520
+      Botellas_charcolodo_Nvl1_13: 5982715876616421603
+      Botellas_charcolodo_Nvl1_14: -4279580731377595388
+      Botellas_charcolodo_Nvl1_15: 2372830473574318459
+      Botellas_charcolodo_Nvl1_16: 7181179822767952271
+      Botellas_charcolodo_Nvl1_2: -5551970673423187864
+      Botellas_charcolodo_Nvl1_3: -8298886238668999520
+      Botellas_charcolodo_Nvl1_4: 4977500036544306397
+      Botellas_charcolodo_Nvl1_5: 6839495979372030624
+      Botellas_charcolodo_Nvl1_6: 8487579009032702187
+      Botellas_charcolodo_Nvl1_7: 6453169016319980467
+      Botellas_charcolodo_Nvl1_8: -2768656220445340976
+      Botellas_charcolodo_Nvl1_9: -3395165145103458943
+      Charco_0: 1166327640692242081
+      Charco_1: -9183845813423704007
+      Charco_2: -833661765867563983
+      Charco_3: -6111835899939858239
+      Charco_4: -433073277875214936
+      Charco_5: -6014380447743093337
+      Vidrios_rotos: 6890081438637268488
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

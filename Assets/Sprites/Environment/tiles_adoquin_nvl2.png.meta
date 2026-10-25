@@ -1,0 +1,444 @@
+fileFormatVersion: 2
+guid: 5f0f1329d2b2b9b46bc0aacc1fbc1e1b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2593373373863957992
+    second: tiles_adoquin_nvl2_0
+  - first:
+      213: 852262500289627392
+    second: tiles_adoquin_nvl2_1
+  - first:
+      213: -5157465780813658779
+    second: tiles_adoquin_nvl2_2
+  - first:
+      213: 3476676976184125695
+    second: tiles_adoquin_nvl2_3
+  - first:
+      213: 8865916864333145272
+    second: tiles_adoquin_nvl2_4
+  - first:
+      213: -3809250386077830402
+    second: tiles_adoquin_nvl2_5
+  - first:
+      213: -6799682043447828563
+    second: tiles_adoquin_nvl2_6
+  - first:
+      213: -5264191407082896189
+    second: tiles_adoquin_nvl2_7
+  - first:
+      213: 1276659430802853037
+    second: tiles_adoquin_nvl2_8
+  - first:
+      213: -1528410086548528732
+    second: tiles_adoquin_nvl2_9
+  - first:
+      213: -7999780561440106421
+    second: tiles_adoquin_nvl2_10
+  - first:
+      213: -4476519286600882027
+    second: tiles_adoquin_nvl2_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_0
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 569
+        width: 225
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81ae1e028ac720cd0800000000000000
+      internalID: -2593373373863957992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_1
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 568
+        width: 223
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00546218a38d3db00800000000000000
+      internalID: 852262500289627392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_2
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 569
+        width: 224
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5658e51a2300d68b0800000000000000
+      internalID: -5157465780813658779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_3
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 569
+        width: 223
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff8eb342a43af3030800000000000000
+      internalID: 3476676976184125695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_4
+      rect:
+        serializedVersion: 2
+        x: 1027
+        y: 569
+        width: 226
+        height: 241
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b4e8ba1a601a0b70800000000000000
+      internalID: 8865916864333145272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_5
+      rect:
+        serializedVersion: 2
+        x: 1279
+        y: 568
+        width: 224
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef2bf45c4f2d22bc0800000000000000
+      internalID: -3809250386077830402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_6
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 283
+        width: 224
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daf90be253da2a1a0800000000000000
+      internalID: -6799682043447828563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_7
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 283
+        width: 223
+        height: 245
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c4092f5ec5d1f6b0800000000000000
+      internalID: -5264191407082896189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_8
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 283
+        width: 223
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dac08200dfa97b110800000000000000
+      internalID: 1276659430802853037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_9
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 283
+        width: 223
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a1a628cf1ff9cae0800000000000000
+      internalID: -1528410086548528732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_10
+      rect:
+        serializedVersion: 2
+        x: 1029
+        y: 283
+        width: 224
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b48994ac6f11bf090800000000000000
+      internalID: -7999780561440106421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_adoquin_nvl2_11
+      rect:
+        serializedVersion: 2
+        x: 1279
+        y: 283
+        width: 224
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59828fb2d6530e1c0800000000000000
+      internalID: -4476519286600882027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tiles_adoquin_nvl2_0: -2593373373863957992
+      tiles_adoquin_nvl2_1: 852262500289627392
+      tiles_adoquin_nvl2_10: -7999780561440106421
+      tiles_adoquin_nvl2_11: -4476519286600882027
+      tiles_adoquin_nvl2_2: -5157465780813658779
+      tiles_adoquin_nvl2_3: 3476676976184125695
+      tiles_adoquin_nvl2_4: 8865916864333145272
+      tiles_adoquin_nvl2_5: -3809250386077830402
+      tiles_adoquin_nvl2_6: -6799682043447828563
+      tiles_adoquin_nvl2_7: -5264191407082896189
+      tiles_adoquin_nvl2_8: 1276659430802853037
+      tiles_adoquin_nvl2_9: -1528410086548528732
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

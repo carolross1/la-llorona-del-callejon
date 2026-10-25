@@ -1,0 +1,340 @@
+fileFormatVersion: 2
+guid: c56a2a3f7cd42f34b84feee937550e01
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7122445235485427148
+    second: Contenedores_Sacos_Nvl1_0
+  - first:
+      213: -3160449803123470766
+    second: Contenedores_Sacos_Nvl1_1
+  - first:
+      213: 561022048268188585
+    second: Contenedores_Sacos_Nvl1_2
+  - first:
+      213: 6461886566923905185
+    second: Contenedores_Sacos_Nvl1_3
+  - first:
+      213: 7148638949790738361
+    second: Contenedores_Sacos_Nvl1_4
+  - first:
+      213: -4329156898822339560
+    second: Contenedores_Sacos_Nvl1_5
+  - first:
+      213: -2947054721129018699
+    second: Contenedores_Sacos_Nvl1_6
+  - first:
+      213: -8458154574388148053
+    second: Sacos_0
+  - first:
+      213: -7866321199655864957
+    second: Sacos_1
+  - first:
+      213: -6607672780576030206
+    second: Sacos_2
+  - first:
+      213: -9013055863583616405
+    second: Sacos_3
+  - first:
+      213: -5903257860232258392
+    second: Sacos_4
+  - first:
+      213: 5587665615309815839
+    second: Sacos_5
+  - first:
+      213: -4587724452019210583
+    second: Huacales_apilados
+  - first:
+      213: -8221893034124397275
+    second: Huacal_roto_paja
+  - first:
+      213: -1341352161456831063
+    second: Canasta_vacia
+  - first:
+      213: 802272081280242373
+    second: Canasta_chiles
+  - first:
+      213: -9036580125001434822
+    second: Costales_apilados
+  - first:
+      213: -6248943152375585458
+    second: Costal_maiz_abierto
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 190
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Huacales_apilados
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 571
+        width: 341
+        height: 398
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a6750eeae02550c0800000000000000
+      internalID: -4587724452019210583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Huacal_roto_paja
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 570
+        width: 393
+        height: 387
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 525b1cfc8d7f5ed80800000000000000
+      internalID: -8221893034124397275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Canasta_vacia
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 599
+        width: 335
+        height: 310
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a5c9a1e05f826de0800000000000000
+      internalID: -1341352161456831063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Canasta_chiles
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 130
+        width: 334
+        height: 337
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c21ce1153e322b00800000000000000
+      internalID: 802272081280242373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Costales_apilados
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 88
+        width: 362
+        height: 411
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a393fe0114e979280800000000000000
+      internalID: -9036580125001434822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Costal_maiz_abierto
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 76
+        width: 341
+        height: 419
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e452b0daf4b4749a0800000000000000
+      internalID: -6248943152375585458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Canasta_chiles: 802272081280242373
+      Canasta_vacia: -1341352161456831063
+      Contenedores_Sacos_Nvl1_0: -7122445235485427148
+      Contenedores_Sacos_Nvl1_1: -3160449803123470766
+      Contenedores_Sacos_Nvl1_2: 561022048268188585
+      Contenedores_Sacos_Nvl1_3: 6461886566923905185
+      Contenedores_Sacos_Nvl1_4: 7148638949790738361
+      Contenedores_Sacos_Nvl1_5: -4329156898822339560
+      Contenedores_Sacos_Nvl1_6: -2947054721129018699
+      Costal_maiz_abierto: -6248943152375585458
+      Costales_apilados: -9036580125001434822
+      Huacal_roto_paja: -8221893034124397275
+      Huacales_apilados: -4587724452019210583
+      Sacos_0: -8458154574388148053
+      Sacos_1: -7866321199655864957
+      Sacos_2: -6607672780576030206
+      Sacos_3: -9013055863583616405
+      Sacos_4: -5903257860232258392
+      Sacos_5: 5587665615309815839
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

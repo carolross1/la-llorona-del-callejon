@@ -11,6 +11,24 @@ TextureImporter:
   - first:
       213: -6231604365672047681
     second: Puertas_nvl2_2
+  - first:
+      213: 6939393032692566102
+    second: PuertaNvl2_0
+  - first:
+      213: 3933720969502020822
+    second: PuertaNvl2_1
+  - first:
+      213: 7870528127214136823
+    second: PuertaNvl2_2
+  - first:
+      213: -8909987091062915374
+    second: Puerta_0
+  - first:
+      213: -7747228335304461618
+    second: Puerta_1
+  - first:
+      213: 263546889747250665
+    second: Puerta_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -43,7 +61,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -57,7 +75,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 140
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -83,7 +101,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -121,67 +139,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Puertas_nvl2_0
+      name: Puerta_0
       rect:
         serializedVersion: 2
-        x: 38
-        y: 279
-        width: 465
-        height: 527
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 60
+        y: 180
+        width: 420
+        height: 680
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dfafbcb400e056800800000000000000
-      internalID: 604905119385647869
+      spriteID: 2def0e3a2fd595480800000000000000
+      internalID: -8909987091062915374
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Puertas_nvl2_1
+      name: Puerta_1
       rect:
         serializedVersion: 2
-        x: 539
-        y: 284
-        width: 456
-        height: 534
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 550
+        y: 180
+        width: 420
+        height: 680
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cacda9db391122c20800000000000000
-      internalID: 3180123613115899052
+      spriteID: ec2365820e05c7490800000000000000
+      internalID: -7747228335304461618
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Puertas_nvl2_2
+      name: Puerta_2
       rect:
         serializedVersion: 2
-        x: 1032
-        y: 284
-        width: 462
-        height: 534
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1040
+        y: 180
+        width: 420
+        height: 680
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fbb185b88d4e489a0800000000000000
-      internalID: -6231604365672047681
+      spriteID: 9ed3b09ff7e48a300800000000000000
+      internalID: 263546889747250665
       vertices: []
       indices: 
       edges: []
@@ -200,6 +218,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      PuertaNvl2_0: 6939393032692566102
+      PuertaNvl2_1: 3933720969502020822
+      PuertaNvl2_2: 7870528127214136823
+      Puerta_0: -8909987091062915374
+      Puerta_1: -7747228335304461618
+      Puerta_2: 263546889747250665
       Puertas_nvl2_0: 604905119385647869
       Puertas_nvl2_1: 3180123613115899052
       Puertas_nvl2_2: -6231604365672047681

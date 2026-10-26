@@ -1,4 +1,4 @@
-// Assets/Editor/Level3Builder.cs
+﻿// Assets/Editor/Level3Builder.cs
 using System;
 using System.IO;
 using System.Linq;
@@ -43,6 +43,7 @@ public static class Level3Builder
         Sprite[] hideSprites = LoadSubSprites("Assets/Sprites/Environment/escondites.png");
         Sprite[] decorSprites = LoadSubSprites("Assets/Sprites/Environment/decoracion.png");
         Sprite velaSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/vela.png");
+        Sprite[] salidas = LoadSubSprites("Assets/Sprites/Environment/Salidas.png");
 
         // 1. Grid y Tilemaps
         GameObject gridGo = GameObject.Find("Grid") ?? new GameObject("Grid");
@@ -125,7 +126,8 @@ public static class Level3Builder
         CreateCandlePickup(candlesRoot, "Vela_3", velaSprite, new Vector2(27.0f, 6.0f));
 
         // 6. Portal Monumental de Salida (X ≈ 35.0, Y = 13.0)
-        CreateExitPortal(props, 35.0f, 13.0f);
+        Sprite exitSprite = (salidas != null && salidas.Length > 2) ? salidas[2] : (salidas != null && salidas.Length > 0 ? salidas[0] : null);
+        CreateExitPortal(props, 35.0f, 13.0f, exitSprite);
 
         // 7. Iluminación Global
         EnsureGlobalLight(0.50f);
@@ -294,7 +296,7 @@ public static class Level3Builder
 
     static void CreateMudPuddle(Transform parent, float x, float y, float scale = 1.0f)
     {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/charco_lodo.png");
+        Sprite sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Botellas_charcolodo_Nvl1.png").OfType<Sprite>().FirstOrDefault(s => s.name.StartsWith("Charco"));
         GameObject go = new GameObject("Charco_Lodo");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
@@ -314,7 +316,7 @@ public static class Level3Builder
 
     static void CreateNoiseObstacle(Transform parent, float x, float y)
     {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/basura_ruido.png");
+        Sprite sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Botellas_charcolodo_Nvl1.png").OfType<Sprite>().FirstOrDefault(s => s.name.StartsWith("Botella"));
         GameObject go = new GameObject("Basura_Ruido");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
@@ -333,7 +335,7 @@ public static class Level3Builder
 
     static void CreateStrayDog(Transform parent, float x, float y)
     {
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/perro_callejero.png");
+        Sprite sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Perro/perro.png").OfType<Sprite>().FirstOrDefault();
         GameObject go = new GameObject("Perro_Callejero");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
@@ -359,9 +361,9 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero");
     }
 
-    static void CreateExitPortal(Transform parent, float x, float y)
+    static void CreateExitPortal(Transform parent, float x, float y, Sprite customSprite = null)
     {
-        Sprite portalSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Environment/portal_meta.png");
+        Sprite portalSprite = customSprite ?? AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Salidas.png").OfType<Sprite>().FirstOrDefault();
 
         GameObject go = new GameObject("Portal_Salida_Meta");
         go.transform.SetParent(parent, false);
@@ -523,7 +525,9 @@ public static class Level3Builder
         {
             player = new GameObject("Player");
             player.tag = "Player";
-            player.AddComponent<Rigidbody2D>().gravityScale = 0f;
+            Rigidbody2D rb = player.AddComponent<Rigidbody2D>();
+            rb.gravityScale = 0f;
+            rb.freezeRotation = true;
             player.AddComponent<CircleCollider2D>().radius = 0.4f;
             player.AddComponent<SpriteRenderer>().sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Player/Carlos.png");
             player.AddComponent<PlayerMovement>();
@@ -531,6 +535,9 @@ public static class Level3Builder
             player.AddComponent<HideSystem>();
         }
         player.transform.position = new Vector3(pos.x, pos.y, 0f);
+        player.transform.rotation = Quaternion.identity;
+        var prb = player.GetComponent<Rigidbody2D>();
+        if (prb != null) { prb.freezeRotation = true; prb.gravityScale = 0f; }
         if (playerLayer >= 0) player.layer = playerLayer;
     }
 
@@ -540,6 +547,9 @@ public static class Level3Builder
         if (llorona == null) return;
         Undo.RecordObject(llorona.transform, "Posicionar Llorona");
         llorona.transform.position = new Vector3(pos.x, pos.y, 0f);
+        llorona.transform.rotation = Quaternion.identity;
+        var lrb = llorona.GetComponent<Rigidbody2D>();
+        if (lrb != null) { lrb.freezeRotation = true; lrb.gravityScale = 0f; }
         if (lloronaLayer >= 0) llorona.gameObject.layer = lloronaLayer;
 
         SerializedObject so = new SerializedObject(llorona);

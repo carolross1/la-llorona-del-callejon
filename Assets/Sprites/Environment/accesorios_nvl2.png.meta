@@ -14,6 +14,30 @@ TextureImporter:
   - first:
       213: -2623847190539031161
     second: accesorios_nvl2_3
+  - first:
+      213: 1617120062360059134
+    second: Accesorio_Farol
+  - first:
+      213: -8586353396860419347
+    second: Accesorio_Maceta
+  - first:
+      213: 8657655688708123312
+    second: Accesorio_BalconGrande
+  - first:
+      213: 3590225195334832765
+    second: Accesorio_Balcon
+  - first:
+      213: -7642577124535122333
+    second: Maceta_colgante
+  - first:
+      213: 6071268023172599411
+    second: Maceta_suelo_seca
+  - first:
+      213: 4555391945890216198
+    second: Balcon_hierro
+  - first:
+      213: -4680580872996734868
+    second: Farol_pared
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +70,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -60,7 +84,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 150
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -86,7 +110,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -124,89 +148,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: accesorios_nvl2_0
+      name: Maceta_colgante
       rect:
         serializedVersion: 2
-        x: 363
-        y: 572
-        width: 260
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9136f4109830ce2d0800000000000000
-      internalID: -3248217344273587431
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: accesorios_nvl2_1
-      rect:
-        serializedVersion: 2
-        x: 865
-        y: 540
-        width: 286
-        height: 442
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 712e483783ee8f2b0800000000000000
-      internalID: -5550424614510468585
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: accesorios_nvl2_2
-      rect:
-        serializedVersion: 2
-        x: 262
-        y: 52
-        width: 450
-        height: 450
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0f4efee8a6be4ba90800000000000000
-      internalID: -7298950253163584272
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: accesorios_nvl2_3
-      rect:
-        serializedVersion: 2
-        x: 899
-        y: 91
-        width: 272
+        x: 90
+        y: 550
+        width: 280
         height: 400
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 78da307c1e8369bd0800000000000000
-      internalID: -2623847190539031161
+      spriteID: 366ce8be89c10f590800000000000000
+      internalID: -7642577124535122333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maceta_suelo_seca
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 550
+        width: 280
+        height: 360
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37e0461a91a714450800000000000000
+      internalID: 6071268023172599411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Balcon_hierro
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 520
+        width: 650
+        height: 380
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 609367bd6d0083f30800000000000000
+      internalID: 4555391945890216198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Farol_pared
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 80
+        width: 260
+        height: 380
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c68ba8aae7c3b0fb0800000000000000
+      internalID: -4680580872996734868
       vertices: []
       indices: 
       edges: []
@@ -225,6 +249,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Accesorio_Balcon: 3590225195334832765
+      Accesorio_BalconGrande: 8657655688708123312
+      Accesorio_Farol: 1617120062360059134
+      Accesorio_Maceta: -8586353396860419347
+      Balcon_hierro: 4555391945890216198
+      Farol_pared: -4680580872996734868
+      Maceta_colgante: -7642577124535122333
+      Maceta_suelo_seca: 6071268023172599411
       accesorios_nvl2_0: -3248217344273587431
       accesorios_nvl2_1: -5550424614510468585
       accesorios_nvl2_2: -7298950253163584272

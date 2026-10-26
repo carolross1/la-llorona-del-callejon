@@ -1,0 +1,574 @@
+fileFormatVersion: 2
+guid: 1c81d3dc3d902c54f9a187ab6426c557
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4074174273247414531
+    second: Botellas_charcolodo_Nvl1_0
+  - first:
+      213: 3361213705063818028
+    second: Botellas_charcolodo_Nvl1_1
+  - first:
+      213: -5551970673423187864
+    second: Botellas_charcolodo_Nvl1_2
+  - first:
+      213: -8298886238668999520
+    second: Botellas_charcolodo_Nvl1_3
+  - first:
+      213: 4977500036544306397
+    second: Botellas_charcolodo_Nvl1_4
+  - first:
+      213: 6839495979372030624
+    second: Botellas_charcolodo_Nvl1_5
+  - first:
+      213: 8487579009032702187
+    second: Botellas_charcolodo_Nvl1_6
+  - first:
+      213: 6453169016319980467
+    second: Botellas_charcolodo_Nvl1_7
+  - first:
+      213: -2768656220445340976
+    second: Botellas_charcolodo_Nvl1_8
+  - first:
+      213: -3395165145103458943
+    second: Botellas_charcolodo_Nvl1_9
+  - first:
+      213: -1115347931167588289
+    second: Botellas_charcolodo_Nvl1_10
+  - first:
+      213: 6420569617771254492
+    second: Botellas_charcolodo_Nvl1_11
+  - first:
+      213: 111328803437274520
+    second: Botellas_charcolodo_Nvl1_12
+  - first:
+      213: 5982715876616421603
+    second: Botellas_charcolodo_Nvl1_13
+  - first:
+      213: -4279580731377595388
+    second: Botellas_charcolodo_Nvl1_14
+  - first:
+      213: 2372830473574318459
+    second: Botellas_charcolodo_Nvl1_15
+  - first:
+      213: 7181179822767952271
+    second: Botellas_charcolodo_Nvl1_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_0
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 786
+        width: 244
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30982f56aef5a8830800000000000000
+      internalID: 4074174273247414531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_1
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 763
+        width: 364
+        height: 195
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c23e0886e0e65ae20800000000000000
+      internalID: 3361213705063818028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_2
+      rect:
+        serializedVersion: 2
+        x: 923
+        y: 758
+        width: 518
+        height: 229
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 860893f861073f2b0800000000000000
+      internalID: -5551970673423187864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_3
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 527
+        width: 241
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a4b1c07fee64dc80800000000000000
+      internalID: -8298886238668999520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_4
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 499
+        width: 377
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddc97bb49e1a31540800000000000000
+      internalID: 4977500036544306397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_5
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 459
+        width: 602
+        height: 279
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0aaae252b55caee50800000000000000
+      internalID: 6839495979372030624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_6
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 261
+        width: 83
+        height: 195
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be8c47cb320f9c570800000000000000
+      internalID: 8487579009032702187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_7
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 261
+        width: 85
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b33f4da7034e8950800000000000000
+      internalID: 6453169016319980467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_8
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 276
+        width: 217
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0da0e2326d1c399d0800000000000000
+      internalID: -2768656220445340976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_9
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 271
+        width: 248
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18d1254f943f1e0d0800000000000000
+      internalID: -3395165145103458943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_10
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 46
+        width: 174
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f300ac947fc7580f0800000000000000
+      internalID: -1115347931167588289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_11
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 125
+        width: 33
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2dbeabc027a1950800000000000000
+      internalID: 6420569617771254492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_12
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 49
+        width: 222
+        height: 159
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 895e526f4f48b8100800000000000000
+      internalID: 111328803437274520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_13
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 46
+        width: 266
+        height: 171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e0cfc95460e60350800000000000000
+      internalID: 5982715876616421603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_14
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 45
+        width: 84
+        height: 205
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40cc1aebfffdb94c0800000000000000
+      internalID: -4279580731377595388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_15
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 104
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b718e917ebcfde020800000000000000
+      internalID: 2372830473574318459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Botellas_charcolodo_Nvl1_16
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 48
+        width: 39
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f815944500da8a360800000000000000
+      internalID: 7181179822767952271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Botellas_charcolodo_Nvl1_0: 4074174273247414531
+      Botellas_charcolodo_Nvl1_1: 3361213705063818028
+      Botellas_charcolodo_Nvl1_10: -1115347931167588289
+      Botellas_charcolodo_Nvl1_11: 6420569617771254492
+      Botellas_charcolodo_Nvl1_12: 111328803437274520
+      Botellas_charcolodo_Nvl1_13: 5982715876616421603
+      Botellas_charcolodo_Nvl1_14: -4279580731377595388
+      Botellas_charcolodo_Nvl1_15: 2372830473574318459
+      Botellas_charcolodo_Nvl1_16: 7181179822767952271
+      Botellas_charcolodo_Nvl1_2: -5551970673423187864
+      Botellas_charcolodo_Nvl1_3: -8298886238668999520
+      Botellas_charcolodo_Nvl1_4: 4977500036544306397
+      Botellas_charcolodo_Nvl1_5: 6839495979372030624
+      Botellas_charcolodo_Nvl1_6: 8487579009032702187
+      Botellas_charcolodo_Nvl1_7: 6453169016319980467
+      Botellas_charcolodo_Nvl1_8: -2768656220445340976
+      Botellas_charcolodo_Nvl1_9: -3395165145103458943
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

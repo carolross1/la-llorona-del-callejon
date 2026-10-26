@@ -12,21 +12,12 @@ public static class SpriteAssetGenerator
     [MenuItem("La Llorona/Generar Sprites del Juego")]
     public static void GenerateAllSprites()
     {
-        Directory.CreateDirectory("Assets/Sprites/UI");
-        Directory.CreateDirectory("Assets/Sprites/Environment");
-
-        GenerateHudCard();
-        GenerateGoalArrow();
-        GeneratePuddleSprite();
-        GenerateTrashNoiseSprite();
-        GenerateStrayDogSprite();
-        GenerateExitPortalSprite();
-
-        // Recortar y configurar con precisión milimétrica todos los spritesheets importados
+        // Se desactivó la generación procedural de sprites para cumplir estrictamente con PROMPT_VISUAL.md:
+        // Todo el arte proviene exclusivamente de las hojas oficiales del proyecto.
         SpriteSheetSlicer.SliceAllSpriteSheets();
 
         AssetDatabase.Refresh();
-        Debug.Log("[SpriteAssetGenerator] ¡Todos los sprites generados y actualizados con éxito!");
+        Debug.Log("[SpriteAssetGenerator] ¡Spritesheets oficiales configurados con éxito!");
     }
 
     /// <summary>Tarjeta de HUD con bordes redondeados y marco sutil semitransparente.</summary>

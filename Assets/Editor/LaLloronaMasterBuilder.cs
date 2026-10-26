@@ -11,22 +11,7 @@ public class LaLloronaMasterBuilder : EditorWindow
     [MenuItem("La Llorona/¡CONSTRUIR TODO EL PROYECTO (Un Clic)!")]
     public static void BuildEverything()
     {
-        Debug.Log("[MasterBuilder] Iniciando construcción total del proyecto...");
-
-        // 0. Sprites procedurales de alta calidad para HUD, brújula, obstáculos y enemigos
-        SpriteAssetGenerator.GenerateAllSprites();
-
-        // 1. ScriptableObjects de dificultad (requeridos antes de los niveles)
-        DifficultySettingsBuilder.GenerateAllSettings();
-
-        // 2. Niveles jugables con obstáculos y portales de meta
-        Level1Builder.BuildLevel1Scene();
-        Level2Builder.BuildLevel2Scene();
-        Level3Builder.BuildLevel3Scene();
-        Level4Builder.BuildLevel4Scene();
-
-        // 3. Escenas de menú, HUD reestilizado y Build Settings
-        UIBuilder.BuildAllScenesAndUI();
+        BuildEverythingSilent();
 
         EditorUtility.DisplayDialog(
             "La Llorona del Callejón",
@@ -42,6 +27,33 @@ public class LaLloronaMasterBuilder : EditorWindow
             "Para jugar: abre Assets/Scenes/Splash.unity y presiona ▶ Play.",
             "¡Excelente!"
         );
+    }
+
+    public static void BuildEverythingSilent()
+    {
+        if (EditorApplication.isPlaying)
+        {
+            Debug.LogWarning("[MasterBuilder] Deteniendo Modo Juego antes de construir...");
+            EditorApplication.isPlaying = false;
+        }
+
+        Debug.Log("[MasterBuilder] Iniciando construcción total del proyecto...");
+
+        // 0. Sprites procedurales y recorte de spritesheets
+        SpriteSheetSlicer.SliceAllSpriteSheets();
+        SpriteAssetGenerator.GenerateAllSprites();
+
+        // 1. ScriptableObjects de dificultad (requeridos antes de los niveles)
+        DifficultySettingsBuilder.GenerateAllSettings();
+
+        // 2. Niveles jugables con obstáculos y portales de meta
+        Level1Builder.BuildLevel1Scene();
+        Level2Builder.BuildLevel2Scene();
+        Level3Builder.BuildLevel3Scene();
+        Level4Builder.BuildLevel4Scene();
+
+        // 3. Escenas de menú, HUD reestilizado y Build Settings
+        UIBuilder.BuildAllScenesAndUI();
 
         Debug.Log("[MasterBuilder] ¡Construcción total completada!");
     }

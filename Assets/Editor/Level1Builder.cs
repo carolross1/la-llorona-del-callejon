@@ -552,6 +552,10 @@ public static class Level1Builder
         var walkProp = so.FindProperty("walkWakeRadius");
         if (walkProp != null) walkProp.floatValue = 2.5f;
 
+        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
+        var barkProp = so.FindProperty("barkSfx");
+        if (barkProp != null) barkProp.objectReferenceValue = sfxPerros;
+
         so.ApplyModifiedProperties();
 
         Rigidbody2D rb = go.AddComponent<Rigidbody2D>();
@@ -789,6 +793,18 @@ public static class Level1Builder
             if (player.GetComponent<PlayerAnimation>() == null)
                 player.AddComponent<PlayerAnimation>();
 
+            PlayerAnimation pa = player.GetComponent<PlayerAnimation>();
+            if (pa != null)
+            {
+                AudioClip sfxPasosLentos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_lentos.wav");
+                AudioClip sfxPasosRapidos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_rapidos.wav");
+                SerializedObject soPa = new SerializedObject(pa);
+                soPa.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
+                soPa.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
+                soPa.ApplyModifiedProperties();
+                EditorUtility.SetDirty(pa);
+            }
+
             // Luz 2D puntual suave y cálida que sigue al jugador (halo tenue de linterna/vela)
             Transform existingLight = player.transform.Find("LuzCarlos");
             GameObject pLightGo = existingLight != null ? existingLight.gameObject : new GameObject("LuzCarlos");
@@ -872,7 +888,12 @@ public static class Level1Builder
         if (s1 != null)
             so.FindProperty("settings").objectReferenceValue = s1;
 
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+        var screamProp = so.FindProperty("screamSfx");
+        if (screamProp != null) screamProp.objectReferenceValue = sfxLlorona;
+
         so.ApplyModifiedProperties();
+        EditorUtility.SetDirty(llorona);
     }
 
     static void SetupCamera(Vector2 pos)
@@ -909,6 +930,97 @@ public static class Level1Builder
         }
         gm.SetLevelNumber(1);
         EditorUtility.SetDirty(gm);
+
+        // Configuración centralizada de AudioManager para Nivel 1
+        AudioManager am = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
+        if (am == null)
+        {
+            GameObject oldAm = GameObject.Find("AudioManager");
+            if (oldAm != null) Undo.DestroyObjectImmediate(oldAm);
+
+            GameObject amGo = new GameObject("AudioManager");
+            am = amGo.AddComponent<AudioManager>();
+            Undo.RegisterCreatedObjectUndo(amGo, "AudioManager");
+        }
+
+        AudioClip n1Music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Music/Nivel1/Breath_Behind_the_Stall.mp3");
+        AudioClip sfxPasosLentos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_lentos.wav");
+        AudioClip sfxPasosRapidos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_rapidos.wav");
+        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+
+        SerializedObject soAm = new SerializedObject(am);
+        soAm.FindProperty("musicaNivel").objectReferenceValue = n1Music;
+        soAm.FindProperty("musicaNivel1").objectReferenceValue = n1Music;
+        soAm.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
+        soAm.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
+        soAm.FindProperty("perrosAullando").objectReferenceValue = sfxPerros;
+        soAm.FindProperty("lloronaGrito").objectReferenceValue = sfxLlorona;
+        soAm.ApplyModifiedProperties();
+        EditorUtility.SetDirty(am);
+    }
+
+    [MenuItem("La Llorona/Configurar Audios Nivel 1")]
+    public static void ConfigureLevel1AudioMenu()
+    {
+        AudioClip n1Music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Music/Nivel1/Breath_Behind_the_Stall.mp3");
+        AudioClip sfxPasosLentos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_lentos.wav");
+        AudioClip sfxPasosRapidos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_rapidos.wav");
+        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+
+        // 1. AudioManager
+        AudioManager am = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
+        if (am == null)
+        {
+            GameObject amGo = new GameObject("AudioManager");
+            am = amGo.AddComponent<AudioManager>();
+            Undo.RegisterCreatedObjectUndo(amGo, "AudioManager");
+        }
+        SerializedObject soAm = new SerializedObject(am);
+        soAm.FindProperty("musicaNivel").objectReferenceValue = n1Music;
+        soAm.FindProperty("musicaNivel1").objectReferenceValue = n1Music;
+        soAm.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
+        soAm.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
+        soAm.FindProperty("perrosAullando").objectReferenceValue = sfxPerros;
+        soAm.FindProperty("lloronaGrito").objectReferenceValue = sfxLlorona;
+        soAm.ApplyModifiedProperties();
+        EditorUtility.SetDirty(am);
+
+        // 2. Player Footsteps
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            PlayerAnimation pa = player.GetComponent<PlayerAnimation>() ?? player.AddComponent<PlayerAnimation>();
+            SerializedObject soPa = new SerializedObject(pa);
+            soPa.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
+            soPa.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
+            soPa.ApplyModifiedProperties();
+            EditorUtility.SetDirty(pa);
+        }
+
+        // 3. Perro Callejero
+        StrayDogAI dog = UnityEngine.Object.FindAnyObjectByType<StrayDogAI>();
+        if (dog != null)
+        {
+            SerializedObject soDog = new SerializedObject(dog);
+            soDog.FindProperty("barkSfx").objectReferenceValue = sfxPerros;
+            soDog.ApplyModifiedProperties();
+            EditorUtility.SetDirty(dog);
+        }
+
+        // 4. Llorona Grito
+        LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
+        if (llorona != null)
+        {
+            SerializedObject soLlorona = new SerializedObject(llorona);
+            soLlorona.FindProperty("screamSfx").objectReferenceValue = sfxLlorona;
+            soLlorona.ApplyModifiedProperties();
+            EditorUtility.SetDirty(llorona);
+        }
+
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
+        Debug.Log("Audios de Nivel 1 configurados exitosamente en la escena activa.");
     }
 
     static TileBase[] LoadTiles()

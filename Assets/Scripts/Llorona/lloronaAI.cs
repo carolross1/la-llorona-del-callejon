@@ -24,6 +24,12 @@ public class LloronaAI : MonoBehaviour
     [SerializeField] float runNoiseMultiplier = 1.5f;
     [SerializeField] LayerMask obstacleMask;   // Layer Walls
 
+    [Header("Audio SFX (Nivel 1)")]
+    [SerializeField] AudioClip screamSfx;
+    [Range(0f, 1f)] [SerializeField] float screamVolume = 0.95f;
+    [SerializeField] AudioSource audioSource;
+    float lastScreamTime = -99f;
+
     Rigidbody2D rb;
     PlayerMovement player;
     State state = State.Patrol;
@@ -47,8 +53,23 @@ public class LloronaAI : MonoBehaviour
             rb.gravityScale = 0f;
         }
         transform.rotation = Quaternion.identity;
+        EnsureAudioSource();
         player = FindAnyObjectByType<PlayerMovement>();
         ApplySettings();
+    }
+
+    void EnsureAudioSource()
+    {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0.65f; // Audio 3D posicional para percibir la dirección del llanto/grito
+        audioSource.minDistance = 2.5f;
+        audioSource.maxDistance = 28.0f;
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
     }
 
     public void SetSettings(LloronaSettings newSettings)
@@ -197,6 +218,37 @@ public class LloronaAI : MonoBehaviour
             HUD.Instance.SetEyeAlert(true);
             HUD.Instance.ShowEventNotice("¡La Llorona te ha visto!", 2.0f);
         }
+
+        PlayScream();
+    }
+
+    void PlayScream()
+    {
+        if (Time.time - lastScreamTime < 8.0f) return;
+        lastScreamTime = Time.time;
+
+        if (screamSfx == null && AudioManager.Instance != null)
+        {
+            screamSfx = AudioManager.Instance.lloronaGrito;
+        }
+        if (screamSfx == null)
+        {
+            screamSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_grito");
+        }
+
+        if (audioSource != null && screamSfx != null)
+        {
+            audioSource.PlayOneShot(screamSfx, screamVolume);
+        }
+        else if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(screamSfx ?? AudioManager.Instance.lloronaGrito, screamVolume);
+        }
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.DuckMusic(5.0f, 0.25f);
+        }
     }
 
     void MoveTo(Vector2 target, float speed)
@@ -258,6 +310,8 @@ public class LloronaAI : MonoBehaviour
         if (player != null && player.IsHidden) return;   // escondido: no lo atrapa
 
         caught = true;
+        PlayScream();
+
         if (GameManager.Instance != null)
             GameManager.Instance.OnPlayerCaught();
         else

@@ -30,6 +30,11 @@ public class StrayDogAI : MonoBehaviour
     [SerializeField] Color sleepColor = new Color(0.98f, 0.92f, 0.82f, 1f); // Tono cálido natural para no perderse en el suelo
     [SerializeField] Color alertColor = new Color(1.15f, 1.10f, 1.0f, 1f);
 
+    [Header("Audio SFX (Nivel 1)")]
+    [SerializeField] AudioClip barkSfx;
+    [Range(0f, 1f)] [SerializeField] float barkVolume = 0.85f;
+    [SerializeField] AudioSource audioSource;
+
     enum DogState { Sleeping, Barking }
     DogState currentState = DogState.Sleeping;
 
@@ -44,6 +49,8 @@ public class StrayDogAI : MonoBehaviour
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
 
+        EnsureAudioSource();
+
         var rb = GetComponent<Rigidbody2D>();
         if (rb != null)
         {
@@ -57,6 +64,21 @@ public class StrayDogAI : MonoBehaviour
         CreateAlertExclamation();
 
         SetSleepingVisuals();
+    }
+
+    void EnsureAudioSource()
+    {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.playOnAwake = false;
+        audioSource.loop = true;
+        audioSource.spatialBlend = 0.5f; // Paneo estéreo con volumen claro en toda la zona
+        audioSource.minDistance = 3.0f;
+        audioSource.maxDistance = 25.0f;
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
     }
 
     void Start()
@@ -168,6 +190,33 @@ public class StrayDogAI : MonoBehaviour
             HUD.Instance.ShowEventNotice("¡El perro callejero despertó y comenzó a ladrar!");
         }
 
+        // Reproducir audio de ladrido/aullido
+        if (barkSfx == null && AudioManager.Instance != null)
+        {
+            barkSfx = AudioManager.Instance.perrosAullando;
+        }
+        if (barkSfx == null)
+        {
+            barkSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perros_aullando");
+        }
+
+        if (audioSource != null && barkSfx != null)
+        {
+            audioSource.clip = barkSfx;
+            audioSource.volume = barkVolume;
+            audioSource.loop = true;
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+
+        // Atenuar música para que el aullido resalte con impacto
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.DuckMusic(4.0f, 0.40f);
+        }
+
         // Alertar a La Llorona hacia este punto exacto
         LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona != null)
@@ -184,7 +233,21 @@ public class StrayDogAI : MonoBehaviour
     {
         currentState = DogState.Sleeping;
         transform.position = basePosition;
+
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
         SetSleepingVisuals();
+    }
+
+    void OnDisable()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
     }
 
     void SetSleepingVisuals()

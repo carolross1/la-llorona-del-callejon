@@ -233,7 +233,11 @@ public class LloronaAI : MonoBehaviour
         }
         if (screamSfx == null)
         {
-            screamSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_grito");
+            screamSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg");
+        }
+        if (screamSfx == null)
+        {
+            screamSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
         }
 
         if (audioSource != null && screamSfx != null)

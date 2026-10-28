@@ -190,14 +190,14 @@ public class StrayDogAI : MonoBehaviour
             HUD.Instance.ShowEventNotice("¡El perro callejero despertó y comenzó a ladrar!");
         }
 
-        // Reproducir audio de ladrido/aullido
+        // Reproducir audio de perro
         if (barkSfx == null && AudioManager.Instance != null)
         {
-            barkSfx = AudioManager.Instance.perrosAullando;
+            barkSfx = AudioManager.Instance.sonidoPerro ?? AudioManager.Instance.perrosAullando;
         }
         if (barkSfx == null)
         {
-            barkSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perros_aullando");
+            barkSfx = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perro");
         }
 
         if (audioSource != null && barkSfx != null)

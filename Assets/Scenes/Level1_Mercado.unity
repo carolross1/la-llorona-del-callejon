@@ -1694,7 +1694,7 @@ MonoBehaviour:
   alertRadius: 18
   cooldown: 3
   brokenSprite: {fileID: 6890081438637268488, guid: c1a77602bd426a24ba779be65db6c85f, type: 3}
-  glassBreakSound: {fileID: 0}
+  glassBreakSound: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
 --- !u!61 &258189645
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3982,7 +3982,7 @@ MonoBehaviour:
   alertRadius: 18
   cooldown: 3
   brokenSprite: {fileID: 6890081438637268488, guid: c1a77602bd426a24ba779be65db6c85f, type: 3}
-  glassBreakSound: {fileID: 0}
+  glassBreakSound: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
 --- !u!61 &450176934
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5182,7 +5182,7 @@ MonoBehaviour:
   alertRadius: 18
   cooldown: 3
   brokenSprite: {fileID: 6890081438637268488, guid: c1a77602bd426a24ba779be65db6c85f, type: 3}
-  glassBreakSound: {fileID: 0}
+  glassBreakSound: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
 --- !u!61 &551095466
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -13982,7 +13982,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 256
-  screamSfx: {fileID: 8300000, guid: 8fe18d837655cba4b97e918bae2cf734, type: 3}
+  screamSfx: {fileID: 8300000, guid: e2b6ba909b4e7164ca50f6e84402c32b, type: 3}
   screamVolume: 0.95
   audioSource: {fileID: 0}
 --- !u!95 &1498718856
@@ -14962,7 +14962,9 @@ MonoBehaviour:
   pasosLentos: {fileID: 8300000, guid: 52e84f82778479144831cd4e45e1162d, type: 3}
   pasosRapidos: {fileID: 8300000, guid: 7e396df30a6e65c468525b3125737338, type: 3}
   perrosAullando: {fileID: 8300000, guid: 8cc783bbfff695e429f1aef9b0274a4c, type: 3}
-  lloronaGrito: {fileID: 8300000, guid: 8fe18d837655cba4b97e918bae2cf734, type: 3}
+  sonidoPerro: {fileID: 8300000, guid: 15037275210d94348a15766f48278a7c, type: 3}
+  lloronaGrito: {fileID: 8300000, guid: e2b6ba909b4e7164ca50f6e84402c32b, type: 3}
+  sonidoVidrio: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
   musicMasterMix: 0.38
   sfxMasterMix: 1
   musicSourceA: {fileID: 0}
@@ -15178,7 +15180,7 @@ MonoBehaviour:
   backView: {fileID: -997718949465080848, guid: 70dcef22d5a464347bc73b81acdc40e2, type: 3}
   sleepColor: {r: 0.98, g: 0.92, b: 0.82, a: 1}
   alertColor: {r: 1.15, g: 1.1, b: 1, a: 1}
-  barkSfx: {fileID: 8300000, guid: 8cc783bbfff695e429f1aef9b0274a4c, type: 3}
+  barkSfx: {fileID: 8300000, guid: 15037275210d94348a15766f48278a7c, type: 3}
   barkVolume: 0.85
   audioSource: {fileID: 0}
 --- !u!58 &1594705477
@@ -17510,7 +17512,7 @@ MonoBehaviour:
   alertRadius: 18
   cooldown: 3
   brokenSprite: {fileID: 6890081438637268488, guid: c1a77602bd426a24ba779be65db6c85f, type: 3}
-  glassBreakSound: {fileID: 0}
+  glassBreakSound: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
 --- !u!61 &1848933665
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -19381,7 +19383,7 @@ MonoBehaviour:
   alertRadius: 18
   cooldown: 3
   brokenSprite: {fileID: 6890081438637268488, guid: c1a77602bd426a24ba779be65db6c85f, type: 3}
-  glassBreakSound: {fileID: 0}
+  glassBreakSound: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
 --- !u!61 &1958742716
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -30036,7 +30038,7 @@ MonoBehaviour:
   alertRadius: 18
   cooldown: 3
   brokenSprite: {fileID: 6890081438637268488, guid: c1a77602bd426a24ba779be65db6c85f, type: 3}
-  glassBreakSound: {fileID: 0}
+  glassBreakSound: {fileID: 8300000, guid: 55a4622309da4cc43ae976b36906d67b, type: 3}
 --- !u!61 &2081399343
 BoxCollider2D:
   m_ObjectHideFlags: 0

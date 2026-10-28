@@ -28,8 +28,9 @@ public static class Level1AudioAutoSetup
         AudioClip n1Music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Music/Nivel1/Breath_Behind_the_Stall.mp3");
         AudioClip sfxPasosLentos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_lentos.wav");
         AudioClip sfxPasosRapidos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_rapidos.wav");
-        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
-        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+        AudioClip sfxPerro = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perro.mp3");
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
+        AudioClip sfxVidrio = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/vidrio.mp3");
 
         // 1. AudioManager
         AudioManager am = Object.FindAnyObjectByType<AudioManager>();
@@ -45,8 +46,9 @@ public static class Level1AudioAutoSetup
         soAm.FindProperty("musicaNivel1").objectReferenceValue = n1Music;
         soAm.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
         soAm.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
-        soAm.FindProperty("perrosAullando").objectReferenceValue = sfxPerros;
+        soAm.FindProperty("sonidoPerro").objectReferenceValue = sfxPerro;
         soAm.FindProperty("lloronaGrito").objectReferenceValue = sfxLlorona;
+        soAm.FindProperty("sonidoVidrio").objectReferenceValue = sfxVidrio;
         soAm.ApplyModifiedProperties();
         EditorUtility.SetDirty(am);
 
@@ -62,17 +64,17 @@ public static class Level1AudioAutoSetup
             EditorUtility.SetDirty(pa);
         }
 
-        // 3. Perro Callejero
+        // 3. Perro Callejero (sonido de perro.mp3)
         StrayDogAI dog = Object.FindAnyObjectByType<StrayDogAI>();
         if (dog != null)
         {
             SerializedObject soDog = new SerializedObject(dog);
-            soDog.FindProperty("barkSfx").objectReferenceValue = sfxPerros;
+            soDog.FindProperty("barkSfx").objectReferenceValue = sfxPerro;
             soDog.ApplyModifiedProperties();
             EditorUtility.SetDirty(dog);
         }
 
-        // 4. Llorona Grito
+        // 4. Llorona (llorona_nivel1.mpeg.wav)
         LloronaAI llorona = Object.FindAnyObjectByType<LloronaAI>();
         if (llorona != null)
         {
@@ -80,6 +82,19 @@ public static class Level1AudioAutoSetup
             soLlorona.FindProperty("screamSfx").objectReferenceValue = sfxLlorona;
             soLlorona.ApplyModifiedProperties();
             EditorUtility.SetDirty(llorona);
+        }
+
+        // 5. Botellas (sonido de vidrio.mp3)
+        NoiseObstacle[] botellas = Object.FindObjectsByType<NoiseObstacle>(FindObjectsInactive.Include);
+        foreach (var b in botellas)
+        {
+            if (b != null)
+            {
+                SerializedObject soB = new SerializedObject(b);
+                soB.FindProperty("glassBreakSound").objectReferenceValue = sfxVidrio;
+                soB.ApplyModifiedProperties();
+                EditorUtility.SetDirty(b);
+            }
         }
 
         EditorSceneManager.MarkSceneDirty(targetScene);

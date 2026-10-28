@@ -515,6 +515,8 @@ public static class Level1Builder
         NoiseObstacle no = go.AddComponent<NoiseObstacle>();
         SerializedObject so = new SerializedObject(no);
         so.FindProperty("brokenSprite").objectReferenceValue = brokenSprite;
+        AudioClip sfxVidrio = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/vidrio.mp3");
+        if (sfxVidrio != null) so.FindProperty("glassBreakSound").objectReferenceValue = sfxVidrio;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, name);
@@ -552,7 +554,7 @@ public static class Level1Builder
         var walkProp = so.FindProperty("walkWakeRadius");
         if (walkProp != null) walkProp.floatValue = 2.5f;
 
-        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
+        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perro.mp3");
         var barkProp = so.FindProperty("barkSfx");
         if (barkProp != null) barkProp.objectReferenceValue = sfxPerros;
 
@@ -888,7 +890,7 @@ public static class Level1Builder
         if (s1 != null)
             so.FindProperty("settings").objectReferenceValue = s1;
 
-        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
         var screamProp = so.FindProperty("screamSfx");
         if (screamProp != null) screamProp.objectReferenceValue = sfxLlorona;
 
@@ -946,16 +948,18 @@ public static class Level1Builder
         AudioClip n1Music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Music/Nivel1/Breath_Behind_the_Stall.mp3");
         AudioClip sfxPasosLentos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_lentos.wav");
         AudioClip sfxPasosRapidos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_rapidos.wav");
-        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
-        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perro.mp3");
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
+        AudioClip sfxVidrio = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/vidrio.mp3");
 
         SerializedObject soAm = new SerializedObject(am);
         soAm.FindProperty("musicaNivel").objectReferenceValue = n1Music;
         soAm.FindProperty("musicaNivel1").objectReferenceValue = n1Music;
         soAm.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
         soAm.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
-        soAm.FindProperty("perrosAullando").objectReferenceValue = sfxPerros;
+        soAm.FindProperty("sonidoPerro").objectReferenceValue = sfxPerros;
         soAm.FindProperty("lloronaGrito").objectReferenceValue = sfxLlorona;
+        soAm.FindProperty("sonidoVidrio").objectReferenceValue = sfxVidrio;
         soAm.ApplyModifiedProperties();
         EditorUtility.SetDirty(am);
     }
@@ -966,8 +970,9 @@ public static class Level1Builder
         AudioClip n1Music = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Music/Nivel1/Breath_Behind_the_Stall.mp3");
         AudioClip sfxPasosLentos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_lentos.wav");
         AudioClip sfxPasosRapidos = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/pasos_rapidos.wav");
-        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perros_aullando.wav");
-        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+        AudioClip sfxPerros = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/perro.mp3");
+        AudioClip sfxLlorona = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
+        AudioClip sfxVidrio = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/vidrio.mp3");
 
         // 1. AudioManager
         AudioManager am = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
@@ -982,8 +987,9 @@ public static class Level1Builder
         soAm.FindProperty("musicaNivel1").objectReferenceValue = n1Music;
         soAm.FindProperty("pasosLentos").objectReferenceValue = sfxPasosLentos;
         soAm.FindProperty("pasosRapidos").objectReferenceValue = sfxPasosRapidos;
-        soAm.FindProperty("perrosAullando").objectReferenceValue = sfxPerros;
+        soAm.FindProperty("sonidoPerro").objectReferenceValue = sfxPerros;
         soAm.FindProperty("lloronaGrito").objectReferenceValue = sfxLlorona;
+        soAm.FindProperty("sonidoVidrio").objectReferenceValue = sfxVidrio;
         soAm.ApplyModifiedProperties();
         EditorUtility.SetDirty(am);
 
@@ -999,7 +1005,7 @@ public static class Level1Builder
             EditorUtility.SetDirty(pa);
         }
 
-        // 3. Perro Callejero
+        // 3. Perro Callejero (sonido de perro.mp3)
         StrayDogAI dog = UnityEngine.Object.FindAnyObjectByType<StrayDogAI>();
         if (dog != null)
         {
@@ -1009,7 +1015,7 @@ public static class Level1Builder
             EditorUtility.SetDirty(dog);
         }
 
-        // 4. Llorona Grito
+        // 4. Llorona (llorona_nivel1.mpeg.wav)
         LloronaAI llorona = UnityEngine.Object.FindAnyObjectByType<LloronaAI>();
         if (llorona != null)
         {
@@ -1017,6 +1023,19 @@ public static class Level1Builder
             soLlorona.FindProperty("screamSfx").objectReferenceValue = sfxLlorona;
             soLlorona.ApplyModifiedProperties();
             EditorUtility.SetDirty(llorona);
+        }
+
+        // 5. Botellas (sonido de vidrio.mp3)
+        NoiseObstacle[] botellas = UnityEngine.Object.FindObjectsByType<NoiseObstacle>(FindObjectsInactive.Include);
+        foreach (var b in botellas)
+        {
+            if (b != null)
+            {
+                SerializedObject soB = new SerializedObject(b);
+                soB.FindProperty("glassBreakSound").objectReferenceValue = sfxVidrio;
+                soB.ApplyModifiedProperties();
+                EditorUtility.SetDirty(b);
+            }
         }
 
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());

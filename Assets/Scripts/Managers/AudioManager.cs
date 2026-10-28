@@ -34,7 +34,9 @@ public class AudioManager : MonoBehaviour
     public AudioClip pasosLentos;
     public AudioClip pasosRapidos;
     public AudioClip perrosAullando;
+    public AudioClip sonidoPerro;
     public AudioClip lloronaGrito;
+    public AudioClip sonidoVidrio;
 
     [Header("Ajustes de Mezcla y Volumen")]
     [Range(0f, 1f)] [SerializeField] float musicMasterMix = 0.38f; // Nivel calibrado para evitar empalme con SFX
@@ -72,8 +74,10 @@ public class AudioManager : MonoBehaviour
         if (musicaNivel1 == null) musicaNivel1 = musicaNivel;
         if (pasosLentos == null) pasosLentos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_lentos");
         if (pasosRapidos == null) pasosRapidos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_rapidos");
-        if (perrosAullando == null) perrosAullando = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perros_aullando");
-        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_grito");
+        if (sonidoPerro == null) sonidoPerro = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perro");
+        if (sonidoVidrio == null) sonidoVidrio = Resources.Load<AudioClip>("Audio/SFX/Nivel1/vidrio");
+        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg");
+        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
     }
 
     void Start()
@@ -264,6 +268,8 @@ public class AudioManager : MonoBehaviour
     public void PlayHideSound() => PlaySFX(escondite, 0.9f);
     public void PlayCandleSound() => PlaySFX(vela, 1.0f);
     public void PlayFinalScream() => PlaySFX(gritoFinal, 1.0f);
+    public void PlayGlassBreak(float volume = 1.0f) => PlaySFX(sonidoVidrio, volume);
+    public void PlayDogBark(float volume = 0.85f) => PlaySFX(sonidoPerro, volume);
 
     /// <summary>
     /// Inicia el llanto 3D posicional en las coordenadas de La Llorona.

@@ -66,6 +66,12 @@ public class GameManager : MonoBehaviour
         int lives = GameSession.Instance != null ? GameSession.Instance.CurrentLives : 3;
         OnLivesChanged?.Invoke(lives);
         OnScoreChanged?.Invoke(levelScore);
+
+        // Iniciar música ambiental del nivel sin empalmarse con los SFX
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayLevelMusic();
+        }
     }
 
     void Update()
@@ -89,6 +95,12 @@ public class GameManager : MonoBehaviour
         {
             GameObject loaderGo = new GameObject("SceneLoader");
             loaderGo.AddComponent<SceneLoader>();
+        }
+
+        if (AudioManager.Instance == null && FindAnyObjectByType<AudioManager>() == null)
+        {
+            GameObject audioGo = new GameObject("AudioManager");
+            audioGo.AddComponent<AudioManager>();
         }
     }
 

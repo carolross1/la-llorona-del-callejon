@@ -56,12 +56,25 @@ public class NoiseObstacle : MonoBehaviour
         }
 
         // Sonido de vidrio
+        if (glassBreakSound == null && AudioManager.Instance != null)
+        {
+            glassBreakSound = AudioManager.Instance.sonidoVidrio;
+        }
+        if (glassBreakSound == null)
+        {
+            glassBreakSound = Resources.Load<AudioClip>("Audio/SFX/Nivel1/vidrio");
+        }
+
         if (AudioManager.Instance != null)
         {
             if (glassBreakSound != null)
                 AudioManager.Instance.PlaySFX(glassBreakSound, 1.0f);
             else
                 AudioManager.Instance.PlayFootstep(); // Respaldo acústico
+        }
+        else if (glassBreakSound != null)
+        {
+            AudioSource.PlayClipAtPoint(glassBreakSound, transform.position, 1.0f);
         }
 
         // Aviso oficial en la franja superior del HUD

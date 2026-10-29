@@ -19,6 +19,7 @@ public class AudioManager : MonoBehaviour
     [Header("Clips de Música")]
     public AudioClip musicaMenu;
     public AudioClip musicaNivel;
+    public AudioClip musicaNivel1;
 
     [Header("Clips de Efectos (SFX)")]
     public AudioClip lloronaLlanto;
@@ -29,6 +30,18 @@ public class AudioManager : MonoBehaviour
     public AudioClip gritoFinal;
     public AudioClip campanaLejana;
 
+    [Header("Clips Específicos Nivel 1")]
+    public AudioClip pasosLentos;
+    public AudioClip pasosRapidos;
+    public AudioClip perrosAullando;
+    public AudioClip sonidoPerro;
+    public AudioClip lloronaGrito;
+    public AudioClip sonidoVidrio;
+
+    [Header("Ajustes de Mezcla y Volumen")]
+    [Range(0f, 1f)] [SerializeField] float musicMasterMix = 0.38f; // Nivel calibrado para evitar empalme con SFX
+    [Range(0f, 1f)] [SerializeField] float sfxMasterMix = 1.0f;
+
     [Header("Canales de Audio")]
     [SerializeField] AudioSource musicSourceA;
     [SerializeField] AudioSource musicSourceB;
@@ -37,6 +50,8 @@ public class AudioManager : MonoBehaviour
 
     bool activeIsA = true;
     Coroutine crossfadeCoroutine;
+    Coroutine duckCoroutine;
+    float currentMusicTargetVol = 0.38f;
 
     void Awake()
     {
@@ -50,6 +65,19 @@ public class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         EnsureAudioSources();
+        LoadDefaultClipsFromResources();
+    }
+
+    void LoadDefaultClipsFromResources()
+    {
+        if (musicaNivel == null) musicaNivel = Resources.Load<AudioClip>("Audio/Music/Nivel1/Breath_Behind_the_Stall");
+        if (musicaNivel1 == null) musicaNivel1 = musicaNivel;
+        if (pasosLentos == null) pasosLentos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_lentos");
+        if (pasosRapidos == null) pasosRapidos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_rapidos");
+        if (sonidoPerro == null) sonidoPerro = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perro");
+        if (sonidoVidrio == null) sonidoVidrio = Resources.Load<AudioClip>("Audio/SFX/Nivel1/vidrio");
+        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg");
+        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
     }
 
     void Start()
@@ -97,31 +125,35 @@ public class AudioManager : MonoBehaviour
     public void SetMusicVolume(float volume)
     {
         volume = Mathf.Clamp01(volume);
+        currentMusicTargetVol = volume * musicMasterMix;
+
         if (audioMixer != null)
         {
             // Conversión de lineal (0-1) a escala logarítmica dB (-80 a 0)
-            float db = volume > 0.001f ? Mathf.Log10(volume) * 20f : -80f;
+            float db = currentMusicTargetVol > 0.001f ? Mathf.Log10(currentMusicTargetVol) * 20f : -80f;
             audioMixer.SetFloat("MusicVol", db);
         }
         else
         {
-            if (musicSourceA != null) musicSourceA.volume = volume;
-            if (musicSourceB != null) musicSourceB.volume = volume;
+            AudioSource activeSource = activeIsA ? musicSourceA : musicSourceB;
+            if (activeSource != null) activeSource.volume = currentMusicTargetVol;
         }
     }
 
     public void SetSfxVolume(float volume)
     {
         volume = Mathf.Clamp01(volume);
+        float scaledSfx = volume * sfxMasterMix;
+
         if (audioMixer != null)
         {
-            float db = volume > 0.001f ? Mathf.Log10(volume) * 20f : -80f;
+            float db = scaledSfx > 0.001f ? Mathf.Log10(scaledSfx) * 20f : -80f;
             audioMixer.SetFloat("SfxVol", db);
         }
         else
         {
-            if (sfxSource != null) sfxSource.volume = volume;
-            if (llorona3DSource != null) llorona3DSource.volume = volume;
+            if (sfxSource != null) sfxSource.volume = scaledSfx;
+            if (llorona3DSource != null) llorona3DSource.volume = scaledSfx;
         }
     }
 
@@ -151,6 +183,7 @@ public class AudioManager : MonoBehaviour
         to.Play();
 
         float startVol = from.volume;
+        float targetVol = currentMusicTargetVol;
         float t = 0f;
 
         while (t < duration)
@@ -158,13 +191,70 @@ public class AudioManager : MonoBehaviour
             t += Time.unscaledDeltaTime;
             float ratio = Mathf.Clamp01(t / duration);
             from.volume = Mathf.Lerp(startVol, 0f, ratio);
-            to.volume = Mathf.Lerp(0f, 1f, ratio);
+            to.volume = Mathf.Lerp(0f, targetVol, ratio);
             yield return null;
         }
 
         from.Stop();
         from.volume = startVol;
-        to.volume = 1f;
+        to.volume = targetVol;
+    }
+
+    /// <summary>
+    /// Atenúa temporalmente la música de fondo (ducking) cuando ocurre un evento sonoro intenso
+    /// (ladrido de perros, grito de la Llorona) para evitar que se empalmen los audios.
+    /// </summary>
+    public void DuckMusic(float duration = 3.5f, float duckVolumeRatio = 0.45f)
+    {
+        if (duckCoroutine != null)
+            StopCoroutine(duckCoroutine);
+
+        duckCoroutine = StartCoroutine(DuckMusicRoutine(duration, duckVolumeRatio));
+    }
+
+    IEnumerator DuckMusicRoutine(float duration, float duckVolumeRatio)
+    {
+        AudioSource activeSource = activeIsA ? musicSourceA : musicSourceB;
+        if (activeSource == null || !activeSource.isPlaying) yield break;
+
+        float normalVol = currentMusicTargetVol;
+        float duckedVol = normalVol * Mathf.Clamp01(duckVolumeRatio);
+
+        // Bajada suave
+        float t = 0f;
+        float fadeTime = 0.3f;
+        while (t < fadeTime)
+        {
+            t += Time.unscaledDeltaTime;
+            activeSource.volume = Mathf.Lerp(normalVol, duckedVol, t / fadeTime);
+            yield return null;
+        }
+        activeSource.volume = duckedVol;
+
+        // Mantener mientras dura el efecto
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.1f, duration - fadeTime * 2));
+
+        // Subida suave de regreso al volumen normal
+        t = 0f;
+        while (t < fadeTime)
+        {
+            t += Time.unscaledDeltaTime;
+            activeSource.volume = Mathf.Lerp(duckedVol, normalVol, t / fadeTime);
+            yield return null;
+        }
+        activeSource.volume = normalVol;
+    }
+
+    /// <summary>
+    /// Reproduce la música de Nivel 1 (Breath_Behind_the_Stall) con volumen calibrado sin empalmarse.
+    /// </summary>
+    public void PlayLevelMusic(AudioClip overrideClip = null)
+    {
+        AudioClip clipToPlay = overrideClip ?? musicaNivel1 ?? musicaNivel;
+        if (clipToPlay != null)
+        {
+            PlayMusicWithCrossfade(clipToPlay, 1.2f);
+        }
     }
 
     public void PlaySFX(AudioClip clip, float volumeScale = 1.0f)
@@ -178,6 +268,8 @@ public class AudioManager : MonoBehaviour
     public void PlayHideSound() => PlaySFX(escondite, 0.9f);
     public void PlayCandleSound() => PlaySFX(vela, 1.0f);
     public void PlayFinalScream() => PlaySFX(gritoFinal, 1.0f);
+    public void PlayGlassBreak(float volume = 1.0f) => PlaySFX(sonidoVidrio, volume);
+    public void PlayDogBark(float volume = 0.85f) => PlaySFX(sonidoPerro, volume);
 
     /// <summary>
     /// Inicia el llanto 3D posicional en las coordenadas de La Llorona.

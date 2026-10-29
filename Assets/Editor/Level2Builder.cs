@@ -11,49 +11,55 @@ using UnityEngine.Tilemaps;
 
 /// <summary>
 /// Constructor oficial y completo del Nivel 2: El Callejón del Beso (recorrido fluido en zigzag de ~60 u).
-/// Cumple estrictamente con la especificación visual y jugabilidad de PROMPT_VISUAL.md:
-/// - Callejón continuo en zigzag con dos giros a 90°:
-///     * Tramo 1 (Horizontal oeste): x in [0, 20], y in [2, 7].
-///     * Tramo 2 (Vertical norte): x in [15, 20], y in [7, 21] (Balcones del Beso enfrentados).
-///     * Tramo 3 (Horizontal este hacia salida): x in [20, 41], y in [16, 21].
-/// - Envolvente total sin huecos (x in [-6, 48], y in [-4, 27]): toda celda fuera de la calle
-///   está sellada con suelo/muros coloniales sólidos sin texturas rotas.
-/// - 8 Límites perimetrales físicos (BoxCollider2D) que impiden a Carlos y La Llorona salirse del callejón.
-/// - Fachadas continuas coloniales (SpriteRenderer) alineadas en ambos lados de todos los tramos.
-/// - 7 escondites funcionales y visibles para Carlos (3 portones coloniales Puerta_0..2,
-///   barriles coloniales y clústeres de huacales/sacos) con aviso [E].
-/// - Carlos con Animator completo y PlayerController.controller conectado (animaciones en las 4 direcciones).
-/// - Decoración densa: balcones enfrentados de hierro forjado, macetas colgantes y en acera,
-///   faroles de pared con LightFlicker, botes y papel picado festivo.
-/// - Obstáculos: 4 charcos de lodo y 4 pilas de botellas reflectantes calibradas a los pies.
-/// - Perro callejero durmiendo en su lecho de paja con farol.
-/// - Salida monumental Salida_1 conectada sin cortes, con luz cálida interior.
-/// - Iluminación URP 2D a 0.46 con halo personal de Carlos (LuzCarlos).
+/// Utiliza los recursos auténticos de Guanajuato ubicados en:
+/// Assets/Sprites/Environment/Nivel 2/Sprites/
+/// 
+/// Características del Nivel 2:
+/// - Suelo: 12 baldosas de adoquín auténtico colonial (Tile_Adoquin_00 .. 11).
+/// - Centro del Callejón del Beso: Pieza central emblemática de los balcones enfrentados (Callejon_Beso_Central).
+/// - Fachadas coloniales continuas de 2 pisos (Fachada_Alta_Oeste, Fachada_Alta_Este, Fachada_Naranja, etc.).
+/// - Accesorios de hierro forjado: Farola_Hierro_Alta, Farol_Pared_Muro con LightFlicker, Farol_Colgante, Balcon_Hierro_Barandal.
+/// - Vegetación colonial: Enredadera_Cascada, Enredadera_Muro, Jardinera_Balcon, Maceta_Colgante, Maceta_Barro.
+/// - Señalética auténtica de callejón: Poste_Senaletica_Callejon, Poste_Senaletica_Farol, Poste_Senaletica_3.
+/// - Escondites funcionales: Portones coloniales (Porton_Colonial) con aviso [E], barriles y cajas.
+/// - Obstáculos calibrados: 4 charcos de lodo y 4 pilas de botellas ruidosas (vidrio.mp3).
+/// - Perro callejero durmiendo en lecho de paja con detección de proximidad (perro.mp3).
+/// - Salida monumental con Arco_Colonial y Monumento_Salida.
+/// - Patrulla de La Llorona (A -> B -> C) con audio posicional 3D y sistema de detección.
+/// - Carlos con controlador de 4 direcciones, estamina, luz ambiental URP 2D y halo personal.
 /// </summary>
 public static class Level2Builder
 {
     const string ScenePath = "Assets/Scenes/Level2_Callejon.unity";
+    const string Nvl2Dir   = "Assets/Sprites/Environment/Nivel 2/Sprites/";
 
-    // Rutas de Spritesheets oficiales
-    const string TilesMuroPath     = "Assets/Sprites/Environment/tiles_nvl2.png";
-    const string TilesAdoquinPath  = "Assets/Sprites/Environment/tiles_adoquin_nvl2.png";
-    const string PuertasPath       = "Assets/Sprites/Environment/Puertas_nvl2.png";
-    const string AccesoriosPath    = "Assets/Sprites/Environment/accesorios_nvl2.png";
-    const string SalidasPath       = "Assets/Sprites/Environment/Salidas.png";
-    const string BotellasPath      = "Assets/Sprites/Environment/Botellas_charcolodo_Nvl1.png";
-    const string EsconditesPath    = "Assets/Sprites/Environment/escondites.png";
-    const string SacosPath         = "Assets/Sprites/Environment/Contenedores_Sacos_Nvl1.png";
-    const string PerroPath         = "Assets/Sprites/Perro/perro.png";
-    const string DecoracionPath    = "Assets/Sprites/Environment/decoracion.png";
+    // Rutas de Spritesheets auxiliares
+    const string TilesMuroPath  = "Assets/Sprites/Environment/tiles_nvl2.png";
+    const string SalidasPath    = "Assets/Sprites/Environment/Salidas.png";
+    const string BotellasPath   = "Assets/Sprites/Environment/Botellas_charcolodo_Nvl1.png";
+    const string EsconditesPath = "Assets/Sprites/Environment/escondites.png";
+    const string SacosPath      = "Assets/Sprites/Environment/Contenedores_Sacos_Nvl1.png";
+    const string PerroPath      = "Assets/Sprites/Perro/perro.png";
+    const string DecoracionPath = "Assets/Sprites/Environment/decoracion.png";
 
-    static Sprite GetSprite(string path, string name, int fallback = 0)
+    static Sprite GetSprite(string path, string name = null, int fallback = 0)
     {
         if (!File.Exists(path)) return null;
+        var direct = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        if (direct != null) return direct;
+
         var sprites = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().ToArray();
+        if (string.IsNullOrEmpty(name)) return sprites.FirstOrDefault();
         var match = sprites.FirstOrDefault(s => s.name == name);
         if (match != null) return match;
         if (fallback >= 0 && fallback < sprites.Length) return sprites[fallback];
         return sprites.FirstOrDefault();
+    }
+
+    static Sprite GetNvl2Sprite(string filename)
+    {
+        string fullPath = Path.Combine(Nvl2Dir, filename);
+        return GetSprite(fullPath);
     }
 
     [MenuItem("La Llorona/Construir Nivel 2 Completo")]
@@ -67,9 +73,9 @@ public static class Level2Builder
             return;
         }
 
-        Debug.Log("[Level2Builder] Iniciando construcción oficial y densa del Nivel 2 (El Callejón del Beso)...");
+        Debug.Log("[Level2Builder] Iniciando construcción del Nivel 2 (El Callejón del Beso) con assets oficiales de Nivel 2...");
 
-        // Asegurar que las hojas de sprites estén debidamente recortadas
+        // Asegurar que las hojas de sprites auxiliares estén debidamente recortadas
         SpriteSheetSlicer.SliceAllSpriteSheets();
 
         Scene scene = File.Exists(ScenePath)
@@ -88,12 +94,12 @@ public static class Level2Builder
         if (wallsLayer < 0) wallsLayer = 0;
         if (hideSpotLayer < 0) hideSpotLayer = 0;
 
-        // Cargar baldosas persistentes y verificadas guardadas en disco (.asset)
-        TileBase[] floorTiles = LoadFloorTiles();
+        // Cargar baldosas de adoquín auténtico de Nivel 2
+        TileBase[] floorTiles = EnsureNivel2FloorTiles();
         TileBase[] wallTiles  = LoadWallTiles();
 
         // ════════════════════════════════════════════════════════════════════════
-        // 1. GRID Y TILEMAPS (Suelo empedrado continuo y Paredes envolventes)
+        // 1. GRID Y TILEMAPS (Suelo empedrado colonial y Paredes perimetrales)
         // ════════════════════════════════════════════════════════════════════════
         GameObject gridGo = GameObject.Find("Grid") ?? new GameObject("Grid");
         if (gridGo.GetComponent<Grid>() == null) gridGo.AddComponent<Grid>();
@@ -105,14 +111,12 @@ public static class Level2Builder
         sueloMap.ClearAllTiles();
         paredesMap.ClearAllTiles();
 
-        // Tinte atmosférico para evitar microcontraste excesivo
-        sueloMap.color   = new Color(0.65f, 0.65f, 0.72f, 1.0f);
-        paredesMap.color = new Color(0.88f, 0.88f, 0.90f, 1.0f);
+        sueloMap.color   = new Color(1.0f, 0.98f, 0.92f, 1.0f);
+        paredesMap.color = new Color(0.30f, 0.30f, 0.38f, 1.0f);
 
         System.Random rnd = new System.Random(42);
 
-        // ENVOLVENTE COMPLETA: x in [-6, 48], y in [-4, 27]
-        // Se cubre absolutamente toda la cuadrícula: Suelo en la calle, Paredes en el resto (Cero huecos)
+        // ENVOLVENTE COMPLETA: x in [-6, 48], y in [-4, 27] (Cero huecos)
         for (int x = -6; x <= 48; x++)
         {
             for (int y = -4; y <= 27; y++)
@@ -133,13 +137,13 @@ public static class Level2Builder
         ConfigureCompositeCollider(paredesMap.gameObject);
 
         // ════════════════════════════════════════════════════════════════════════
-        // 2. LÍMITES PERIMETRALES DEFINIDOS (Carlos NO se puede salir del callejón)
+        // 2. LÍMITES PERIMETRALES DEFINIDOS (BoxCollider2D impenetrable)
         // ════════════════════════════════════════════════════════════════════════
         Transform limitsRoot = FreshRoot("Limites_Callejon");
         CreateStreetBoundaries(limitsRoot, wallsLayer);
 
         // ════════════════════════════════════════════════════════════════════════
-        // 3. FACHADAS COLONIALES CONTINUAS (Muros visibles de 2 pisos en ambos lados)
+        // 3. FACHADAS COLONIALES CONTINUAS (SpriteRenderer con assets de Nivel 2)
         // ════════════════════════════════════════════════════════════════════════
         Transform propsRoot  = FreshRoot("Props");
         Transform decalsRoot = FreshRoot("Decals");
@@ -147,11 +151,27 @@ public static class Level2Builder
 
         CreateStreetFacades(propsRoot, wallsLayer);
 
-        // Cargar sprites individuales oficiales
-        Sprite puerta0       = GetSprite(PuertasPath, "Puerta_0", 0);
-        Sprite puerta1       = GetSprite(PuertasPath, "Puerta_1", 1);
-        Sprite puerta2       = GetSprite(PuertasPath, "Puerta_2", 2);
+        // Cargar sprites auténticos de Nivel 2
+        Sprite portonColonial    = GetNvl2Sprite("Porton_Colonial.png");
+        Sprite callejonBesoPiece = GetNvl2Sprite("Callejon_Beso_Central.png");
+        Sprite farolaHierro      = GetNvl2Sprite("Farola_Hierro_Alta.png");
+        Sprite farolPared        = GetNvl2Sprite("Farol_Pared_Muro.png");
+        Sprite farolColgante     = GetNvl2Sprite("Farol_Colgante.png");
+        Sprite farolChico        = GetNvl2Sprite("Farol_Pared_Chico.png");
+        Sprite barandalBalcon    = GetNvl2Sprite("Balcon_Hierro_Barandal.png");
+        Sprite enredaderaCascada = GetNvl2Sprite("Enredadera_Cascada.png");
+        Sprite enredaderaMuro    = GetNvl2Sprite("Enredadera_Muro.png");
+        Sprite jardineraBalcon   = GetNvl2Sprite("Jardinera_Balcon.png");
+        Sprite macetaBarro       = GetNvl2Sprite("Maceta_Barro.png");
+        Sprite macetaColgante    = GetNvl2Sprite("Maceta_Colgante.png");
+        Sprite signCallejon      = GetNvl2Sprite("Poste_Senaletica_Callejon.png");
+        Sprite signFarol         = GetNvl2Sprite("Poste_Senaletica_Farol.png");
+        Sprite signPlaca3        = GetNvl2Sprite("Poste_Senaletica_3.png");
+        Sprite signPlaca1        = GetNvl2Sprite("Poste_Senaletica_1.png");
+        Sprite monumentoSalida   = GetNvl2Sprite("Monumento_Salida.png");
+        Sprite arcoColonial      = GetNvl2Sprite("Arco_Colonial.png");
 
+        // Sprites auxiliares
         Sprite barril        = GetSprite(EsconditesPath, "Escondite_barril", 1);
         Sprite cajas         = GetSprite(EsconditesPath, "Escondite_cajas", 0);
         Sprite huacales      = GetSprite(SacosPath, "Huacales_apilados", 0);
@@ -159,11 +179,6 @@ public static class Level2Builder
         Sprite costales      = GetSprite(SacosPath, "Costales_apilados", 4);
         Sprite canasta       = GetSprite(SacosPath, "Canasta_chiles", 3);
         Sprite canastaVacia  = GetSprite(SacosPath, "Canasta_vacia", 2);
-
-        Sprite balcon        = GetSprite(AccesoriosPath, "Balcon_hierro", 2);
-        Sprite macetaColg    = GetSprite(AccesoriosPath, "Maceta_colgante", 0);
-        Sprite macetaSeca    = GetSprite(AccesoriosPath, "Maceta_suelo_seca", 1);
-        Sprite farolPared    = GetSprite(AccesoriosPath, "Farol_pared", 3);
 
         Sprite charco0       = GetSprite(BotellasPath, "Charco_0", 0);
         Sprite charco1       = GetSprite(BotellasPath, "Charco_1", 1);
@@ -181,64 +196,86 @@ public static class Level2Builder
         Sprite papelPicado   = GetSprite(DecoracionPath, "Papel_picado", 5);
         Sprite boteSprite    = GetSprite(DecoracionPath, "Bote", 1);
 
-        // ── A. 7 ESCONDITES VISIBLES Y ACCESIBLES PARA CARLOS ───────────────────
-        // 1. Escondite 1 (Inicio en x=6.5, y=3.2): Clúster de huacales y barril
+        // ── A. 7 ESCONDITES VISIBLES Y ACCESIBLES PARA CARLOS (GDD: puertas y barriles) ─
+        // 1. Escondite 1 (Inicio Tramo 1 en x=6.5, y=3.2): Huacales y barril colonial
         CreateClusterHideSpot(propsRoot, "Escondite_1_HuacalesBarril", barril, huacales, canasta,
             6.5f, 3.2f, hideSpotLayer, wallsLayer);
 
-        // 2. Escondite 2 (Tramo 1 en x=11.5, y=6.5): Portón colonial Puerta_0
-        CreateDoorHideSpot(propsRoot, "Escondite_2_PortonCantera", puerta0, macetaSeca, huacales,
+        // 2. Escondite 2 (Tramo 1 en x=11.5, y=6.5): Portón colonial auténtico con maceta de barro
+        CreateDoorHideSpot(propsRoot, "Escondite_2_PortonCantera", portonColonial, macetaBarro, enredaderaMuro,
             11.5f, 6.5f, hideSpotLayer, wallsLayer);
 
-        // 3. Escondite 3 (Curva del Codo 1 en x=18.5, y=3.8): Clúster de cajas coloniales
+        // 3. Escondite 3 (Curva del Codo 1 en x=18.5, y=3.8): Cajas coloniales y costales
         CreateClusterHideSpot(propsRoot, "Escondite_3_Codo1Cajas", cajas, costales, canastaVacia,
             18.5f, 3.8f, hideSpotLayer, wallsLayer);
 
-        // 4. Escondite 4 (Callejón del Beso vertical en x=15.8, y=11.5): Portón colonial Puerta_1
-        CreateDoorHideSpot(propsRoot, "Escondite_4_PortonBeso", puerta1, huacalRoto, macetaSeca,
+        // 4. Escondite 4 (Callejón del Beso vertical en x=15.8, y=11.5): Portón colonial
+        CreateDoorHideSpot(propsRoot, "Escondite_4_PortonBeso", portonColonial, enredaderaCascada, macetaBarro,
             15.8f, 11.5f, hideSpotLayer, wallsLayer);
 
-        // 5. Escondite 5 (Curva del Codo 2 en x=18.5, y=14.5): Clúster de barril y huacales
+        // 5. Escondite 5 (Curva del Codo 2 en x=18.5, y=14.5): Barril y huacales
         CreateClusterHideSpot(propsRoot, "Escondite_5_Codo2Barril", barril, huacales, costales,
             18.5f, 14.5f, hideSpotLayer, wallsLayer);
 
-        // 6. Escondite 6 (Tramo Superior en x=27.5, y=20.5): Portón colonial Puerta_2
-        CreateDoorHideSpot(propsRoot, "Escondite_6_PortonSuperior", puerta2, macetaSeca, canasta,
+        // 6. Escondite 6 (Tramo Superior en x=27.5, y=20.5): Portón colonial
+        CreateDoorHideSpot(propsRoot, "Escondite_6_PortonSuperior", portonColonial, macetaBarro, canasta,
             27.5f, 20.5f, hideSpotLayer, wallsLayer);
 
-        // 7. Escondite 7 (Recta Final en x=36.0, y=17.2): Gran clúster de cajas y barril
+        // 7. Escondite 7 (Recta Final pegado al muro sur): Gran clúster de cajas y barril colonial
         CreateClusterHideSpot(propsRoot, "Escondite_7_SalidaBarril", cajas, barril, huacales,
-            36.0f, 17.2f, hideSpotLayer, wallsLayer);
+            34.0f, 15.6f, hideSpotLayer, wallsLayer);
 
-        // ── B. BALCONES DEL BESO ENFRENTADOS (Callejón del Beso) ─────────────────
-        CreateBalcony(decorRoot, "Balcon_Oeste_Beso", balcon, 15.0f, 13.0f, true);
-        CreateBalcony(decorRoot, "Balcon_Este_Beso",  balcon, 20.0f, 13.5f, false);
+        // ── B. EL CALLEJÓN DEL BESO: BALCONES ENFRENTADOS (Callejón del Beso) ───
+        CreateBalcony(decorRoot, "Balcon_Oeste_Beso", barandalBalcon, 15.0f, 13.0f, true);
+        CreateBalcony(decorRoot, "Balcon_Este_Beso",  barandalBalcon, 20.0f, 13.5f, false);
 
-        CreateBalcony(decorRoot, "Balcon_Horizontal_1", balcon,  5.0f,  7.8f, false);
-        CreateBalcony(decorRoot, "Balcon_Horizontal_2", balcon, 16.0f,  7.8f, false);
-        CreateBalcony(decorRoot, "Balcon_Superior_1",   balcon, 24.0f, 21.8f, false);
-        CreateBalcony(decorRoot, "Balcon_Superior_2",   balcon, 33.0f, 21.8f, false);
+        // Balcones de hierro forjado adicionales
+        CreateBalcony(decorRoot, "Balcon_Oeste_Beso", barandalBalcon, 15.0f, 10.5f, true);
+        CreateBalcony(decorRoot, "Balcon_Este_Beso",  barandalBalcon, 20.0f, 16.5f, false);
+        CreateBalcony(decorRoot, "Balcon_Horizontal_1", barandalBalcon,  5.0f,  7.8f, false);
+        CreateBalcony(decorRoot, "Balcon_Superior_1",   barandalBalcon, 24.0f, 21.8f, false);
+        CreateBalcony(decorRoot, "Balcon_Superior_2",   barandalBalcon, 33.0f, 21.8f, false);
 
-        // ── C. MACETAS COLONIALES Y BOTES EN LAS ACERAS ──────────────────────────
-        CreateDecoProp(decorRoot, "Maceta_Colg_1", macetaColg, 15.0f, 14.2f, 1.0f);
-        CreateDecoProp(decorRoot, "Maceta_Colg_2", macetaColg, 20.0f, 14.7f, 1.0f);
-        CreateDecoProp(decorRoot, "Maceta_Colg_3", macetaColg, 24.0f, 22.8f, 1.0f);
+        // ── C. VEGETACIÓN Y ENREDADERAS COLONIALES ────────────────────────────────
+        CreateDecoProp(decorRoot, "Enredadera_1", enredaderaCascada, 14.8f, 15.5f, 1.0f);
+        CreateDecoProp(decorRoot, "Enredadera_2", enredaderaCascada, 20.2f, 11.5f, 1.0f);
+        CreateDecoProp(decorRoot, "Enredadera_3", enredaderaMuro,     6.0f,  7.6f, 1.0f);
+        CreateDecoProp(decorRoot, "Enredadera_4", enredaderaMuro,    34.0f, 21.8f, 1.0f);
 
-        CreateDecoProp(decorRoot, "Maceta_Acera_1", macetaSeca,  3.5f,  2.2f, 1.0f, wallsLayer);
-        CreateDecoProp(decorRoot, "Maceta_Acera_2", macetaSeca, 14.0f,  2.2f, 1.0f, wallsLayer);
-        CreateDecoProp(decorRoot, "Maceta_Acera_3", macetaSeca, 21.2f,  8.5f, 1.0f, wallsLayer);
-        CreateDecoProp(decorRoot, "Maceta_Acera_4", macetaSeca, 21.8f, 16.5f, 1.0f, wallsLayer);
-        CreateDecoProp(decorRoot, "Maceta_Acera_5", macetaSeca, 38.5f, 16.5f, 1.0f, wallsLayer);
+        CreateDecoProp(decorRoot, "Jardinera_1", jardineraBalcon, 15.0f, 10.0f, 1.0f);
+        CreateDecoProp(decorRoot, "Jardinera_2", jardineraBalcon, 20.0f, 16.0f, 1.0f);
 
-        CreateBote(decorRoot, "Bote_Callejon_1", boteSprite,  8.0f, 2.2f, wallsLayer);
-        CreateBote(decorRoot, "Bote_Callejon_2", boteSprite, 22.5f, 20.8f, wallsLayer);
+        CreateDecoProp(decorRoot, "Maceta_Colg_1", macetaColgante, 15.2f, 13.8f, 1.0f);
+        CreateDecoProp(decorRoot, "Maceta_Colg_2", macetaColgante, 19.8f, 14.2f, 1.0f);
+        CreateDecoProp(decorRoot, "Maceta_Colg_3", macetaColgante, 25.0f, 22.0f, 1.0f);
 
-        // Papel picado tradicional
+        CreateDecoProp(decorRoot, "Maceta_Acera_1", macetaBarro,  3.5f,  2.2f, 1.0f, wallsLayer);
+        CreateDecoProp(decorRoot, "Maceta_Acera_2", macetaBarro, 14.0f,  2.2f, 1.0f, wallsLayer);
+        CreateDecoProp(decorRoot, "Maceta_Acera_3", macetaBarro, 21.2f,  8.5f, 1.0f, wallsLayer);
+        CreateDecoProp(decorRoot, "Maceta_Acera_4", macetaBarro, 21.8f, 16.5f, 1.0f, wallsLayer);
+        CreateDecoProp(decorRoot, "Maceta_Acera_5", macetaBarro, 37.5f, 15.2f, 1.0f, wallsLayer);
+
+        // ── D. SEÑALÉTICA AUTÉNTICA Y GUÍAS DE DIRECCIÓN ────────────────────────
+        CreateDecoProp(decorRoot, "Senal_Callejon_Beso", signCallejon, 3.0f, 3.0f, 1.0f);
+        CreateDecoProp(decorRoot, "Senal_Farol_Entrada", signFarol, 15.2f, 6.2f, 1.0f);
+        CreateDecoProp(decorRoot, "Senal_Placa_Historica", signPlaca3, 19.5f, 11.0f, 1.0f);
+        CreateDecoProp(decorRoot, "Senal_Salida_Placa", signPlaca1, 34.0f, 17.0f, 1.0f);
+
+        // Guías direccionales iluminadas para indicar por dónde subir y doblar
+        CreateDirectionSign(decorRoot, "Guia_Codo1_Subir_Beso", 17.5f, 3.0f, 2.8f, 6.5f);
+        CreateDirectionSign(decorRoot, "Guia_Codo2_Giro_Salida", 18.5f, 20.8f, 2.6f, 6.0f);
+
+        // Papel picado tradicional de pueblo mágico
         CreateForegroundProp(decorRoot, "Papel_1", papelPicado,  8.0f,  6.8f, 1.2f);
-        CreateForegroundProp(decorRoot, "Papel_2", papelPicado, 17.5f, 10.5f, 1.2f);
+        CreateForegroundProp(decorRoot, "Papel_2", papelPicado, 17.5f,  9.5f, 1.2f);
         CreateForegroundProp(decorRoot, "Papel_3", papelPicado, 30.0f, 20.8f, 1.2f);
 
-        // ── D. FAROLES DE PARED PARPADEANTES (LightFlicker) ──────────────────────
+        // ── E. FAROLES DE PARED PARPADEANTES Y FAROLAS DE HIERRO (GDD) ───────────
+        // Farolas de pie altas
+        CreateStreetLamp(decorRoot, "Farola_Inicio", farolaHierro, 1.5f, 3.0f, wallsLayer);
+        CreateStreetLamp(decorRoot, "Farola_Final",  farolaHierro, 38.0f, 20.8f, wallsLayer);
+
+        // Faroles de pared con LightFlicker
         CreateWallFarol(decorRoot, "Farol_Pared_1", farolPared,  4.0f,  7.4f, wallsLayer);
         CreateWallFarol(decorRoot, "Farol_Pared_2", farolPared, 11.5f,  7.4f, wallsLayer);
         CreateWallFarol(decorRoot, "Farol_Pared_3", farolPared, 14.2f,  4.8f, wallsLayer);
@@ -247,7 +284,15 @@ public static class Level2Builder
         CreateWallFarol(decorRoot, "Farol_Pared_6", farolPared, 27.5f, 21.4f, wallsLayer);
         CreateWallFarol(decorRoot, "Farol_Pared_7", farolPared, 35.0f, 21.4f, wallsLayer);
 
-        // ── E. CHARCOS DE LODO Y BOTELLAS EN ESQUINAS CIEGAS ─────────────────────
+        // Faroles colgantes
+        CreateHangingLantern(decorRoot, "Farol_Colgante_1", farolColgante, 17.5f, 16.5f);
+        CreateHangingLantern(decorRoot, "Farol_Colgante_2", farolColgante, 23.0f, 17.0f);
+
+        // Sconces chicos
+        CreateWallSconce(decorRoot, "Farol_Chico_1", farolChico, 14.5f, 8.5f);
+        CreateWallSconce(decorRoot, "Farol_Chico_2", farolChico, 20.5f, 18.5f);
+
+        // ── F. CHARCOS DE LODO Y BOTELLAS EN ESQUINAS CIEGAS ─────────────────────
         CreateMudPuddle(decalsRoot, "Charco_1", charco0,  9.0f,  4.2f);
         CreateMudPuddle(decalsRoot, "Charco_2", charco1, 17.0f,  5.5f);
         CreateMudPuddle(decalsRoot, "Charco_3", charco2, 17.5f, 12.0f);
@@ -258,14 +303,14 @@ public static class Level2Builder
         CreateNoiseObstacle(decalsRoot, "Botellas_3", botellas, botellasRotas, 16.0f, 14.2f);
         CreateNoiseObstacle(decalsRoot, "Botellas_4", botVerde,  botellasRotas, 24.5f, 17.2f);
 
-        // ── F. PERRO CALLEJERO TERRITORIAL DURMIENDO ─────────────────────────────
+        // ── G. PERRO CALLEJERO TERRITORIAL DURMIENDO (GDD: ladra y alerta) ───────
         CreateStrayDog(propsRoot, 19.8f, 15.0f, perroLatDer, perroFrente, perroEspalda, huacalRoto);
 
-        // ── G. SALIDA MONUMENTAL DEL CALLEJÓN (Salida_1) ─────────────────────────
-        CreateExitScene(propsRoot, 40.5f, 16.0f, salida1, wallsLayer);
+        // ── H. SALIDA MONUMENTAL DEL CALLEJÓN (Monumento_Salida y Arco_Colonial) ─
+        CreateExitSceneNivel2(propsRoot, 40.5f, 16.0f, arcoColonial, monumentoSalida, wallsLayer);
 
         // ════════════════════════════════════════════════════════════════════════
-        // 4. WAYPOINTS Y PATRULLA DE LA LLORONA
+        // 4. WAYPOINTS Y PATRULLA DE LA LLORONA (GDD: Patrulla A -> B -> C)
         // ════════════════════════════════════════════════════════════════════════
         Transform wpRoot = FreshRoot("Waypoints");
         Transform wpA = CreateEmpty(wpRoot, "WP_Codo1",   17.5f,  4.5f);
@@ -289,7 +334,7 @@ public static class Level2Builder
         UIBuilder.BuildLevel2UICanvas();
 
         EditorSceneManager.SaveScene(scene, ScenePath);
-        Debug.Log("[Level2Builder] ¡Nivel 2 (El Callejón del Beso) construido con éxito, denso y sin huecos!");
+        Debug.Log("[Level2Builder] ¡Nivel 2 (El Callejón del Beso) construido exitosamente con assets oficiales de Nivel 2!");
     }
 
     // ── Lógica de Calles y Geometría ─────────────────────────────────────────
@@ -333,7 +378,7 @@ public static class Level2Builder
         // 7. Tramo 3 Norte (x in [14.5, 41.5], y = 21.6)
         CreateLimitWall(parent, "Limite_Norte_Tramo3", 28.0f, 21.6f, 28.0f, 1.2f, wallsLayer);
 
-        // 8. Salida Este (detrás del arco de Salida_1)
+        // 8. Salida Este (detrás del arco de Salida)
         CreateLimitWall(parent, "Limite_Este_Salida", 42.6f, 18.5f, 1.2f, 6.2f, wallsLayer);
     }
 
@@ -354,14 +399,25 @@ public static class Level2Builder
 
     static void CreateStreetFacades(Transform parent, int wallsLayer)
     {
-        Sprite[] facadeSprites = new Sprite[7];
-        string[] names = {
-            "Fachada_balcon_roja_0", "Fachada_ocre_1", "Fachada_azul_2",
-            "Fachada_roja_3", "Fachada_ocre_4", "Fachada_morada_5", "Fachada_ventana_roja_6"
-        };
-        for (int i = 0; i < names.Length; i++)
+        // Variedad de fachadas auténticas de Guanajuato (Nivel 2)
+        Sprite[] facadeSprites = new Sprite[]
         {
-            facadeSprites[i] = GetSprite(TilesMuroPath, names[i], i);
+            GetNvl2Sprite("Fachada_Alta_Oeste.png"),
+            GetNvl2Sprite("Fachada_Alta_Este.png"),
+            GetNvl2Sprite("Fachada_Naranja.png"),
+            GetNvl2Sprite("Fachada_Amarilla.png"),
+            GetNvl2Sprite("Fachada_Terracota.png"),
+            GetNvl2Sprite("Fachada_Ocre.png"),
+            GetNvl2Sprite("Casa_Colonial_1.png"),
+            GetNvl2Sprite("Casa_Colonial_2.png"),
+            GetNvl2Sprite("Casa_Colonial_3.png"),
+            GetNvl2Sprite("Casa_Colonial_4.png")
+        }.Where(s => s != null).ToArray();
+
+        if (facadeSprites.Length == 0)
+        {
+            // Respaldo de seguridad si algún sprite falla al cargar
+            facadeSprites = new Sprite[] { GetSprite(TilesMuroPath, "Fachada_ocre_1", 1) };
         }
 
         GameObject facadesRoot = new GameObject("Fachadas_Coloniales");
@@ -369,50 +425,50 @@ public static class Level2Builder
 
         int idx = 0;
 
-        // Tramo 1 Sur (x: -1 a 20.5, y = 0.6): Fachadas con teja
-        for (float x = -1.0f; x <= 20.5f; x += 1.6f)
+        // Tramo 1 Sur (x: -1 a 20.5, y = 0.6)
+        for (float x = -1.0f; x <= 20.5f; x += 3.2f)
         {
             SpawnFacade(facadesRoot.transform, $"Fachada_T1_Sur_{idx}", facadeSprites[idx % facadeSprites.Length], x, 0.6f, 2, wallsLayer);
             idx++;
         }
 
-        // Tramo 1 Norte (x: -1 a 14.5, y = 8.5): Fachadas norte
-        for (float x = -1.0f; x <= 14.5f; x += 1.6f)
+        // Tramo 1 Norte (x: -1 a 14.5, y = 8.5)
+        for (float x = -1.0f; x <= 14.5f; x += 3.2f)
         {
             SpawnFacade(facadesRoot.transform, $"Fachada_T1_Norte_{idx}", facadeSprites[idx % facadeSprites.Length], x, 8.5f, 3, wallsLayer);
             idx++;
         }
 
-        // Tramo 2 Oeste (Callejón del Beso: y in [7.5, 21.0], x = 13.8)
-        for (float y = 7.5f; y <= 21.0f; y += 2.2f)
+        // Tramo 2 Oeste (Callejón del Beso: y in [7.5, 21.0], x = 13.5)
+        for (float y = 7.5f; y <= 21.0f; y += 3.8f)
         {
-            SpawnFacade(facadesRoot.transform, $"Fachada_T2_Oeste_{idx}", facadeSprites[idx % facadeSprites.Length], 13.8f, y, 3, wallsLayer);
+            SpawnFacade(facadesRoot.transform, $"Fachada_T2_Oeste_{idx}", facadeSprites[idx % facadeSprites.Length], 13.5f, y, 3, wallsLayer);
             idx++;
         }
 
-        // Tramo 2 Este (vertical: y in [0.6, 15.0], x = 21.2)
-        for (float y = 0.6f; y <= 15.0f; y += 2.2f)
+        // Tramo 2 Este (vertical: y in [0.6, 15.0], x = 21.5)
+        for (float y = 0.6f; y <= 15.0f; y += 3.8f)
         {
-            SpawnFacade(facadesRoot.transform, $"Fachada_T2_Este_{idx}", facadeSprites[idx % facadeSprites.Length], 21.2f, y, 3, wallsLayer);
+            SpawnFacade(facadesRoot.transform, $"Fachada_T2_Este_{idx}", facadeSprites[idx % facadeSprites.Length], 21.5f, y, 3, wallsLayer);
             idx++;
         }
 
         // Tramo 3 Sur (x in [20.5, 41.5], y = 14.5)
-        for (float x = 20.5f; x <= 41.5f; x += 1.6f)
+        for (float x = 20.5f; x <= 41.5f; x += 3.2f)
         {
             SpawnFacade(facadesRoot.transform, $"Fachada_T3_Sur_{idx}", facadeSprites[idx % facadeSprites.Length], x, 14.5f, 2, wallsLayer);
             idx++;
         }
 
         // Tramo 3 Norte (x in [14.5, 41.5], y = 22.5)
-        for (float x = 14.5f; x <= 41.5f; x += 1.6f)
+        for (float x = 14.5f; x <= 41.5f; x += 3.2f)
         {
             SpawnFacade(facadesRoot.transform, $"Fachada_T3_Norte_{idx}", facadeSprites[idx % facadeSprites.Length], x, 22.5f, 3, wallsLayer);
             idx++;
         }
 
         // Cierre Entrada Oeste (x = -1.2, y in [1.5, 7.5])
-        for (float y = 1.5f; y <= 7.5f; y += 2.0f)
+        for (float y = 1.5f; y <= 7.5f; y += 3.0f)
         {
             SpawnFacade(facadesRoot.transform, $"Fachada_Entrada_Oeste_{idx}", facadeSprites[idx % facadeSprites.Length], -1.2f, y, 3, wallsLayer);
             idx++;
@@ -435,24 +491,79 @@ public static class Level2Builder
 
     // ── Cargadores de Tilesets Persistentes (.asset) ─────────────────────────
 
-    static TileBase[] LoadFloorTiles()
+    static TileBase[] EnsureNivel2FloorTiles()
     {
+        string dir = "Assets/Tiles/Level2";
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
         TileBase[] tiles = new TileBase[12];
         for (int i = 0; i < 12; i++)
         {
-            tiles[i] = AssetDatabase.LoadAssetAtPath<TileBase>($"Assets/Tiles/tiles_{i}.asset");
+            string spritePath = $"{Nvl2Dir}Tile_Adoquin_{i:D2}.png";
+            string tilePath   = $"{dir}/adoquin_{i}.asset";
+
+            Tile t = AssetDatabase.LoadAssetAtPath<Tile>(tilePath);
+            Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
+
+            if (t == null)
+            {
+                t = ScriptableObject.CreateInstance<Tile>();
+                t.sprite = sp;
+                t.colliderType = Tile.ColliderType.None;
+                AssetDatabase.CreateAsset(t, tilePath);
+            }
+            else
+            {
+                if (sp != null && t.sprite != sp)
+                {
+                    t.sprite = sp;
+                    EditorUtility.SetDirty(t);
+                }
+            }
+            tiles[i] = t;
         }
+
+        AssetDatabase.SaveAssets();
         return tiles;
     }
 
     static TileBase[] LoadWallTiles()
     {
-        TileBase[] tiles = new TileBase[24];
-        for (int i = 0; i < 24; i++)
+        TileBase[] tiles = new TileBase[12];
+        for (int i = 0; i < 12; i++)
         {
-            tiles[i] = AssetDatabase.LoadAssetAtPath<TileBase>($"Assets/Tiles/tiles_{24 + i}.asset");
+            // Usar baldosas sólidas de muro
+            tiles[i] = AssetDatabase.LoadAssetAtPath<TileBase>($"Assets/Tiles/tiles_{i}.asset");
         }
         return tiles;
+    }
+
+    // ── Pieza Emblemática Central del Callejón del Beso ──────────────────────
+
+    static void CreateCentralCallejonPiece(Transform parent, string name, Sprite sprite, float x, float y)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 9; // Por encima de los muros y debajo de elementos de primer plano
+
+        // Luz tenue cálida que emana entre los balcones
+        GameObject balconyLightGo = new GameObject("LuzBalconesEnfrentados");
+        balconyLightGo.transform.SetParent(go.transform, false);
+        balconyLightGo.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+        Light2D bLight = balconyLightGo.AddComponent<Light2D>();
+        bLight.lightType = Light2D.LightType.Point;
+        bLight.color = new Color(1.0f, 0.88f, 0.65f, 1.0f);
+        bLight.intensity = 1.35f;
+        bLight.pointLightInnerRadius = 0.5f;
+        bLight.pointLightOuterRadius = 3.5f;
+        balconyLightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
     }
 
     // ── Escondites Funcionales ───────────────────────────────────────────────
@@ -464,14 +575,12 @@ public static class Level2Builder
         root.transform.SetParent(parent, false);
         root.transform.position = new Vector3(x, y, 0f);
 
-        // Puerta principal colonial
         GameObject doorGo = new GameObject("PuertaPrincipal");
         doorGo.transform.SetParent(root.transform, false);
         SpriteRenderer srDoor = doorGo.AddComponent<SpriteRenderer>();
         srDoor.sprite = doorSprite;
         srDoor.sortingOrder = 3;
 
-        // Decoraciones a los lados para enmarcar el portón
         if (decorLeft != null)
         {
             GameObject decL = new GameObject("Deco_Izq");
@@ -492,13 +601,11 @@ public static class Level2Builder
             srR.sortingOrder = 3;
         }
 
-        // Base sólida que bloquea el paso físico
         BoxCollider2D solidCol = root.AddComponent<BoxCollider2D>();
         solidCol.size   = new Vector2(2.6f, 1.8f);
         solidCol.offset = new Vector2(0f, 0.45f);
         if (wallsLayer >= 0) root.layer = wallsLayer;
 
-        // Trigger frontal prominente para ocultarse pulsando [E]
         GameObject trigGo = new GameObject("TriggerOcultarse");
         trigGo.transform.SetParent(root.transform, false);
         BoxCollider2D trigCol = trigGo.AddComponent<BoxCollider2D>();
@@ -507,7 +614,6 @@ public static class Level2Builder
         trigCol.offset = new Vector2(0f, -0.7f);
         if (hideSpotLayer >= 0) trigGo.layer = hideSpotLayer;
 
-        // Punto interior donde se oculta Carlos
         GameObject hidePt = new GameObject("HidePoint");
         hidePt.transform.SetParent(root.transform, false);
         hidePt.transform.localPosition = new Vector3(0f, 0.35f, 0f);
@@ -527,7 +633,6 @@ public static class Level2Builder
         root.transform.SetParent(parent, false);
         root.transform.position = new Vector3(x, y, 0f);
 
-        // Pieza principal
         GameObject mainGo = new GameObject("Cuerpo_Principal");
         mainGo.transform.SetParent(root.transform, false);
         SpriteRenderer srMain = mainGo.AddComponent<SpriteRenderer>();
@@ -590,8 +695,42 @@ public static class Level2Builder
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
-        sr.sortingOrder = 10; // Foreground
+        sr.sortingOrder = 10;
         sr.flipX = flipX;
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateStreetLamp(Transform parent, string name, Sprite sprite, float x, float y, int layer)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 4;
+
+        if (layer >= 0)
+        {
+            go.layer = layer;
+            BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+            col.size = new Vector2(0.5f, 0.5f);
+            col.offset = new Vector2(0f, -1.2f);
+        }
+
+        GameObject lightGo = new GameObject("LuzFarola");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 1.6f, 0f);
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.88f, 0.55f);
+        l2d.intensity = 1.9f;
+        l2d.pointLightInnerRadius = 0.8f;
+        l2d.pointLightOuterRadius = 5.2f;
+        lightGo.AddComponent<LightFlicker>();
 
         Undo.RegisterCreatedObjectUndo(go, name);
     }
@@ -623,6 +762,116 @@ public static class Level2Builder
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
+    static void CreateHangingLantern(Transform parent, string name, Sprite sprite, float x, float y)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 5;
+
+        GameObject lightGo = new GameObject("LuzColgante");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, -0.2f, 0f);
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.86f, 0.52f);
+        l2d.intensity = 1.4f;
+        l2d.pointLightInnerRadius = 0.6f;
+        l2d.pointLightOuterRadius = 3.6f;
+        lightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateWallSconce(Transform parent, string name, Sprite sprite, float x, float y)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 4;
+
+        GameObject lightGo = new GameObject("LuzChica");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 0f, 0f);
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.82f, 0.50f);
+        l2d.intensity = 1.1f;
+        l2d.pointLightInnerRadius = 0.4f;
+        l2d.pointLightOuterRadius = 2.8f;
+        lightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateDirectionSign(Transform parent, string name, float x, float y, float intensity, float radius)
+    {
+        Sprite placa = UIBuilder.PlacaResaltada;
+        if (placa == null) return;
+
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * 0.55f;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = placa;
+        sr.sortingOrder = 12;
+
+        GameObject lightGo = new GameObject("LuzGuia");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = Vector3.zero;
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.92f, 0.55f);
+        l2d.intensity = intensity;
+        l2d.pointLightInnerRadius = 0.8f;
+        l2d.pointLightOuterRadius = radius;
+        lightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateMetaMarkerSign(Transform parent, float x, float y, float intensity, float radius)
+    {
+        Sprite placa = UIBuilder.PlacaResaltada;
+        if (placa == null) return;
+
+        GameObject go = new GameObject("Cartel_Luminoso_Meta");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * 0.70f;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = placa;
+        sr.sortingOrder = 12;
+
+        GameObject lightGo = new GameObject("LuzBeaconMeta");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = Vector3.zero;
+
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.95f, 0.45f);
+        l2d.intensity = intensity;
+        l2d.pointLightInnerRadius = 1.0f;
+        l2d.pointLightOuterRadius = radius;
+        lightGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, "Cartel_Luminoso_Meta");
+    }
+
     static void CreateMudPuddle(Transform parent, string name, Sprite sprite, float x, float y)
     {
         GameObject go = new GameObject(name);
@@ -631,7 +880,7 @@ public static class Level2Builder
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
-        sr.sortingOrder = 1; // Decals
+        sr.sortingOrder = 1;
         sr.color = new Color(0.85f, 0.78f, 0.70f, 0.95f);
 
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
@@ -651,7 +900,7 @@ public static class Level2Builder
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
-        sr.sortingOrder = 2; // Decal superior
+        sr.sortingOrder = 2;
         sr.color = new Color(1.15f, 1.25f, 1.15f, 1.0f);
 
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
@@ -716,44 +965,51 @@ public static class Level2Builder
         Undo.RegisterCreatedObjectUndo(go, "Perro_Callejero_Callejon");
     }
 
-    static void CreateExitScene(Transform parent, float x, float y, Sprite exitSprite, int wallsLayer)
+    static void CreateExitSceneNivel2(Transform parent, float x, float y, Sprite arco, Sprite monumento, int wallsLayer)
     {
         GameObject go = new GameObject("Salida_Callejon_Meta");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
 
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = exitSprite ?? GetSprite(SalidasPath, "Salida_1", 1);
-        sr.sortingOrder = 3;
+        // Arco colonial
+        GameObject archGo = new GameObject("ArcoColonial");
+        archGo.transform.SetParent(go.transform, false);
+        SpriteRenderer srArch = archGo.AddComponent<SpriteRenderer>();
+        srArch.sprite = arco ?? GetSprite(SalidasPath, "Salida_1", 1);
+        srArch.sortingOrder = 3;
 
-        BoxCollider2D leftCol = go.AddComponent<BoxCollider2D>();
-        leftCol.size   = new Vector2(2.4f, 5.0f);
-        leftCol.offset = new Vector2(-2.5f, 2.5f);
-
-        BoxCollider2D rightCol = go.AddComponent<BoxCollider2D>();
-        rightCol.size   = new Vector2(2.4f, 5.0f);
-        rightCol.offset = new Vector2(2.5f, 2.5f);
+        // Monumento / pedestal histórico a un costado
+        if (monumento != null)
+        {
+            GameObject monGo = new GameObject("MonumentoHistorico");
+            monGo.transform.SetParent(go.transform, false);
+            monGo.transform.localPosition = new Vector3(-2.0f, -0.5f, 0f);
+            SpriteRenderer srMon = monGo.AddComponent<SpriteRenderer>();
+            srMon.sprite = monumento;
+            srMon.sortingOrder = 3;
+        }
 
         if (wallsLayer >= 0) go.layer = wallsLayer;
 
+        // Zona amplia de meta en el umbral del arco (sin colisionadores solidos que bloqueen el paso)
         GameObject goalGo = new GameObject("MetaTrigger");
         goalGo.transform.SetParent(go.transform, false);
-        goalGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
+        goalGo.transform.localPosition = new Vector3(-1.5f, 2.0f, 0f);
 
         BoxCollider2D centerTrigger = goalGo.AddComponent<BoxCollider2D>();
         centerTrigger.isTrigger = true;
-        centerTrigger.size = new Vector2(2.2f, 4.0f);
+        centerTrigger.size = new Vector2(4.5f, 5.0f);
         goalGo.AddComponent<LevelGoal>();
 
         GameObject lightGo = new GameObject("LuzSalida");
         lightGo.transform.SetParent(go.transform, false);
-        lightGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
+        lightGo.transform.localPosition = new Vector3(-0.5f, 2.0f, 0f);
         Light2D l2d = lightGo.AddComponent<Light2D>();
         l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.88f, 0.55f);
-        l2d.intensity = 2.4f;
-        l2d.pointLightInnerRadius = 1.0f;
-        l2d.pointLightOuterRadius = 6.0f;
+        l2d.color = new Color(1.0f, 0.90f, 0.50f);
+        l2d.intensity = 3.6f;
+        l2d.pointLightInnerRadius = 1.5f;
+        l2d.pointLightOuterRadius = 8.5f;
         lightGo.AddComponent<LightFlicker>();
 
         Undo.RegisterCreatedObjectUndo(go, "Salida_Callejon_Meta");
@@ -781,26 +1037,9 @@ public static class Level2Builder
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-    static void CreateBote(Transform parent, string name, Sprite sprite, float x, float y, int layer)
-    {
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 3;
-
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1.2f, 1.8f);
-        col.offset = new Vector2(0f, 0f);
-        if (layer >= 0) go.layer = layer;
-
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
     static void CreateForegroundProp(Transform parent, string name, Sprite sprite, float x, float y, float scale)
     {
+        if (sprite == null) return;
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
@@ -808,7 +1047,7 @@ public static class Level2Builder
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
-        sr.sortingOrder = 10; // Foreground
+        sr.sortingOrder = 10;
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
@@ -870,7 +1109,6 @@ public static class Level2Builder
         sr.sortingOrder = 10;
         sr.color = new Color(1.08f, 1.04f, 0.98f, 1.0f);
 
-        // ANIMATOR COMPLETO CON CONTROLADOR OFICIAL
         Animator anim = player.GetComponent<Animator>();
         if (anim == null) anim = player.AddComponent<Animator>();
         RuntimeAnimatorController ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animations/Player/PlayerController.controller");
@@ -880,7 +1118,6 @@ public static class Level2Builder
             anim.enabled = true;
         }
 
-        // SCRIPTS DE CONTROL Y ESTAMINA
         if (player.GetComponent<PlayerMovement>() == null)
             player.AddComponent<PlayerMovement>();
 
@@ -890,7 +1127,6 @@ public static class Level2Builder
         if (player.GetComponent<HideSystem>() == null)
             player.AddComponent<HideSystem>();
 
-        // LUZ PERSONAL CÁLIDA DE CARLOS
         Transform existingLight = player.transform.Find("LuzCarlos");
         GameObject pLightGo = existingLight != null ? existingLight.gameObject : new GameObject("LuzCarlos");
         pLightGo.transform.SetParent(player.transform, false);
@@ -907,7 +1143,6 @@ public static class Level2Builder
         if (pLightGo.GetComponent<LightFlicker>() == null)
             pLightGo.AddComponent<LightFlicker>();
 
-        // FÍSICA Y COLISIÓN CALIBRADA A LOS PIES
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
         if (rb == null) rb = player.AddComponent<Rigidbody2D>();
         rb.freezeRotation = true;

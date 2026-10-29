@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Pantalla de inicio (Splash) que presenta el logotipo del equipo y el título del juego.
-/// Carga automáticamente el Menú Principal tras 3 segundos o al presionar cualquier tecla.
+/// Inicia la música de intro y carga automáticamente el Menú Principal tras 3 segundos o al presionar cualquier tecla.
 /// </summary>
 public class SplashScreen : MonoBehaviour
 {
@@ -17,7 +17,22 @@ public class SplashScreen : MonoBehaviour
 
     void Start()
     {
+        EnsureAudioManager();
         StartCoroutine(WaitAndProceedRoutine());
+    }
+
+    void EnsureAudioManager()
+    {
+        if (AudioManager.Instance == null && FindAnyObjectByType<AudioManager>() == null)
+        {
+            GameObject audioGo = new GameObject("AudioManager");
+            audioGo.AddComponent<AudioManager>();
+        }
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMenuMusic();
+        }
     }
 
     void Update()

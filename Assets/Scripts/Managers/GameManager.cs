@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
         // Iniciar música ambiental del nivel sin empalmarse con los SFX
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayLevelMusic();
+            AudioManager.Instance.PlayMusicForLevel(currentLevelNumber);
         }
     }
 
@@ -211,6 +211,10 @@ public class GameManager : MonoBehaviour
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1f;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMenuMusic();
+        }
         if (SceneLoader.Instance != null)
             SceneLoader.Instance.LoadScene("MainMenu");
         else

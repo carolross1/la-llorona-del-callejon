@@ -20,6 +20,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip musicaMenu;
     public AudioClip musicaNivel;
     public AudioClip musicaNivel1;
+    public AudioClip musicaNivel2;
 
     [Header("Clips de Efectos (SFX)")]
     public AudioClip lloronaLlanto;
@@ -66,12 +67,49 @@ public class AudioManager : MonoBehaviour
 
         EnsureAudioSources();
         LoadDefaultClipsFromResources();
+        CheckAudioListener();
+    }
+
+    
+    void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        CheckAudioListener();
+    }
+
+    void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        CheckAudioListener();
+    }
+
+    public void CheckAudioListener()
+    {
+        AudioListener[] listeners = FindObjectsByType<AudioListener>();
+        var myListener = GetComponent<AudioListener>();
+
+        if (listeners == null || listeners.Length == 0)
+        {
+            if (myListener == null) myListener = gameObject.AddComponent<AudioListener>();
+            myListener.enabled = true;
+        }
+        else if (listeners.Length > 1 && myListener != null)
+        {
+            // Si otra cmara ya tiene AudioListener activo, desactivar el de respaldo
+            myListener.enabled = false;
+        }
     }
 
     void LoadDefaultClipsFromResources()
     {
+        if (musicaMenu == null) musicaMenu = Resources.Load<AudioClip>("Audio/Music/Intro");
         if (musicaNivel == null) musicaNivel = Resources.Load<AudioClip>("Audio/Music/Nivel1/Breath_Behind_the_Stall");
         if (musicaNivel1 == null) musicaNivel1 = musicaNivel;
+        if (musicaNivel2 == null) musicaNivel2 = Resources.Load<AudioClip>("Audio/Music/Nivel2/Nivel 2");
         if (pasosLentos == null) pasosLentos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_lentos");
         if (pasosRapidos == null) pasosRapidos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_rapidos");
         if (sonidoPerro == null) sonidoPerro = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perro");
@@ -179,11 +217,22 @@ public class AudioManager : MonoBehaviour
     IEnumerator CrossfadeRoutine(AudioSource from, AudioSource to, AudioClip nextClip, float duration)
     {
         to.clip = nextClip;
+        to.loop = true;
+
+        float targetVol = currentMusicTargetVol > 0.05f ? currentMusicTargetVol : 0.38f;
+
+        // Si no haba msica previa sonando, reproducir de inmediato a volumen completo
+        if (from == null || !from.isPlaying || from.clip == null)
+        {
+            to.volume = targetVol;
+            to.Play();
+            yield break;
+        }
+
         to.volume = 0f;
         to.Play();
 
         float startVol = from.volume;
-        float targetVol = currentMusicTargetVol;
         float t = 0f;
 
         while (t < duration)
@@ -245,16 +294,60 @@ public class AudioManager : MonoBehaviour
         activeSource.volume = normalVol;
     }
 
-    /// <summary>
-    /// Reproduce la música de Nivel 1 (Breath_Behind_the_Stall) con volumen calibrado sin empalmarse.
+        /// <summary>
+    /// Reproduce la cancin de Intro en la pantalla de Men con crossfade suave.
     /// </summary>
-    public void PlayLevelMusic(AudioClip overrideClip = null)
+    public void PlayMenuMusic()
     {
-        AudioClip clipToPlay = overrideClip ?? musicaNivel1 ?? musicaNivel;
+        if (musicaMenu == null)
+            musicaMenu = Resources.Load<AudioClip>("Audio/Music/Intro");
+
+        if (musicaMenu != null)
+        {
+            PlayMusicWithCrossfade(musicaMenu, 1.2f);
+        }
+    }
+
+    /// <summary>
+    /// Reproduce la msica calibrada para cada nivel:
+    /// - Nivel 1: Breath_Behind_the_Stall
+    /// - Nivel 2: Nivel 2
+    /// </summary>
+    public void PlayMusicForLevel(int levelNumber, AudioClip overrideClip = null)
+    {
+        if (overrideClip != null)
+        {
+            PlayMusicWithCrossfade(overrideClip, 1.2f);
+            return;
+        }
+
+        AudioClip clipToPlay = null;
+        if (levelNumber == 1)
+        {
+            clipToPlay = musicaNivel1 ?? musicaNivel ?? Resources.Load<AudioClip>("Audio/Music/Nivel1/Breath_Behind_the_Stall");
+        }
+        else if (levelNumber == 2)
+        {
+            clipToPlay = musicaNivel2 ?? Resources.Load<AudioClip>("Audio/Music/Nivel2/Nivel 2");
+        }
+
+        if (clipToPlay == null)
+        {
+            clipToPlay = musicaNivel1 ?? musicaNivel;
+        }
+
         if (clipToPlay != null)
         {
             PlayMusicWithCrossfade(clipToPlay, 1.2f);
         }
+    }
+
+    /// <summary>
+    /// Reproduce la msica de nivel (Nivel 1 por defecto).
+    /// </summary>
+    public void PlayLevelMusic(AudioClip overrideClip = null)
+    {
+        PlayMusicForLevel(1, overrideClip);
     }
 
     public void PlaySFX(AudioClip clip, float volumeScale = 1.0f)

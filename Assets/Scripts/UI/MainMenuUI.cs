@@ -26,6 +26,9 @@ public class MainMenuUI : MonoBehaviour
 
     void Start()
     {
+        // Iniciar msica del men (Intro.mp3)
+        EnsureAudioManager();
+
         // Enlazar botones principales
         if (playButton != null) playButton.onClick.AddListener(OnPlayClicked);
         if (continueButton != null) continueButton.onClick.AddListener(OnContinueClicked);
@@ -136,6 +139,20 @@ public class MainMenuUI : MonoBehaviour
             SceneLoader.Instance.LoadScene(sName);
         else
             UnityEngine.SceneManagement.SceneManager.LoadScene(sName);
+    }
+
+    void EnsureAudioManager()
+    {
+        if (AudioManager.Instance == null && FindAnyObjectByType<AudioManager>() == null)
+        {
+            GameObject audioGo = new GameObject("AudioManager");
+            audioGo.AddComponent<AudioManager>();
+        }
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMenuMusic();
+        }
     }
 
     string GetSceneNameForLevel(int level)

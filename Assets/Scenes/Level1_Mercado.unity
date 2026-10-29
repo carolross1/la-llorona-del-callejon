@@ -14949,9 +14949,10 @@ MonoBehaviour:
   audioMixer: {fileID: 0}
   musicGroup: {fileID: 0}
   sfxGroup: {fileID: 0}
-  musicaMenu: {fileID: 0}
+  musicaMenu: {fileID: 8300000, guid: 326c92802f2478e4893cf324e0c119f0, type: 3}
   musicaNivel: {fileID: 8300000, guid: 3023f4bd1d9611a47a716a6bc054539d, type: 3}
   musicaNivel1: {fileID: 8300000, guid: 3023f4bd1d9611a47a716a6bc054539d, type: 3}
+  musicaNivel2: {fileID: 8300000, guid: 18c4af49f69c58146a41ff53fedfea2c, type: 3}
   lloronaLlanto: {fileID: 0}
   pasos1: {fileID: 0}
   escondite: {fileID: 0}

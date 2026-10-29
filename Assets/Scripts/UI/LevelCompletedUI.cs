@@ -1,9 +1,7 @@
 // Assets/Scripts/UI/LevelCompletedUI.cs
 using UnityEngine;
 using UnityEngine.UI;
-#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
-#endif
 
 /// <summary>
 /// Pantalla de victoria que se despliega al alcanzar la meta del nivel.
@@ -45,8 +43,7 @@ public class LevelCompletedUI : MonoBehaviour
     {
         if (panel != null && panel.activeInHierarchy)
         {
-            // Atajos de teclado para continuar cómodamente
-#if ENABLE_INPUT_SYSTEM
+            // Atajos de teclado para continuar cómodamente usando exclusivamente el nuevo Input System
             var kb = Keyboard.current;
             if (kb != null)
             {
@@ -61,16 +58,6 @@ public class LevelCompletedUI : MonoBehaviour
                     OnMenuClicked();
                     return;
                 }
-            }
-#endif
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) ||
-                Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.E))
-            {
-                OnNextLevelClicked();
-            }
-            else if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                OnMenuClicked();
             }
         }
     }

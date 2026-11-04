@@ -19,6 +19,12 @@ public class HUD : MonoBehaviour
     [SerializeField] Color activeHeartColor = Color.white;
     [SerializeField] Color lostHeartColor = new Color(0.25f, 0.25f, 0.25f, 0.45f);
 
+    [Header("Barra de Vida Continua")]
+    [SerializeField] GameObject healthBarRoot;
+    [SerializeField] Image healthFillImage;
+    [SerializeField] Text healthValueText;
+    [SerializeField] CanvasGroup healthCanvasGroup;
+
     [Header("Indicadores de Texto")]
     [SerializeField] Text timerText;
     [SerializeField] Text scoreText;
@@ -104,6 +110,21 @@ public class HUD : MonoBehaviour
 
     public void UpdateLives(int lives)
     {
+        int max = (GameSession.Instance != null && GameSession.Instance.MaxLives > 0) ? GameSession.Instance.MaxLives : 3;
+
+        // 1. Actualizar barra continua de vida (si está asignada)
+        if (healthFillImage != null)
+        {
+            float targetFill = Mathf.Clamp01((float)lives / max);
+            healthFillImage.fillAmount = targetFill;
+        }
+
+        if (healthValueText != null)
+        {
+            healthValueText.text = $"VIDA {lives}/{max}";
+        }
+
+        // 2. Actualizar corazones discretos (si están asignados)
         if (heartImages == null) return;
         for (int i = 0; i < heartImages.Length; i++)
         {

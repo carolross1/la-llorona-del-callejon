@@ -9,13 +9,16 @@ public class CameraFollow2D : MonoBehaviour
 {
     [Header("Objetivo")]
     [SerializeField] Transform target;
-    [SerializeField] Vector3 offset = new Vector3(0f, 0f, -10f);
+    [SerializeField] Vector3 offset = new Vector3(0f, 1.1f, -10f);
     [SerializeField] float smoothTime = 0.25f;
 
     [Header("Límites del Mapa (Confiner)")]
     [SerializeField] bool useBounds = true;
-    [SerializeField] Vector2 minBounds = new Vector2(8.8f, 7.0f);
-    [SerializeField] Vector2 maxBounds = new Vector2(31.2f, 9.0f);
+    [SerializeField] Vector2 minBounds = new Vector2(-6.0f, 1.25f);
+    [SerializeField] Vector2 maxBounds = new Vector2(45.0f, 3.5f);
+
+    [Header("Zoom")]
+    [SerializeField] float orthoSize = 2.85f;
 
     Camera cam;
     Vector3 velocity;
@@ -26,7 +29,10 @@ public class CameraFollow2D : MonoBehaviour
         if (cam != null)
         {
             cam.orthographic = true;
-            cam.orthographicSize = 5f;
+            if (orthoSize > 0f)
+            {
+                cam.orthographicSize = orthoSize;
+            }
             transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
         }
     }

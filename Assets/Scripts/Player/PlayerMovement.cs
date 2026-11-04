@@ -6,15 +6,24 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float walkSpeed = 3.5f;
     [SerializeField] float runSpeed = 6.0f;
+    [Header("Estamina")]
     [SerializeField] float maxStamina = 100f;
     [SerializeField] float staminaDrainRate = 25f;
     [SerializeField] float staminaRegenRate = 20f;
 
+    [Header("Salto / Brinco")]
+    [SerializeField] float jumpDuration = 0.45f;
+    [SerializeField] float jumpHeight = 1.2f;
+    [SerializeField] float jumpStaminaCost = 15f;
+
     Rigidbody2D rb;
+    Collider2D playerCollider;
     Vector2 input;
     float currentStamina;
+    float jumpTimer;
 
     public bool IsRunning { get; private set; }
+    public bool IsJumping { get; private set; }
     public bool IsHidden { get; set; }
     public float SpeedMultiplier { get; set; } = 1.0f;
     public Vector2 MoveInput => input;
@@ -25,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerCollider = GetComponent<Collider2D>();
         if (rb != null)
         {
             rb.freezeRotation = true;
@@ -53,6 +63,22 @@ public class PlayerMovement : MonoBehaviour
 
         bool wantsToRun = kb.leftShiftKey.isPressed && input != Vector2.zero;
 
+        // Salto con Barra Espaciadora [Espacio]
+        if (kb.spaceKey.wasPressedThisFrame && !IsJumping && !IsHidden && currentStamina >= jumpStaminaCost)
+        {
+            currentStamina = Mathf.Max(0f, currentStamina - jumpStaminaCost);
+            StartJump();
+        }
+
+        if (IsJumping)
+        {
+            jumpTimer += Time.deltaTime;
+            if (jumpTimer >= jumpDuration)
+            {
+                EndJump();
+            }
+        }
+
         if (wantsToRun && currentStamina > 0f)
         {
             IsRunning = true;
@@ -70,6 +96,26 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void StartJump()
+    {
+        IsJumping = true;
+        jumpTimer = 0f;
+        if (playerCollider != null)
+        {
+            // Traspasa temporalmente colisiones de obstáculos bajos para brincar sobre ellos
+            playerCollider.isTrigger = true;
+        }
+    }
+
+    void EndJump()
+    {
+        IsJumping = false;
+        if (playerCollider != null)
+        {
+            playerCollider.isTrigger = false;
+        }
+    }
+
     void FixedUpdate()
     {
         if (IsHidden || (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing))
@@ -77,6 +123,17 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             return;
         }
-        rb.linearVelocity = input * (IsRunning ? runSpeed : walkSpeed) * SpeedMultiplier;
+
+        float speed = IsJumping ? runSpeed * 1.15f : (IsRunning ? runSpeed : walkSpeed);
+        Vector2 vel = input * speed * SpeedMultiplier;
+
+        // Impulso y arco vertical durante el salto
+        if (IsJumping)
+        {
+            float arc = Mathf.Sin((jumpTimer / jumpDuration) * Mathf.PI);
+            vel += Vector2.up * (arc * jumpHeight * 2.2f);
+        }
+
+        rb.linearVelocity = vel;
     }
 }

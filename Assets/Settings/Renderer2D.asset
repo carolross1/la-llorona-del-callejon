@@ -34,15 +34,15 @@ MonoBehaviour:
   - name: Multiply
     maskTextureChannel: 0
     blendMode: 1
-  - name: Additive
+  - name: Multiply L2
     maskTextureChannel: 0
-    blendMode: 0
-  - name: Multiply with Mask
-    maskTextureChannel: 1
     blendMode: 1
-  - name: Additive with Mask
-    maskTextureChannel: 1
-    blendMode: 0
+  - name: Multiply L3
+    maskTextureChannel: 0
+    blendMode: 1
+  - name: Multiply L4
+    maskTextureChannel: 0
+    blendMode: 1
   m_UseDepthStencilBuffer: 1
   m_UseCameraSortingLayersTexture: 0
   m_CameraSortingLayersTextureBound: -1

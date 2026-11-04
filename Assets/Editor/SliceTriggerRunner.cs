@@ -99,8 +99,8 @@ public static class SliceTriggerRunner
             try
             {
                 File.Delete(l2Trigger);
-                Debug.Log("[SliceTriggerRunner] Construyendo Nivel 2 oficial (El Callejón del Beso)...");
-                Level2Builder.BuildLevel2Scene();
+                Debug.Log("[SliceTriggerRunner] Construyendo Nivel 2 oficial de 4 pisos (El Callejón del Beso)...");
+                Level2MasterController.BuildFullVerticalLevel2();
                 File.WriteAllText("Temp/build_level2_done.txt", "DONE");
                 Debug.Log("[SliceTriggerRunner] Nivel 2 construido con éxito.");
             }

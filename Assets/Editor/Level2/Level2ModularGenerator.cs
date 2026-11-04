@@ -94,17 +94,22 @@ public static class Level2ModularGenerator
         CreatePiece(facadesGroup, "Muro_Piedra_Stairs4C", new Vector3(51.0f, 2.00f, 0f), muroMamposteria, "Background", -7);
         CreatePiece(facadesGroup, "Muro_Piedra_PreMeta",  new Vector3(54.0f, 1.63f, 0f), muroMamposteria, "Background", -6);
 
-        // ── Fachadas Tier 2 (Terraza del Beso, Y = 3.25) ──
+        // ── Fachadas Tier 2 (Terraza y Balcón Continuo, Y = 3.25) ──
         CreatePiece(facadesGroup, "Casa_Terraza_1",        new Vector3( 7.5f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
         CreatePiece(facadesGroup, "Muro_Piedra_Stairs2",   new Vector3(11.5f, 5.25f, 0f), muroMamposteria, "Background", -7);
         CreatePiece(facadesGroup, "Casa_Terraza_2",        new Vector3(16.5f, 4.50f, 0f), casa1PisoOrange, "Background", -6);
-        CreatePiece(facadesGroup, "Casa_Terraza_Este",     new Vector3(50.0f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Muro_Piedra_Terraza_Mid",new Vector3(20.5f, 4.50f, 0f), muroMamposteria, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_3",        new Vector3(25.0f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_4",        new Vector3(33.0f, 4.50f, 0f), casa1PisoOrange, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_5",        new Vector3(41.0f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_Este",     new Vector3(49.5f, 4.88f, 0f), casa1PisoOrange, "Background", -6);
 
-        // ── Fachadas Tier 3 (Pasarela Mirador / Acueducto, Y = 6.50) ──
+        // ── Fachadas Tier 3 (Pasarela Mirador Continua, Y = 6.50) ──
         CreatePiece(facadesGroup, "Casa_Tier3_1",          new Vector3(18.0f, 8.13f, 0f), casa1PisoYellow, "Background", -6);
         CreatePiece(facadesGroup, "Muro_Piedra_Stairs3",   new Vector3(21.0f, 8.50f, 0f), muroMamposteria, "Background", -7);
         CreatePiece(facadesGroup, "Casa_Tier3_2",          new Vector3(28.5f, 7.75f, 0f), casa1PisoOrange, "Background", -6);
-        CreatePiece(facadesGroup, "Casa_Tier3_Este",       new Vector3(43.5f, 8.13f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Tier3_3",          new Vector3(36.0f, 8.13f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Tier3_Este",       new Vector3(43.5f, 8.13f, 0f), casa1PisoOrange, "Background", -6);
 
         // ── Fachadas Tier 4 (Azoteas Coloniales, Y = 9.75) ──
         CreatePiece(facadesGroup, "Casa_Tier4_1",          new Vector3(27.0f, 11.38f, 0f), casa1PisoYellow, "Background", -6);
@@ -112,7 +117,7 @@ public static class Level2ModularGenerator
         CreatePiece(facadesGroup, "Muro_Piedra_Stairs4A",  new Vector3(39.0f, 11.50f, 0f), muroMamposteria, "Background", -7);
 
         // ----------------------------------------------------
-        // 4. ESTRUCTURA DE CALLES, ESCALERAS Y PASARELAS (4 PISOS)
+        // 4. ESTRUCTURA DE CALLES, ESCALERAS Y PASARELAS (4 PISOS CONECTADOS Y RUTAS ALTERNATIVAS)
         // ----------------------------------------------------
         GameObject pathwaysGroup = GetOrCreateChild(rootEnv, "Vias_Plataformas_Jugables");
         GameObject stairsGroup   = GetOrCreateChild(rootEnv, "Escaleras_Cantera");
@@ -128,18 +133,21 @@ public static class Level2ModularGenerator
         // ── ESCALERA 1: CALLE A TIER 2 (Sube de Y = 0.05 a Y = 3.25, X: 0.0 a 4.1) ──
         BuildStaircase(stairsGroup, "Escalera_Calle_a_Tier2", 0.0f, 0.05f, 4.1f, 3.25f, true, stairsSprite);
 
-        // ── TIER 2: TERRAZA DEL BESO (X: 4.1 a 18.0, Y = 3.25) ──
-        BuildEmpedradoWalkway(pathwaysGroup, railingsGroup, boundsRoot, "Terraza_Tier2", 4.1f, 13.9f, 3.25f, adoquinesPuros, muroMamposteria, barandalSprite,
-            backGaps: new List<(float, float)> { (10.5f, 14.8f) });
+        // ── TIER 2: TERRAZA DEL BESO Y BALCÓN CONTINUO COMPLETO (X: 4.1 a 51.5, Y = 3.25) ──
+        // Permite caminar libremente por todo el piso 2 sin obligar a subir ni a bajar
+        BuildEmpedradoWalkway(pathwaysGroup, railingsGroup, boundsRoot, "Terraza_Tier2", 4.1f, 47.4f, 3.25f, adoquinesPuros, muroMamposteria, barandalSprite,
+            backGaps: new List<(float, float)> { (10.5f, 14.8f) },
+            frontGaps: new List<(float, float)> { (18.0f, 22.2f) });
 
         // ── ESCALERA 1B: BAJADA DE TIER 2 A CALLE HONDA (Baja de Y = 3.25 a Y = 0.05, X: 18.0 a 22.1) ──
-        BuildStaircase(stairsGroup, "Escalera_Tier2_a_Calle", 18.0f, 3.25f, 22.1f, 0.05f, false, stairsSprite);
+        BuildStaircase(stairsGroup, "Escalera_Tier2_a_Calle", 18.0f, 3.25f, 22.1f, 0.05f, false, stairsSprite, floorContinuesAtTop: true);
 
         // ── ESCALERA 2: SUBIDA DE TIER 2 A TIER 3 (Sube de Y = 3.30 a Y = 6.50, X: 10.5 a 14.6) ──
         BuildStaircase(stairsGroup, "Escalera_Tier2_a_Tier3", 10.5f, 3.30f, 14.6f, 6.50f, true, stairsSprite);
 
-        // ── TIER 3: PASARELA MIRADOR / ACUEDUCTO AÉREO (X: 14.6 a 35.0, Y = 6.50) ──
-        BuildEmpedradoWalkway(pathwaysGroup, railingsGroup, boundsRoot, "Pasarela_Tier3", 14.6f, 20.4f, 6.50f, adoquinesPuros, muroMamposteria, barandalSprite,
+        // ── TIER 3: PASARELA MIRADOR Y BALCÓN CONTINUO COMPLETO (X: 14.6 a 45.0, Y = 6.50) ──
+        // Si el jugador no quiere subir por la 3ra escalera, puede seguir caminando derecho por este balcón
+        BuildEmpedradoWalkway(pathwaysGroup, railingsGroup, boundsRoot, "Pasarela_Tier3", 14.6f, 30.4f, 6.50f, adoquinesPuros, muroMamposteria, barandalSprite,
             backGaps: new List<(float, float)> { (20.0f, 24.3f) });
 
         // ── ESCALERA 3: SUBIDA DE TIER 3 A TIER 4 (Sube de Y = 6.55 a Y = 9.75, X: 20.0 a 24.1) ──
@@ -151,14 +159,8 @@ public static class Level2ModularGenerator
         // ── ESCALERA 4A: BAJADA DE TIER 4 A TIER 3 ESTE (Baja de Y = 9.75 a Y = 6.50, X: 38.0 a 42.1) ──
         BuildStaircase(stairsGroup, "Escalera_Tier4_a_Tier3Este", 38.0f, 9.75f, 42.1f, 6.50f, false, stairsSprite);
 
-        // ── TIER 3 ESTE: BALCÓN INTERMEDIO (X: 42.1 a 45.0, Y = 6.50) ──
-        BuildEmpedradoWalkway(pathwaysGroup, railingsGroup, boundsRoot, "Balcon_Tier3Este", 42.1f, 2.9f, 6.50f, adoquinesPuros, muroMamposteria, barandalSprite);
-
         // ── ESCALERA 4B: BAJADA DE TIER 3 ESTE A TIER 2 ESTE (Baja de Y = 6.50 a Y = 3.25, X: 45.0 a 49.1) ──
         BuildStaircase(stairsGroup, "Escalera_Tier3Este_a_Tier2Este", 45.0f, 6.50f, 49.1f, 3.25f, false, stairsSprite);
-
-        // ── TIER 2 ESTE: BALCÓN PREVIO A LA META (X: 49.1 a 51.5, Y = 3.25) ──
-        BuildEmpedradoWalkway(pathwaysGroup, railingsGroup, boundsRoot, "Balcon_Tier2Este", 49.1f, 2.4f, 3.25f, adoquinesPuros, muroMamposteria, barandalSprite);
 
         // ── ESCALERA 4C: BAJADA FINAL A LA ENTRADA DEL TÚNEL (Baja de Y = 3.25 a Y = 0.05, X: 51.5 a 54.5) ──
         BuildStaircase(stairsGroup, "Escalera_Tier2Este_a_CalleMeta", 51.5f, 3.25f, 54.5f, 0.05f, false, stairsSprite);
@@ -221,8 +223,11 @@ public static class Level2ModularGenerator
             new Vector3(55.5f, 2.0f, 0f),  // Tier 1: Fachada túnel meta
             new Vector3( 8.5f, 5.0f, 0f),  // Tier 2: Pared casa terraza
             new Vector3(16.0f, 5.0f, 0f),  // Tier 2: Antes de subir a Tier 3
+            new Vector3(28.0f, 5.0f, 0f),  // Tier 2: Balcón medio
+            new Vector3(44.0f, 5.0f, 0f),  // Tier 2: Balcón este
             new Vector3(17.5f, 8.2f, 0f),  // Tier 3: Pasarela Mirador
-            new Vector3(32.0f, 8.2f, 0f),  // Tier 3: Antes de bajar al este
+            new Vector3(32.0f, 8.2f, 0f),  // Tier 3: Balcón medio
+            new Vector3(39.0f, 8.2f, 0f),  // Tier 3: Balcón este
             new Vector3(26.5f, 11.4f, 0f), // Tier 4: Azoteas altas
             new Vector3(35.5f, 11.4f, 0f)  // Tier 4: Antes de la escalera de bajada
         };
@@ -241,7 +246,9 @@ public static class Level2ModularGenerator
         // Cajas y barriles de sigilo distribuidos estratégicamente
         CreateCrateProp(stealthRoot, "Huacales_Inicio",      new Vector3(-2.8f, 0.25f, 0f), crateSprite);
         CreateCrateProp(stealthRoot, "Sacos_Tier2",         new Vector3( 7.0f, 3.50f, 0f), sackSprite);
+        CreateCrateProp(stealthRoot, "Huacales_Tier2_East", new Vector3(37.0f, 3.50f, 0f), crateSprite);
         CreateCrateProp(stealthRoot, "Huacales_Tier3",      new Vector3(27.0f, 6.75f, 0f), crateSprite);
+        CreateCrateProp(stealthRoot, "Sacos_Tier3_East",    new Vector3(40.0f, 6.75f, 0f), sackSprite);
         CreateCrateProp(stealthRoot, "Sacos_Tier4",         new Vector3(31.0f, 10.00f, 0f), sackSprite);
         CreateCrateProp(stealthRoot, "Cajas_Calle1",        new Vector3(24.5f, 0.25f, 0f), crateSprite);
         CreateCrateProp(stealthRoot, "Barril_Calle2",       new Vector3(38.0f, 0.25f, 0f), barrelSprite);
@@ -395,7 +402,7 @@ public static class Level2ModularGenerator
             CreateSolidBarrier(boundsRoot, $"ParedAlta_{name}", new Vector2((startX + endX) * 0.5f, walkwayY + 0.75f), new Vector2(length, 0.35f));
     }
 
-    static void BuildStaircase(GameObject stairsGroup, string name, float startX, float startY, float endX, float endY, bool isAscendingRight, Sprite stairsSprite)
+    static void BuildStaircase(GameObject stairsGroup, string name, float startX, float startY, float endX, float endY, bool isAscendingRight, Sprite stairsSprite, bool floorContinuesAtTop = false)
     {
         GameObject stairObj = GetOrCreateChild(stairsGroup, name);
         float centerX = (startX + endX) * 0.5f;
@@ -423,6 +430,7 @@ public static class Level2ModularGenerator
         stairs.leftX   = Mathf.Min(startX, endX);
         stairs.rightX  = Mathf.Max(startX, endX);
         stairs.isAscendingRight = isAscendingRight;
+        stairs.floorContinuesAtTop = floorContinuesAtTop;
     }
 
     static void CreateBarrierWithGaps(GameObject parent, string prefix, float startX, float endX, float y, float thickness, List<(float start, float end)> gaps)

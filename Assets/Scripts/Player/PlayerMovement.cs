@@ -88,10 +88,13 @@ public class PlayerMovement : MonoBehaviour
             StartJump();
         }
 
-        // Ofrenda / Orar con [F] para distraer a La Llorona
+        // Ofrenda / Orar con [F] (Prioriza consagrar nicho sagrado si está cerca, o colocar ofrenda en el suelo)
         if (kb.fKey.wasPressedThisFrame && Candle.PlayerCandlesCount > 0 && !IsHidden)
         {
-            Candle.TryPlaceOffering(transform.position);
+            if (!ShrineNiche.TryLightNearestShrine(transform.position))
+            {
+                Candle.TryPlaceOffering(transform.position);
+            }
         }
 
         if (IsJumping)

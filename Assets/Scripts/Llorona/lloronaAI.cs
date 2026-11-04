@@ -457,6 +457,7 @@ public class LloronaAI : MonoBehaviour
     {
         if (state == State.Distracted) return false;
         if (player == null || player.IsHidden) return false;
+        if (ShrineNiche.IsPositionSafe(player.transform.position)) return false;
 
         Vector2 to = player.transform.position - transform.position;
         float dist = to.magnitude;
@@ -478,6 +479,7 @@ public class LloronaAI : MonoBehaviour
     {
         if (caught) return;
         if (col == null || !col.CompareTag("Player")) return;
+        if (player != null && (player.IsHidden || ShrineNiche.IsPositionSafe(player.transform.position))) return;
         if (player != null && player.IsHidden) return;   // escondido: no lo atrapa
 
         caught = true;
@@ -501,4 +503,19 @@ public class LloronaAI : MonoBehaviour
         Gizmos.DrawRay(transform.position, l * viewDistance);
         Gizmos.DrawRay(transform.position, r * viewDistance);
     }
+
+    public static void OnShrineLitAggression()
+    {
+        var llorona = Object.FindAnyObjectByType<LloronaAI>();
+        if (llorona != null)
+        {
+            llorona.patrolSpeed = Mathf.Min(3.0f, llorona.patrolSpeed + 0.3f);
+            llorona.chaseSpeed = Mathf.Min(4.2f, llorona.chaseSpeed + 0.35f);
+            if (llorona.audioSource != null && AudioManager.Instance != null && AudioManager.Instance.lloronaLlanto != null)
+            {
+                llorona.audioSource.PlayOneShot(AudioManager.Instance.lloronaLlanto, 0.9f);
+            }
+        }
+    }
+
 }

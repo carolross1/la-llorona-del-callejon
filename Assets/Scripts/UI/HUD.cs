@@ -11,6 +11,8 @@ using UnityEngine.UI;
 public class HUD : MonoBehaviour
 {
     public static HUD Instance { get; private set; }
+    public static int ActiveShrinesLit = 0;
+    public static int TotalShrines = 0;
 
     [Header("Corazones de Vida")]
     [SerializeField] Image[] heartImages;
@@ -109,7 +111,12 @@ public class HUD : MonoBehaviour
         if (candleInventoryRoot != null)
             candleInventoryRoot.SetActive(true);
         if (candleCountText != null)
-            candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0";
+        {
+            if (TotalShrines > 0)
+                candleCountText.text = $"Ofrendas: {ActiveShrinesLit}/{TotalShrines}   Velas: {count}  [F]";
+            else
+                candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0";
+        }
     }
 
     public void UpdateLives(int lives)

@@ -170,6 +170,16 @@ public class Candle : MonoBehaviour
         return true;
     }
 
+    public static bool ConsumeCandle()
+    {
+        if (PlayerCandlesCount <= 0) return false;
+        PlayerCandlesCount--;
+        OnCandlesCountChanged?.Invoke(PlayerCandlesCount);
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayCandleSound();
+        return true;
+    }
+
     public static void ResetInventory()
     {
         PlayerCandlesCount = 0;

@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Vela coleccionable en el escenario.
-/// Al acercarse y presionar [E] se recoge al inventario.
+/// Se recoge automáticamente al caminar sobre ella o acercarse y presionar [E].
 /// Con la tecla [F] Carlos ora y coloca una ofrenda sagrada en el suelo,
 /// la cual distrae y pacifica a La Llorona durante varios segundos.
 /// </summary>
@@ -19,37 +19,76 @@ public class Candle : MonoBehaviour
     [Header("Retroalimentación")]
     [SerializeField] ParticleSystem pickupParticles;
 
-    bool playerNearby;
+    PlayerMovement player;
+    bool isCollected;
+
+    void Start()
+    {
+        player = FindAnyObjectByType<PlayerMovement>();
+        EnsureTriggerCollider();
+    }
+
+    void EnsureTriggerCollider()
+    {
+        CircleCollider2D col = GetComponent<CircleCollider2D>();
+        if (col == null) col = gameObject.AddComponent<CircleCollider2D>();
+        col.isTrigger = true;
+        col.radius = 1.3f;
+        col.offset = Vector2.zero;
+    }
 
     void Update()
     {
-        if (playerNearby && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        if (isCollected) return;
+
+        if (player == null)
+        {
+            player = FindAnyObjectByType<PlayerMovement>();
+            if (player == null) return;
+        }
+
+        float dist = Vector2.Distance(transform.position, player.transform.position);
+
+        // 1. Recogida automática al caminar sobre la vela (muy cómodo y sin fallas)
+        if (dist <= 1.35f)
         {
             CollectCandle();
+            return;
+        }
+
+        // 2. O recogida presionando [E] al estar a distancia media
+        if (dist <= 2.2f && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            CollectCandle();
+            return;
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (isCollected) return;
+
         if (other.CompareTag("Player") || other.GetComponentInParent<PlayerMovement>() != null)
         {
-            playerNearby = true;
-            if (HUD.Instance != null)
-                HUD.Instance.ShowEventNotice("[E] Recoger veladora", 2.0f);
+            CollectCandle();
         }
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
+        if (isCollected) return;
+
         if (other.CompareTag("Player") || other.GetComponentInParent<PlayerMovement>() != null)
         {
-            playerNearby = false;
+            CollectCandle();
         }
     }
 
     void CollectCandle()
     {
-        playerNearby = false;
+        if (isCollected) return;
+        isCollected = true;
+
         PlayerCandlesCount++;
         OnCandlesCountChanged?.Invoke(PlayerCandlesCount);
 
@@ -57,7 +96,7 @@ public class Candle : MonoBehaviour
             AudioManager.Instance.PlayCandleSound();
 
         if (HUD.Instance != null)
-            HUD.Instance.ShowTutorial("¡Veladora recogida!\nPresiona [F] para orar, colocar la ofrenda y distraer a La Llorona.", 4.5f);
+            HUD.Instance.ShowEventNotice("¡Veladora recogida!\nPresiona [F] para orar y distraer a La Llorona.", 4.0f);
 
         if (pickupParticles != null)
         {
@@ -76,7 +115,7 @@ public class Candle : MonoBehaviour
         PlayerCandlesCount--;
         OnCandlesCountChanged?.Invoke(PlayerCandlesCount);
 
-        // Sonido de encendido de vela
+        // Sonido sagrado de encendido de vela
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlayCandleSound();
 

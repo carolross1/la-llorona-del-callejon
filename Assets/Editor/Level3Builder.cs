@@ -295,11 +295,11 @@ public static class Level3Builder
         Transform tutRoot = FreshRoot("TutorialTriggers");
         CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
             new Vector2(2.5f, 11.5f), new Vector2(4f, 8f),
-            "¡El Atrio de la Parroquia de Dolores!\n• [E] Recoger veladoras\n• [F] Orar / Colocar ofrenda (distrae a La Llorona)\n• [C] Esconderse en confesionarios y bancas",
+            "¡El Atrio de la Parroquia de Dolores!\n• Camina sobre las veladoras para recogerlas\n• Presiona [F] para orar y distraer a La Llorona\n• Presiona [E] para esconderte en confesionarios y bancas",
             showOnStart: true);
         CreateTutorialTrigger(tutRoot, "Tutorial_Fuente",
             new Vector2(13.0f, 11.5f), new Vector2(3f, 6f),
-            "La Llorona ronda en circulos por la fuente.\nUsa los confesionarios y bancas para ocultarte con [C].");
+            "La Llorona ronda en circulos por la fuente.\nUsa los confesionarios y bancas para ocultarte con [E].");
         CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
             new Vector2(33.0f, 11.5f), new Vector2(3f, 8f),
             "¡El porton al Panteon de las Animas esta abierto!\nSigue las flores de cempasuchil hacia el Porton Este para escapar.");
@@ -517,7 +517,8 @@ public static class Level3Builder
 
         CircleCollider2D col = go.AddComponent<CircleCollider2D>();
         col.isTrigger = true;
-        col.radius = 0.5f;
+        col.radius = 1.3f;
+        col.offset = Vector2.zero;
 
         GameObject lightGo = new GameObject("LuzVela");
         lightGo.transform.SetParent(go.transform, false);

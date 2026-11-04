@@ -47,7 +47,7 @@ public class Stairs2D : MonoBehaviour
             float playerX = rb.position.x;
 
             // Verificar si el jugador está dentro del rango horizontal de la escalera
-            if (playerX >= leftX - 0.25f && playerX <= rightX + 0.25f)
+            if (playerX >= leftX && playerX <= rightX)
             {
                 float t = Mathf.Clamp01((playerX - leftX) / Mathf.Max(0.01f, rightX - leftX));
                 float targetY = isAscendingRight

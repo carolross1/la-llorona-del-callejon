@@ -103,32 +103,40 @@ public static class Level2MasterController
             RenderTexture rt = new RenderTexture(1024, 576, 24);
             cam.targetTexture = rt;
             Texture2D tex = new Texture2D(1024, 576, TextureFormat.RGB24, false);
-            // Captura 1: Vista inicial de Carlos en la calle empedrada
-            cam.transform.position = new Vector3(-5.0f, 1.40f, -10f);
+            // Captura 1: Vista inicial de Carlos en la calle empedrada (Tier 1)
+            cam.transform.position = new Vector3(-4.0f, 1.40f, -10f);
             cam.Render();
             RenderTexture.active = rt;
             tex.ReadPixels(new Rect(0, 0, 1024, 576), 0, 0);
             tex.Apply();
             File.WriteAllBytes("Temp/SceneScreenshot.png", tex.EncodeToPNG());
 
-            // Captura 2: Vista de la Escalera Central de Cantera
-            cam.transform.position = new Vector3(2.0f, 1.80f, -10f);
+            // Captura 2: Vista de la Escalera Central de Cantera hacia Tier 2
+            cam.transform.position = new Vector3(2.5f, 2.00f, -10f);
             cam.Render();
             RenderTexture.active = rt;
             tex.ReadPixels(new Rect(0, 0, 1024, 576), 0, 0);
             tex.Apply();
             File.WriteAllBytes("Temp/SceneScreenshot_Stairs.png", tex.EncodeToPNG());
 
-            // Captura 3: Vista de la Terraza Alta del Beso
-            cam.transform.position = new Vector3(10.0f, 4.20f, -10f);
+            // Captura 3: Vista de las Pasarelas Elevadas (Tier 2 y Tier 3)
+            cam.transform.position = new Vector3(16.0f, 5.00f, -10f);
             cam.Render();
             RenderTexture.active = rt;
             tex.ReadPixels(new Rect(0, 0, 1024, 576), 0, 0);
             tex.Apply();
             File.WriteAllBytes("Temp/SceneScreenshot_Terrace.png", tex.EncodeToPNG());
 
-            // Captura 4: Vista de la Meta / Túnel Colonial
-            cam.transform.position = new Vector3(37.0f, 1.60f, -10f);
+            // Captura 4: Vista de las Azoteas Coloniales (Tier 4)
+            cam.transform.position = new Vector3(28.0f, 9.80f, -10f);
+            cam.Render();
+            RenderTexture.active = rt;
+            tex.ReadPixels(new Rect(0, 0, 1024, 576), 0, 0);
+            tex.Apply();
+            File.WriteAllBytes("Temp/SceneScreenshot_Tier4.png", tex.EncodeToPNG());
+
+            // Captura 5: Vista de la Meta Monumental / Túnel Colonial (X = 57.0)
+            cam.transform.position = new Vector3(55.0f, 1.80f, -10f);
             cam.Render();
             RenderTexture.active = rt;
             tex.ReadPixels(new Rect(0, 0, 1024, 576), 0, 0);
@@ -142,7 +150,7 @@ public static class Level2MasterController
             UnityEngine.Object.DestroyImmediate(rt);
             UnityEngine.Object.DestroyImmediate(tex);
 
-            Debug.Log("[Level2MasterController] Screenshots guardadas en Temp/SceneScreenshot.png y Temp/SceneScreenshot_Stairs.png");
+            Debug.Log("[Level2MasterController] Screenshots de los 4 pisos y meta guardadas en Temp/");
         }
         catch (Exception ex)
         {
@@ -233,8 +241,9 @@ public static class Level2MasterController
             BoxCollider2D playerCol = player.GetComponent<BoxCollider2D>();
             if (playerCol != null)
             {
-                playerCol.size = new Vector2(0.5f, 0.3f);
+                playerCol.size = new Vector2(0.42f, 0.22f);
                 playerCol.offset = new Vector2(0f, -0.3f);
+                playerCol.edgeRadius = 0.04f;
             }
         }
 
@@ -250,7 +259,7 @@ public static class Level2MasterController
             if (follow == null) follow = cam.gameObject.AddComponent<CameraFollow2D>();
 
             follow.enabled = true;
-            follow.SetBounds(new Vector2(-6.0f, 1.40f), new Vector2(40.0f, 4.40f));
+            follow.SetBounds(new Vector2(-8.0f, 1.40f), new Vector2(58.0f, 10.50f));
 
             if (player != null)
             {

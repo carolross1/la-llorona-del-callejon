@@ -32,15 +32,22 @@ public static class Level2HUD
         Canvas canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
         if (canvas == null) return;
 
+        // Limpiar elementos huérfanos o duplicados directos bajo canvas para evitar HUD doble
+        string[] orphanNames = { "HUD_Izquierda_Estado", "HUD_Centro_Tiempo", "HUD_Centro_TiempoPuntos", "HUD_Derecha_Objetivo", "HUD_Inferior_Corazones_Duplicados" };
+        foreach (var oName in orphanNames)
+        {
+            Transform orphan = canvas.transform.Find(oName);
+            if (orphan != null && orphan.gameObject != hud.gameObject)
+            {
+                UnityEngine.Object.DestroyImmediate(orphan.gameObject);
+            }
+        }
+
         // ========================================================
         // 1. ARRIBA IZQUIERDA: CORAZONES Y ESTAMINA [Shift]
         // ========================================================
-        GameObject hudLeft = GameObject.Find("HUD_Izquierda_Estado");
-        if (hudLeft == null)
-        {
-            hudLeft = new GameObject("HUD_Izquierda_Estado", typeof(RectTransform));
-            hudLeft.transform.SetParent(canvas.transform, false);
-        }
+        GameObject hudLeft = GetOrCreateUIRect(hud.transform, "HUD_Izquierda_Estado");
+        hudLeft.SetActive(true);
 
         RectTransform hudLeftRect = hudLeft.GetComponent<RectTransform>();
         hudLeftRect.anchorMin = new Vector2(0f, 1f);
@@ -48,10 +55,6 @@ public static class Level2HUD
         hudLeftRect.pivot     = new Vector2(0f, 1f);
         hudLeftRect.anchoredPosition = new Vector2(32f, -28f);
         hudLeftRect.sizeDelta = new Vector2(340f, 120f);
-
-        // Desactivar duplicados viejos en la esquina inferior izquierda
-        Transform oldDup = canvas.transform.Find("HUD_Inferior_Corazones_Duplicados");
-        if (oldDup != null) oldDup.gameObject.SetActive(false);
 
         // Contenedor de corazones discretos (con medios corazones)
         GameObject heartsRoot = GetOrCreateUIRect(hudLeft.transform, "Corazones_Vida_Contenedor");
@@ -138,12 +141,8 @@ public static class Level2HUD
         // ========================================================
         // 2. ARRIBA CENTRO: PLACA COLONIAL "TIEMPO 00:00" Y "PUNTOS 0"
         // ========================================================
-        GameObject centerTimerObj = GameObject.Find("HUD_Centro_Tiempo");
-        if (centerTimerObj == null)
-        {
-            centerTimerObj = new GameObject("HUD_Centro_Tiempo", typeof(RectTransform));
-            centerTimerObj.transform.SetParent(canvas.transform, false);
-        }
+        GameObject centerTimerObj = GetOrCreateUIRect(hud.transform, "HUD_Centro_TiempoPuntos");
+        centerTimerObj.SetActive(true);
 
         RectTransform centerRect = centerTimerObj.GetComponent<RectTransform>();
         centerRect.anchorMin = new Vector2(0.5f, 1f);
@@ -193,12 +192,8 @@ public static class Level2HUD
         // ========================================================
         // 3. ARRIBA DERECHA: PANEL DE OBJETIVO CON "Salida: XXm"
         // ========================================================
-        GameObject objPanel = GameObject.Find("HUD_Derecha_Objetivo");
-        if (objPanel == null)
-        {
-            objPanel = new GameObject("HUD_Derecha_Objetivo", typeof(RectTransform));
-            objPanel.transform.SetParent(canvas.transform, false);
-        }
+        GameObject objPanel = GetOrCreateUIRect(hud.transform, "HUD_Derecha_Objetivo");
+        objPanel.SetActive(true);
 
         RectTransform objPanelRect = objPanel.GetComponent<RectTransform>();
         objPanelRect.anchorMin = new Vector2(1f, 1f);

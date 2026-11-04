@@ -1,0 +1,618 @@
+fileFormatVersion: 2
+guid: 16c28d4eaf24e964fae4404aea1786e1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 194482741623155610
+    second: ofrendas_0
+  - first:
+      213: -5887512171087425747
+    second: ofrendas_1
+  - first:
+      213: -3643531719036445813
+    second: ofrendas_2
+  - first:
+      213: 4811930843479698959
+    second: ofrendas_3
+  - first:
+      213: -6922255514376856037
+    second: ofrendas_4
+  - first:
+      213: -3959906763573258563
+    second: ofrendas_5
+  - first:
+      213: 4415093117680582718
+    second: ofrendas_6
+  - first:
+      213: -7946969820773245670
+    second: ofrendas_7
+  - first:
+      213: -842921409595557045
+    second: ofrendas_8
+  - first:
+      213: 4000734113209416655
+    second: ofrendas_9
+  - first:
+      213: -3644275702820399901
+    second: ofrendas_10
+  - first:
+      213: 6905805608226949846
+    second: ofrendas_11
+  - first:
+      213: 3197650151237318726
+    second: ofrendas_12
+  - first:
+      213: -5097401644515856732
+    second: ofrendas_13
+  - first:
+      213: 3778675008804526130
+    second: ofrendas_14
+  - first:
+      213: -4870393657439954895
+    second: ofrendas_15
+  - first:
+      213: -6218691631062452022
+    second: ofrendas_16
+  - first:
+      213: -1793705804411964412
+    second: ofrendas_17
+  - first:
+      213: -3528812102120104521
+    second: ofrendas_18
+  - first:
+      213: -4307883474448985673
+    second: ofrendas_19
+  - first:
+      213: 4625080726628354022
+    second: ofrendas_20
+  - first:
+      213: 7346746723216321157
+    second: ofrendas_21
+  - first:
+      213: 3825340197396930473
+    second: ofrendas_22
+  - first:
+      213: 3320724518937031100
+    second: ofrendas_23
+  - first:
+      213: -9059915234822561924
+    second: ofrendas_24
+  - first:
+      213: 7598530379331494467
+    second: ofrendas_25
+  - first:
+      213: 4563920283028604227
+    second: ofrendas_26
+  - first:
+      213: -7029349601733372420
+    second: ofrendas_27
+  - first:
+      213: -6847063161645239456
+    second: ofrendas_28
+  - first:
+      213: 8844041248440692275
+    second: ofrendas_29
+  - first:
+      213: 5258142948106137584
+    second: ofrendas_30
+  - first:
+      213: -4577367374018146019
+    second: ofrendas_31
+  - first:
+      213: -8011688056735157642
+    second: ofrendas_32
+  - first:
+      213: 283377096817781604
+    second: ofrendas_33
+  - first:
+      213: 8849845131253292315
+    second: ofrendas_34
+  - first:
+      213: 8886020715220945661
+    second: ofrendas_35
+  - first:
+      213: -6083092761641509900
+    second: ofrendas_36
+  - first:
+      213: -2963721507393800314
+    second: ofrendas_37
+  - first:
+      213: -8461554617380826847
+    second: ofrendas_38
+  - first:
+      213: 6278287576441983611
+    second: ofrendas_39
+  - first:
+      213: -2967589826882140872
+    second: ofrendas_40
+  - first:
+      213: -8359119844246019429
+    second: ofrendas_41
+  - first:
+      213: -5011832375333646770
+    second: ofrendas_42
+  - first:
+      213: 2887206558944448648
+    second: ofrendas_43
+  - first:
+      213: 3582153002325844968
+    second: ofrendas_44
+  - first:
+      213: 1415036231547059489
+    second: ofrendas_45
+  - first:
+      213: 8041599231231933647
+    second: ofrendas_46
+  - first:
+      213: 1660144237779103873
+    second: ofrendas_47
+  - first:
+      213: 8236429222546973354
+    second: ofrendas_48
+  - first:
+      213: -2373022535156097297
+    second: ofrendas_49
+  - first:
+      213: -2644975292066520327
+    second: Charco_AguaBendita
+  - first:
+      213: 6180196658648904688
+    second: Vaso_Vela_Roja_1
+  - first:
+      213: 8499793949323277952
+    second: Vaso_Vela_Roja_2
+  - first:
+      213: 4731605439012234484
+    second: Candelabro_Vela
+  - first:
+      213: -66119644400725899
+    second: Vela_Blanca_Grande
+  - first:
+      213: 8129704291770114810
+    second: Vidrios_Jarron_Roto
+  - first:
+      213: 1327612685285142510
+    second: Sahumador_Roto
+  - first:
+      213: -3101129592109672359
+    second: Ramo_Cempasuchil_1
+  - first:
+      213: -1224953758495896377
+    second: Ramo_Terciopelo
+  - first:
+      213: -5237298418973587361
+    second: Ramo_Alcatraces
+  - first:
+      213: -7054546030038556662
+    second: Ramo_Mixto_Ofrenda
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Charco_AguaBendita
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 696
+        width: 592
+        height: 228
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f2a0bc4cf82b4bd0800000000000000
+      internalID: -2644975292066520327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vaso_Vela_Roja_1
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 748
+        width: 84
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f3f2d0fd1874c550800000000000000
+      internalID: 6180196658648904688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vaso_Vela_Roja_2
+      rect:
+        serializedVersion: 2
+        x: 720
+        y: 752
+        width: 96
+        height: 180
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 086bd65209555f570800000000000000
+      internalID: 8499793949323277952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Candelabro_Vela
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 680
+        width: 124
+        height: 304
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f461a1e31a0aa140800000000000000
+      internalID: 4731605439012234484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vela_Blanca_Grande
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 732
+        width: 132
+        height: 252
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 570d1d2a888151ff0800000000000000
+      internalID: -66119644400725899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vidrios_Jarron_Roto
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 444
+        width: 168
+        height: 176
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af22de7faf282d070800000000000000
+      internalID: 8129704291770114810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sahumador_Roto
+      rect:
+        serializedVersion: 2
+        x: 1264
+        y: 380
+        width: 160
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eef29b904b0ac6210800000000000000
+      internalID: 1327612685285142510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ramo_Cempasuchil_1
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 48
+        width: 272
+        height: 308
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 958d9d3011396f4d0800000000000000
+      internalID: -3101129592109672359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ramo_Terciopelo
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 48
+        width: 276
+        height: 272
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cc8296fb07100fe0800000000000000
+      internalID: -1224953758495896377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ramo_Alcatraces
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 44
+        width: 244
+        height: 276
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f584d5a16d06157b0800000000000000
+      internalID: -5237298418973587361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ramo_Mixto_Ofrenda
+      rect:
+        serializedVersion: 2
+        x: 1168
+        y: 44
+        width: 336
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a00e8e323c7391e90800000000000000
+      internalID: -7054546030038556662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Candelabro_Vela: 4731605439012234484
+      Charco_AguaBendita: -2644975292066520327
+      Ramo_Alcatraces: -5237298418973587361
+      Ramo_Cempasuchil_1: -3101129592109672359
+      Ramo_Mixto_Ofrenda: -7054546030038556662
+      Ramo_Terciopelo: -1224953758495896377
+      Sahumador_Roto: 1327612685285142510
+      Vaso_Vela_Roja_1: 6180196658648904688
+      Vaso_Vela_Roja_2: 8499793949323277952
+      Vela_Blanca_Grande: -66119644400725899
+      Vidrios_Jarron_Roto: 8129704291770114810
+      ofrendas_0: 194482741623155610
+      ofrendas_1: -5887512171087425747
+      ofrendas_10: -3644275702820399901
+      ofrendas_11: 6905805608226949846
+      ofrendas_12: 3197650151237318726
+      ofrendas_13: -5097401644515856732
+      ofrendas_14: 3778675008804526130
+      ofrendas_15: -4870393657439954895
+      ofrendas_16: -6218691631062452022
+      ofrendas_17: -1793705804411964412
+      ofrendas_18: -3528812102120104521
+      ofrendas_19: -4307883474448985673
+      ofrendas_2: -3643531719036445813
+      ofrendas_20: 4625080726628354022
+      ofrendas_21: 7346746723216321157
+      ofrendas_22: 3825340197396930473
+      ofrendas_23: 3320724518937031100
+      ofrendas_24: -9059915234822561924
+      ofrendas_25: 7598530379331494467
+      ofrendas_26: 4563920283028604227
+      ofrendas_27: -7029349601733372420
+      ofrendas_28: -6847063161645239456
+      ofrendas_29: 8844041248440692275
+      ofrendas_3: 4811930843479698959
+      ofrendas_30: 5258142948106137584
+      ofrendas_31: -4577367374018146019
+      ofrendas_32: -8011688056735157642
+      ofrendas_33: 283377096817781604
+      ofrendas_34: 8849845131253292315
+      ofrendas_35: 8886020715220945661
+      ofrendas_36: -6083092761641509900
+      ofrendas_37: -2963721507393800314
+      ofrendas_38: -8461554617380826847
+      ofrendas_39: 6278287576441983611
+      ofrendas_4: -6922255514376856037
+      ofrendas_40: -2967589826882140872
+      ofrendas_41: -8359119844246019429
+      ofrendas_42: -5011832375333646770
+      ofrendas_43: 2887206558944448648
+      ofrendas_44: 3582153002325844968
+      ofrendas_45: 1415036231547059489
+      ofrendas_46: 8041599231231933647
+      ofrendas_47: 1660144237779103873
+      ofrendas_48: 8236429222546973354
+      ofrendas_49: -2373022535156097297
+      ofrendas_5: -3959906763573258563
+      ofrendas_6: 4415093117680582718
+      ofrendas_7: -7946969820773245670
+      ofrendas_8: -842921409595557045
+      ofrendas_9: 4000734113209416655
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

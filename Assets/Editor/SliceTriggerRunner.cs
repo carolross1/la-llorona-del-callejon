@@ -50,8 +50,9 @@ public static class SliceTriggerRunner
         string l1Trigger = "Temp/build_level1_trigger.txt";
         string l2Trigger = "Temp/build_level2_trigger.txt";
         string allTrigger = "Temp/build_all_trigger.txt";
+        string l3Trigger = "Temp/build_level3_trigger.txt";
 
-        if (!File.Exists(sliceTrigger) && !File.Exists(l1Trigger) && !File.Exists(l2Trigger) && !File.Exists(allTrigger))
+        if (!File.Exists(sliceTrigger) && !File.Exists(l1Trigger) && !File.Exists(l2Trigger) && !File.Exists(allTrigger) && !File.Exists(l3Trigger))
             return;
 
         if (EditorApplication.isPlaying)
@@ -111,6 +112,22 @@ public static class SliceTriggerRunner
             }
         }
 
+        if (File.Exists(l3Trigger))
+        {
+            try
+            {
+                File.Delete(l3Trigger);
+                Debug.Log("[SliceTriggerRunner] Construyendo Nivel 3 oficial (El Atrio de Dolores)...");
+                Level3Builder.BuildLevel3Scene();
+                File.WriteAllText("Temp/build_level3_done.txt", "DONE");
+                Debug.Log("[SliceTriggerRunner] Nivel 3 construido con éxito.");
+            }
+            catch (System.Exception ex)
+            {
+                File.WriteAllText("Temp/build_level3_error.txt", ex.ToString());
+                Debug.LogError($"[SliceTriggerRunner] Error construyendo Nivel 3: {ex}");
+            }
+        }
         if (File.Exists(allTrigger))
         {
             try
@@ -129,3 +146,4 @@ public static class SliceTriggerRunner
         }
     }
 }
+

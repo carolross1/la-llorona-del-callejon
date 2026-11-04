@@ -56,6 +56,10 @@ public class HUD : MonoBehaviour
 
     Coroutine tutorialCoroutine;
 
+    [Header("Indicador de Salida Dinámico")]
+    [SerializeField] Transform exitGoalTransform;
+    Transform playerCachedTransform;
+
     void Awake()
     {
         Instance = this;
@@ -105,7 +109,7 @@ public class HUD : MonoBehaviour
         if (candleInventoryRoot != null)
             candleInventoryRoot.SetActive(count > 0);
         if (candleCountText != null)
-            candleCountText.text = $"×{count}   [F] Colocar";
+            candleCountText.text = $"[F] Orar / Ofrenda (x{count})";
     }
 
     public void UpdateLives(int lives)

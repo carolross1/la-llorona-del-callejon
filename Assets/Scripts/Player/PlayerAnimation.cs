@@ -1,6 +1,7 @@
 // Assets/Scripts/Player/PlayerAnimation.cs
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class PlayerAnimation : MonoBehaviour
 {
     [Header("Audio de Pasos (Nivel 1)")]
@@ -17,12 +18,33 @@ public class PlayerAnimation : MonoBehaviour
 
     void Awake()
     {
-        anim = GetComponent<Animator>();
+        EnsureAnimator();
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         movement = GetComponent<PlayerMovement>();
 
         EnsureFootstepSource();
+    }
+
+    public void EnsureAnimator()
+    {
+        if (anim == null)
+            anim = GetComponent<Animator>();
+
+        if (anim == null)
+            anim = gameObject.AddComponent<Animator>();
+
+        if (anim.runtimeAnimatorController == null)
+        {
+            anim.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("PlayerController");
+            if (anim.runtimeAnimatorController == null)
+                anim.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Animations/Player/PlayerController");
+
+#if UNITY_EDITOR
+            if (anim.runtimeAnimatorController == null)
+                anim.runtimeAnimatorController = UnityEditor.AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animations/Player/PlayerController.controller");
+#endif
+        }
     }
 
     void EnsureFootstepSource()
@@ -37,7 +59,7 @@ public class PlayerAnimation : MonoBehaviour
         }
         footstepSource.playOnAwake = false;
         footstepSource.loop = true;
-        footstepSource.spatialBlend = 0f; // Audio 2D nítido para el jugador
+        footstepSource.spatialBlend = 0f; // Audio 2D nitido para el jugador
     }
 
     void Update()
@@ -56,10 +78,15 @@ public class PlayerAnimation : MonoBehaviour
         }
 
         // Carlos cuenta con sprites nativos para todas las direcciones (fila 2: izquierda, fila 3: derecha).
-        // flipX debe permanecer siempre en false para no invertir ni quebrar la animación hacia la izquierda.
+        // flipX debe permanecer siempre en false para no invertir ni quebrar la animacion.
         if (sr != null && sr.flipX)
         {
             sr.flipX = false;
+        }
+
+        if (anim == null || anim.runtimeAnimatorController == null)
+        {
+            EnsureAnimator();
         }
 
         if (anim != null && anim.runtimeAnimatorController != null)
@@ -88,7 +115,7 @@ public class PlayerAnimation : MonoBehaviour
         }
 
         // Si pisa el lodo (SpeedMultiplier < 0.9f) va lento -> pasos lentos
-        // Si corre a alta velocidad sin impedimento -> pasos rápidos
+        // Si corre a alta velocidad sin impedimento -> pasos rapidos
         bool inMud = (movement != null && movement.SpeedMultiplier < 0.9f);
         bool isRunningFast = (movement != null && movement.IsRunning && !inMud && vel.magnitude > 3.2f);
 
@@ -119,14 +146,6 @@ public class PlayerAnimation : MonoBehaviour
             {
                 footstepSource.Play();
             }
-        }
-    }
-
-    void OnDisable()
-    {
-        if (footstepSource != null && footstepSource.isPlaying)
-        {
-            footstepSource.Stop();
         }
     }
 }

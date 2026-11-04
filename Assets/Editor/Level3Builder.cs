@@ -83,7 +83,7 @@ public static class Level3Builder
             }
         }
 
-        // Limpiar ra�ces obsoletas del Nivel 3 previo
+        // Limpiar ra�ces obsoletas del Nivel 3 previo
         string[] oldRoots = new string[] { "Props", "Hazards", "Barricadas", "Decoracion", "Luces", "Limites" };
         foreach (var r in oldRoots)
         {
@@ -107,8 +107,8 @@ public static class Level3Builder
 
             // Muro de colisión que protege la base de la catedral
             BoxCollider2D catCol = catGo.AddComponent<BoxCollider2D>();
-            catCol.size = new Vector2(13.0f, 4.0f);
-            catCol.offset = new Vector2(0f, -2.5f);
+            catCol.size = new Vector2(14.0f, 3.5f);
+            catCol.offset = new Vector2(0f, 1.8f);
             if (wallsLayer >= 0) catGo.layer = wallsLayer;
 
             // Iluminación cálida de entrada a la parroquia
@@ -202,7 +202,7 @@ public static class Level3Builder
         // Altar mayor al aire libre con veladoras
         if (sAltar != null)
         {
-            CreateSolidProp(props, "Altar_Atrio", sAltar, 18.0f, 17.5f, 1.15f, wallsLayer, new Vector2(4.5f, 1.5f), new Vector2(0f, -0.6f));
+            CreateSolidProp(props, "Altar_Atrio", sAltar, 18.0f, 17.5f, 1.15f, wallsLayer, new Vector2(4.8f, 1.8f), new Vector2(0f, 0.9f));
             // Luz de velas en el altar
             GameObject lAltar = new GameObject("Luz_Altar");
             lAltar.transform.SetParent(props, false);
@@ -221,7 +221,7 @@ public static class Level3Builder
             float[] cipresesX = new float[] { 3.5f, 5.0f, 31.0f, 32.5f };
             foreach (float cx in cipresesX)
             {
-                CreateSolidProp(props, $"Cipres_{cx:0}", sCipres, cx, 12.0f, 1.25f, wallsLayer, new Vector2(0.8f, 0.8f), new Vector2(0f, -1.2f));
+                CreateSolidProp(props, $"Cipres_{cx:0}", sCipres, cx, 12.0f, 1.25f, wallsLayer, new Vector2(0.9f, 0.8f), new Vector2(0f, 0.45f));
             }
         }
 
@@ -295,14 +295,14 @@ public static class Level3Builder
         Transform tutRoot = FreshRoot("TutorialTriggers");
         CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
             new Vector2(2.5f, 11.5f), new Vector2(4f, 8f),
-            "¡El Atrio de la Parroquia de Dolores!\nRecoge veladoras con [E] y colócalas con [F] para orar y distraer a La Llorona.",
+            "¡El Atrio de la Parroquia de Dolores!\n• [E] Recoger veladoras\n• [F] Orar / Colocar ofrenda (distrae a La Llorona)\n• [C] Esconderse en confesionarios y bancas",
             showOnStart: true);
         CreateTutorialTrigger(tutRoot, "Tutorial_Fuente",
             new Vector2(13.0f, 11.5f), new Vector2(3f, 6f),
-            "La Llorona ronda en círculos por la fuente.\nUsa los confesionarios y bancas para ocultarte con [E].");
+            "La Llorona ronda en circulos por la fuente.\nUsa los confesionarios y bancas para ocultarte con [C].");
         CreateTutorialTrigger(tutRoot, "Tutorial_Salida",
             new Vector2(33.0f, 11.5f), new Vector2(3f, 8f),
-            "¡El portón al Panteón de las Ánimas está abierto!\nCruza la reja hacia la salida.");
+            "¡El porton al Panteon de las Animas esta abierto!\nSigue las flores de cempasuchil hacia el Porton Este para escapar.");
 
         // 16. GameManager y AudioManager
         SetupGameManager(3);
@@ -360,7 +360,7 @@ public static class Level3Builder
 
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.size = colSize;
-        bc.offset = new Vector2(0f, -0.4f);
+        bc.offset = new Vector2(0f, 0.6f);
         if (layer >= 0) go.layer = layer;
 
         Undo.RegisterCreatedObjectUndo(go, name);
@@ -379,7 +379,7 @@ public static class Level3Builder
 
         CircleCollider2D col = go.AddComponent<CircleCollider2D>();
         col.radius = 0.35f;
-        col.offset = new Vector2(0f, -1.2f);
+        col.offset = new Vector2(0f, 0.35f);
         if (layer >= 0) go.layer = layer;
 
         GameObject lightGo = new GameObject("Luz");
@@ -407,24 +407,44 @@ public static class Level3Builder
         sr.sprite = sprite;
         sr.sortingOrder = 3;
 
-        BoxCollider2D trig = go.AddComponent<BoxCollider2D>();
-        trig.isTrigger = true;
-        trig.size = new Vector2(2.4f, 2.0f);
+        // Base solida física en layer Walls (impide que Carlos la atraviese)
+        BoxCollider2D solidCol = go.AddComponent<BoxCollider2D>();
+        if (name.Contains("Banca"))
+        {
+            solidCol.size = new Vector2(2.6f, 0.8f);
+            solidCol.offset = new Vector2(0f, 0.45f);
+        }
+        else if (name.Contains("Confesionario"))
+        {
+            solidCol.size = new Vector2(2.0f, 1.4f);
+            solidCol.offset = new Vector2(0f, 0.75f);
+        }
+        else // Cripta
+        {
+            solidCol.size = new Vector2(2.6f, 1.2f);
+            solidCol.offset = new Vector2(0f, 0.65f);
+        }
+        int wallsLayer = LayerMask.NameToLayer("Walls");
+        if (wallsLayer >= 0) go.layer = wallsLayer;
 
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1.8f, 0.8f);
-        col.offset = new Vector2(0f, -0.6f);
+        // Trigger de proximidad como hijo en layer HideSpot para activar [C] Esconderse
+        GameObject trigGo = new GameObject("Trigger_Escondite");
+        trigGo.transform.SetParent(go.transform, false);
+        if (layer >= 0) trigGo.layer = layer;
+        BoxCollider2D trigCol = trigGo.AddComponent<BoxCollider2D>();
+        trigCol.isTrigger = true;
+        trigCol.size = solidCol.size + new Vector2(1.2f, 1.2f);
+        trigCol.offset = solidCol.offset;
 
         GameObject hp = new GameObject("HidePoint");
         hp.transform.SetParent(go.transform, false);
-        hp.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+        hp.transform.localPosition = new Vector3(0f, solidCol.offset.y + 0.2f, 0f);
 
         HideSpot hs = go.AddComponent<HideSpot>();
         SerializedObject so = new SerializedObject(hs);
         so.FindProperty("hidePoint").objectReferenceValue = hp.transform;
         so.ApplyModifiedProperties();
 
-        if (layer >= 0) go.layer = layer;
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
@@ -558,7 +578,7 @@ public static class Level3Builder
         labelGo.transform.SetParent(go.transform, false);
         labelGo.transform.localPosition = new Vector3(0f, 3.2f, 0f);
         TextMesh tm = labelGo.AddComponent<TextMesh>();
-        tm.text = "AL PANTEÓN ➔";
+        tm.text = "SALIDA AL PANTEON ➔";
         tm.fontSize = 32;
         tm.characterSize = 0.12f;
         tm.anchor = TextAnchor.MiddleCenter;

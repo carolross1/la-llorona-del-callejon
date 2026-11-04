@@ -345,17 +345,21 @@ public class LloronaAI : MonoBehaviour
     /// Distrae a La Llorona hacia una ofrenda o posición específica durante varios segundos.
     /// Durante la distracción no persigue a Carlos.
     /// </summary>
-    public void Distract(Vector2 targetPos, float duration = 3.0f)
+    public void Distract(Vector2 targetPos, float duration = 7.0f)
     {
         state = State.Distracted;
         timer = duration;
         distractionPos = targetPos;
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.SetEyeAlert(false);
+        }
     }
 
     /// <summary>
     /// Distrae a La Llorona deteniéndola en su posición actual durante varios segundos.
     /// </summary>
-    public void Distract(float duration = 3.0f)
+    public void Distract(float duration = 7.0f)
     {
         Distract(transform.position, duration);
     }

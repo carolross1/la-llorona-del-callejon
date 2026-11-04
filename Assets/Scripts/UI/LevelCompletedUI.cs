@@ -66,32 +66,40 @@ public class LevelCompletedUI : MonoBehaviour
     {
         if (state == GameState.LevelCompleted)
         {
-            if (panel != null) panel.SetActive(true);
-
-            // Asegurar que el cursor esté visible e interactuable
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-
-            if (GameManager.Instance != null)
-            {
-                float t = GameManager.Instance.LevelTimer;
-                int min = Mathf.FloorToInt(t / 60f);
-                int sec = Mathf.FloorToInt(t % 60f);
-                if (timeResultText != null)
-                    timeResultText.text = $"Tiempo: {min:00}:{sec:00}";
-
-                int score = GameManager.Instance.LevelScore;
-                if (scoreResultText != null)
-                    scoreResultText.text = $"Puntos Obtenidos: {score}";
-
-                int high = SaveSystem.GetHighScore(GameManager.Instance.CurrentLevelNumber);
-                if (highScoreText != null)
-                    highScoreText.text = $"Récord: {high}";
-            }
+            Show();
         }
         else
         {
             if (panel != null) panel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Despliega el panel de victoria con estadísticas actualizadas.
+    /// </summary>
+    public void Show()
+    {
+        if (panel != null) panel.SetActive(true);
+
+        // Asegurar que el cursor esté visible e interactuable
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        if (GameManager.Instance != null)
+        {
+            float t = GameManager.Instance.LevelTimer;
+            int min = Mathf.FloorToInt(t / 60f);
+            int sec = Mathf.FloorToInt(t % 60f);
+            if (timeResultText != null)
+                timeResultText.text = $"Tiempo: {min:00}:{sec:00}";
+
+            int score = GameManager.Instance.LevelScore;
+            if (scoreResultText != null)
+                scoreResultText.text = $"Puntos Obtenidos: {score}";
+
+            int high = SaveSystem.GetHighScore(GameManager.Instance.CurrentLevelNumber);
+            if (highScoreText != null)
+                highScoreText.text = $"Récord: {high}";
         }
     }
 

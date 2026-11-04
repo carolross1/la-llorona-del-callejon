@@ -13,6 +13,12 @@ public class LloronaAI : MonoBehaviour
     [SerializeField] float patrolSpeed = 1.5f;
     [SerializeField] float waitTime = 2f;
 
+    public Transform[] Waypoints
+    {
+        get => waypoints;
+        set => waypoints = value;
+    }
+
     [Header("Persecución")]
     [SerializeField] float chaseSpeed = 2.8f;
     [SerializeField] float loseSightTime = 3f;
@@ -56,6 +62,54 @@ public class LloronaAI : MonoBehaviour
         EnsureAudioSource();
         player = FindAnyObjectByType<PlayerMovement>();
         ApplySettings();
+        ValidateWaypoints();
+    }
+
+    void ValidateWaypoints()
+    {
+        var valid = new System.Collections.Generic.List<Transform>();
+        if (waypoints != null)
+        {
+            foreach (var w in waypoints)
+            {
+                if (w != null) valid.Add(w);
+            }
+        }
+        if (valid.Count == 0)
+        {
+            var wp1 = GameObject.Find("WP_Paseo1") ?? GameObject.Find("WP_Codo1") ?? GameObject.Find("WP_Balcones");
+            var wp2 = GameObject.Find("WP_Paseo2") ?? GameObject.Find("WP_Codo2");
+            if (wp1 != null) valid.Add(wp1.transform);
+            if (wp2 != null) valid.Add(wp2.transform);
+        }
+        if (valid.Count > 0)
+        {
+            waypoints = valid.ToArray();
+        }
+    }
+
+    bool HasValidWaypoint()
+    {
+        if (waypoints == null || waypoints.Length == 0)
+        {
+            ValidateWaypoints();
+            if (waypoints == null || waypoints.Length == 0) return false;
+        }
+
+        if (idx < 0 || idx >= waypoints.Length) idx = 0;
+        if (waypoints[idx] == null)
+        {
+            for (int i = 0; i < waypoints.Length; i++)
+            {
+                if (waypoints[i] != null)
+                {
+                    idx = i;
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     void EnsureAudioSource()
@@ -107,7 +161,7 @@ public class LloronaAI : MonoBehaviour
             case State.Patrol:
                 if (sees) { StartChase(); break; }
 
-                if (waypoints == null || waypoints.Length == 0)
+                if (!HasValidWaypoint())
                 {
                     rb.linearVelocity = Vector2.zero;
                     break;
@@ -130,8 +184,11 @@ public class LloronaAI : MonoBehaviour
                 if (waypoints != null && waypoints.Length > 1)
                 {
                     int nextIdx = (idx + 1) % waypoints.Length;
-                    Vector2 nextDir = (waypoints[nextIdx].position - transform.position).normalized;
-                    if (nextDir.sqrMagnitude > 0.01f) facing = nextDir;
+                    if (waypoints[nextIdx] != null)
+                    {
+                        Vector2 nextDir = (waypoints[nextIdx].position - transform.position).normalized;
+                        if (nextDir.sqrMagnitude > 0.01f) facing = nextDir;
+                    }
                 }
 
                 timer -= Time.fixedDeltaTime;

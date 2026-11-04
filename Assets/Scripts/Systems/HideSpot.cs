@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class HideSpot : MonoBehaviour
 {
+    public enum SpotType { Sacos, Barril, Caja, Porton, Puesto }
+
+    public SpotType spotType = SpotType.Sacos;
+    public bool canExitAnytime = true;
+
     [SerializeField] Transform hidePoint;           // arrastra aquí HidePoint
     [SerializeField] SpriteRenderer spriteRenderer; // opcional, se busca solo
 

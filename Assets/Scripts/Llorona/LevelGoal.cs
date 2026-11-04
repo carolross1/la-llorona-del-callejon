@@ -39,9 +39,24 @@ public class LevelGoal : MonoBehaviour
         {
             GameManager.Instance.OnLevelCompleted();
         }
+
+        var ui = Object.FindAnyObjectByType<LevelCompletedUI>(FindObjectsInactive.Include);
+        if (ui != null)
+        {
+            ui.gameObject.SetActive(true);
+            ui.Show();
+        }
         else
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Debug.LogWarning("[LevelGoal] LevelCompletedUI no encontrada en la escena, avanzando automáticamente al siguiente nivel.");
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.NextLevel();
+            }
+            else
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            }
         }
     }
 }

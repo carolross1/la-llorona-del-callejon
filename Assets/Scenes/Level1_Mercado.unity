@@ -856,6 +856,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35eb9b07846a8a04fb4c1b42c4518b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideSpot
+  spotType: 0
+  canExitAnytime: 1
   hidePoint: {fileID: 759074649}
   spriteRenderer: {fileID: 0}
 --- !u!61 &66443778
@@ -3658,6 +3660,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35eb9b07846a8a04fb4c1b42c4518b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideSpot
+  spotType: 0
+  canExitAnytime: 1
   hidePoint: {fileID: 1985084078}
   spriteRenderer: {fileID: 0}
 --- !u!61 &437480166
@@ -4679,6 +4683,7 @@ MonoBehaviour:
   useBounds: 1
   minBounds: {x: 8.8, y: 5}
   maxBounds: {x: 48.5, y: 15}
+  orthoSize: 2.85
 --- !u!1 &521514763
 GameObject:
   m_ObjectHideFlags: 0
@@ -9232,6 +9237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35eb9b07846a8a04fb4c1b42c4518b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideSpot
+  spotType: 0
+  canExitAnytime: 1
   hidePoint: {fileID: 77548261}
   spriteRenderer: {fileID: 0}
 --- !u!61 &680419875
@@ -10777,6 +10784,9 @@ MonoBehaviour:
   maxStamina: 100
   staminaDrainRate: 25
   staminaRegenRate: 20
+  jumpDuration: 0.45
+  jumpHeight: 1.2
+  jumpStaminaCost: 15
 --- !u!95 &1012157940
 Animator:
   serializedVersion: 7
@@ -11385,6 +11395,10 @@ MonoBehaviour:
   lostHeartSprite: {fileID: 5249732557364212421, guid: ae614496f5a23da4e9dfc0ed8ca037b2, type: 3}
   activeHeartColor: {r: 1, g: 1, b: 1, a: 1}
   lostHeartColor: {r: 0.25, g: 0.25, b: 0.25, a: 0.45}
+  healthBarRoot: {fileID: 0}
+  healthFillImage: {fileID: 0}
+  healthValueText: {fileID: 0}
+  healthCanvasGroup: {fileID: 0}
   timerText: {fileID: 2035135661}
   scoreText: {fileID: 2136585896}
   objectiveText: {fileID: 1756223485}
@@ -14708,6 +14722,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35eb9b07846a8a04fb4c1b42c4518b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideSpot
+  spotType: 0
+  canExitAnytime: 1
   hidePoint: {fileID: 1827337733}
   spriteRenderer: {fileID: 0}
 --- !u!61 &1575213990
@@ -16044,6 +16060,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35eb9b07846a8a04fb4c1b42c4518b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideSpot
+  spotType: 0
+  canExitAnytime: 1
   hidePoint: {fileID: 184550085}
   spriteRenderer: {fileID: 0}
 --- !u!61 &1653392913

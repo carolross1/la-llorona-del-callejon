@@ -17,8 +17,9 @@ public static class SliceTriggerRunner
         if (File.Exists(reloadTrigger))
         {
             File.Delete(reloadTrigger);
-            Debug.Log("[SliceTriggerRunner] Solicitando recarga de scripts...");
+            Debug.Log("[SliceTriggerRunner] Solicitando recarga y compilación de scripts...");
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
             EditorUtility.RequestScriptReload();
             return;
         }

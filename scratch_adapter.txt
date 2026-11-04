@@ -1,0 +1,719 @@
+#if UNITY_EDITOR
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
+
+/// <summary>
+/// Adaptador del Nivel 2: Callejón Colonial en 2 Plantas (EXACTO A LA IMAGEN DE REFERENCIA):
+/// - Composición idéntica a la imagen: Sin casas regadas ni calle plana estirada.
+/// - PLANTA BAJA: Calle empedrada inferior con faroles, casas terracota, escondites de sigilo (cajas y barriles [E]),
+///   charco de lodo y botellas con ruido, con La Llorona patrullando abajo.
+/// - ESCALERA DE CANTERA CENTRAL: Conecta ambos pisos; sube con W o D, baja con A o S con Stairs2D.
+/// - PLANTA ALTA: Terraza superior con barandales de hierro forjado al frente, letrero de madera y
+///   la entrada al Túnel Oscuro del Callejón en el centro, donde se encuentra la META.
+/// - CÁMARA: Encuadre 1:1 de la imagen, con Carlos visible en la terraza y colisiones precisas en ambos pisos.
+/// </summary>
+[InitializeOnLoad]
+public static class Level2Adapter
+{
+    const string ScenePath = "Assets/Scenes/Level2_Callejon.unity";
+    const string TriggerFile = "Temp/RunLevel2Adapt.txt";
+
+    static Level2Adapter()
+    {
+        EditorApplication.update += OnEditorUpdate;
+    }
+
+    static void OnEditorUpdate()
+    {
+        if (File.Exists(TriggerFile))
+        {
+            try { File.Delete(TriggerFile); } catch { }
+            AdaptLevel2ToImage();
+        }
+    }
+
+    [MenuItem("Tools/¡Adaptar Nivel 2 y HUD a Imagen de Referencia! %#l", priority = 10)]
+    public static void AdaptLevel2ToImage()
+    {
+        Debug.Log("[Level2Adapter] === CONSTRUYENDO ESCENARIO 2 PLANTAS EXACTO A LA IMAGEN DE REFERENCIA ===");
+
+        var scene = EditorSceneManager.OpenScene(ScenePath);
+        if (!scene.IsValid())
+        {
+            Debug.LogError("[Level2Adapter] No se pudo abrir la escena: " + ScenePath);
+            return;
+        }
+
+        try
+        {
+            ArchiveOldPrototypeMaze(scene);
+            AdaptHUD();
+            BuildExactTwoStoryScene(scene);
+            ConfigureCameraAndPlayer();
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[Level2Adapter] ¡Escenario de 2 plantas adaptado exactamente a la imagen con éxito total!");
+            EditorUtility.DisplayDialog("Nivel 2 Adaptado a la Imagen", 
+                "¡El Nivel 2 ha sido reconstruido idéntico a tu imagen de referencia!\n\n" +
+                "🏛️ PLANTA ALTA (Terraza Superior):\n" +
+                "- Andador elevado con barandales de hierro forjado al frente.\n" +
+                "- Túnel oscuro central donde está la META.\n\n" +
+                "🪜 ESCALERA DE CANTERA CENTRAL:\n" +
+                "- Conecta ambos pisos: subes con W o D, bajas con A o S.\n\n" +
+                "🏘️ PLANTA BAJA (Calle Inferior):\n" +
+                "- Calle empedrada con cajas y barriles de sigilo [E].\n" +
+                "- Charco de lodo, botellas y La Llorona patrullando abajo.", "¡Entendido!");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("[Level2Adapter] Error durante la adaptación: " + ex.ToString());
+        }
+    }
+
+    // ========================================================
+    // 1. ARCHIVADO DEL LABERINTO VIEJO Y OBJETOS SUELTOS
+    // ========================================================
+    static void ArchiveOldPrototypeMaze(UnityEngine.SceneManagement.Scene scene)
+    {
+        var roots = scene.GetRootGameObjects();
+        GameObject archivedRoot = GameObject.Find("_OldPrototype_Archived");
+        if (archivedRoot == null)
+        {
+            archivedRoot = new GameObject("_OldPrototype_Archived");
+        }
+
+        HashSet<string> preserveNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Main Camera", "Player", "Canvas", "EventSystem", 
+            "GameManager", "AudioManager", "Global Light 2D", "Llorona",
+            "Escenario_Callejon_Adaptado", "_OldPrototype_Archived",
+            "Salida_Callejon_Meta", "MetaTrigger"
+        };
+
+        int count = 0;
+        foreach (var root in roots)
+        {
+            if (!preserveNames.Contains(root.name) && !root.name.StartsWith("_OldPrototype"))
+            {
+                root.transform.SetParent(archivedRoot.transform);
+                count++;
+            }
+        }
+
+        archivedRoot.SetActive(false);
+    }
+
+    // ==========================================
+    // 2. ADAPTACIÓN DE LA BARRA DE VIDA Y EL HUD
+    // ==========================================
+    static void AdaptHUD()
+    {
+        HUD hud = UnityEngine.Object.FindAnyObjectByType<HUD>();
+        if (hud == null) return;
+
+        Sprite[] uiSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/UI/interfaz.png").OfType<Sprite>().ToArray();
+        Sprite heartFull = uiSprites.FirstOrDefault(s => s.name == "Corazon_lleno");
+        Sprite barFrame = uiSprites.FirstOrDefault(s => s.name == "Barra_marco");
+        Sprite plateNormal = uiSprites.FirstOrDefault(s => s.name == "Placa_normal");
+
+        GameObject hudLeft = GameObject.Find("HUD_Izquierda_Estado");
+        if (hudLeft != null)
+        {
+            RectTransform hudLeftRect = GetOrAddComponent<RectTransform>(hudLeft);
+            hudLeftRect.anchoredPosition = new Vector2(36f, -36f);
+            hudLeftRect.sizeDelta = new Vector2(340f, 130f);
+
+            GameObject bgObj = GetOrCreateUIRect(hudLeft.transform, "Fondo_Protector_HUD");
+            bgObj.transform.SetAsFirstSibling();
+            RectTransform bgRect = GetOrAddComponent<RectTransform>(bgObj);
+            bgRect.anchorMin = new Vector2(0f, 1f);
+            bgRect.anchorMax = new Vector2(0f, 1f);
+            bgRect.pivot = new Vector2(0f, 1f);
+            bgRect.anchoredPosition = new Vector2(-12f, 10f);
+            bgRect.sizeDelta = new Vector2(330f, 115f);
+
+            Image bgImg = GetOrAddComponent<Image>(bgObj);
+            if (plateNormal != null)
+            {
+                bgImg.sprite = plateNormal;
+                bgImg.type = Image.Type.Sliced;
+                bgImg.color = new Color(0.12f, 0.08f, 0.08f, 0.90f);
+            }
+
+            GameObject hpRoot = GetOrCreateUIRect(hudLeft.transform, "Barra_Vida_Contenedor");
+            RectTransform hpRootRect = GetOrAddComponent<RectTransform>(hpRoot);
+            hpRootRect.anchorMin = new Vector2(0f, 1f);
+            hpRootRect.anchorMax = new Vector2(0f, 1f);
+            hpRootRect.pivot = new Vector2(0f, 1f);
+            hpRootRect.anchoredPosition = new Vector2(6f, -8f);
+            hpRootRect.sizeDelta = new Vector2(300f, 46f);
+
+            GameObject heartIconObj = GetOrCreateUIRect(hpRoot.transform, "Icono_Corazon");
+            RectTransform heartIconRect = GetOrAddComponent<RectTransform>(heartIconObj);
+            heartIconRect.anchorMin = new Vector2(0f, 0.5f);
+            heartIconRect.anchorMax = new Vector2(0f, 0.5f);
+            heartIconRect.pivot = new Vector2(0.5f, 0.5f);
+            heartIconRect.anchoredPosition = new Vector2(22f, 0f);
+            heartIconRect.sizeDelta = new Vector2(40f, 40f);
+
+            Image heartIconImg = GetOrAddComponent<Image>(heartIconObj);
+            if (heartFull != null) heartIconImg.sprite = heartFull;
+            heartIconImg.color = Color.white;
+
+            GameObject barFrameObj = GetOrCreateUIRect(hpRoot.transform, "Marco_Barra");
+            RectTransform barFrameRect = GetOrAddComponent<RectTransform>(barFrameObj);
+            barFrameRect.anchorMin = new Vector2(0f, 0.5f);
+            barFrameRect.anchorMax = new Vector2(0f, 0.5f);
+            barFrameRect.pivot = new Vector2(0f, 0.5f);
+            barFrameRect.anchoredPosition = new Vector2(50f, 0f);
+            barFrameRect.sizeDelta = new Vector2(245f, 28f);
+
+            Image barFrameImg = GetOrAddComponent<Image>(barFrameObj);
+            if (barFrame != null)
+            {
+                barFrameImg.sprite = barFrame;
+                barFrameImg.type = Image.Type.Sliced;
+                barFrameImg.color = new Color(1f, 0.88f, 0.70f, 1f);
+            }
+
+            GameObject barBgObj = GetOrCreateUIRect(barFrameObj.transform, "Fondo_Interior");
+            RectTransform barBgRect = GetOrAddComponent<RectTransform>(barBgObj);
+            barBgRect.anchorMin = Vector2.zero;
+            barBgRect.anchorMax = Vector2.one;
+            barBgRect.offsetMin = new Vector2(4f, 4f);
+            barBgRect.offsetMax = new Vector2(-4f, -4f);
+
+            Image barBgImg = GetOrAddComponent<Image>(barBgObj);
+            barBgImg.color = new Color(0.22f, 0.05f, 0.05f, 0.95f);
+
+            GameObject fillObj = GetOrCreateUIRect(barBgObj.transform, "Relleno_Vida");
+            RectTransform fillRect = GetOrAddComponent<RectTransform>(fillObj);
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+
+            Image fillImg = GetOrAddComponent<Image>(fillObj);
+            fillImg.type = Image.Type.Filled;
+            fillImg.fillMethod = Image.FillMethod.Horizontal;
+            fillImg.fillOrigin = (int)Image.OriginHorizontal.Left;
+            fillImg.fillAmount = 1.0f;
+            fillImg.color = new Color(0.92f, 0.18f, 0.18f, 1f);
+
+            GameObject txtObj = GetOrCreateUIRect(barFrameObj.transform, "Texto_Vida");
+            RectTransform txtRect = GetOrAddComponent<RectTransform>(txtObj);
+            txtRect.anchorMin = Vector2.zero;
+            txtRect.anchorMax = Vector2.one;
+            txtRect.offsetMin = Vector2.zero;
+            txtRect.offsetMax = Vector2.zero;
+
+            Text txtComp = GetOrAddComponent<Text>(txtObj);
+            txtComp.text = "VIDA 3/3";
+            txtComp.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            txtComp.fontSize = 13;
+            txtComp.fontStyle = FontStyle.Bold;
+            txtComp.alignment = TextAnchor.MiddleCenter;
+            txtComp.color = new Color(1f, 0.96f, 0.88f, 1f);
+
+            Transform staminaTransform = hudLeft.transform.Find("Estamina_Barra");
+            if (staminaTransform != null)
+            {
+                RectTransform stRect = GetOrAddComponent<RectTransform>(staminaTransform.gameObject);
+                stRect.anchorMin = new Vector2(0f, 1f);
+                stRect.anchorMax = new Vector2(0f, 1f);
+                stRect.pivot = new Vector2(0f, 1f);
+                stRect.anchoredPosition = new Vector2(56f, -62f);
+                stRect.sizeDelta = new Vector2(245f, 20f);
+            }
+
+            Transform oldHearts = hudLeft.transform.Find("Corazones_Vida");
+            if (oldHearts != null) oldHearts.gameObject.SetActive(false);
+
+            SerializedObject serializedHUD = new SerializedObject(hud);
+            var propRoot = serializedHUD.FindProperty("healthBarRoot");
+            if (propRoot != null) propRoot.objectReferenceValue = hpRoot;
+            var propFill = serializedHUD.FindProperty("healthFillImage");
+            if (propFill != null) propFill.objectReferenceValue = fillImg;
+            var propTxt = serializedHUD.FindProperty("healthValueText");
+            if (propTxt != null) propTxt.objectReferenceValue = txtComp;
+            serializedHUD.ApplyModifiedProperties();
+        }
+    }
+
+    // ========================================================
+    // 3. CONSTRUCCIÓN EXACTA DEL ESCENARIO DE LA IMAGEN
+    // ========================================================
+    static void BuildExactTwoStoryScene(UnityEngine.SceneManagement.Scene scene)
+    {
+        string envDir = "Assets/Sprites/Environment/";
+        string nvl2Dir = envDir + "Nivel 2/Sprites/";
+
+        // Sprites de arquitectura
+        Sprite stairsSprite = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Callejon_Beso_Central.png");
+        Sprite darkTunnelSprite = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Fachada_Alta_Este.png");
+        Sprite railingSprite = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Balcon_Hierro_Barandal.png");
+        Sprite casa1Sprite = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Casa_Colonial_1.png");
+        Sprite casa2Sprite = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Casa_Colonial_2.png");
+        Sprite fachadaTerracota = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Fachada_Terracota.png");
+        Sprite wallLantern = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Farol_Pared_Chico.png");
+        Sprite flowerPot = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Maceta_Barro.png");
+        Sprite signSprite = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Poste_Senaletica_Callejon.png");
+        Sprite cobbleTile = AssetDatabase.LoadAssetAtPath<Sprite>(nvl2Dir + "Tile_Adoquin_00.png");
+
+        // Sprites de obstáculos
+        Sprite[] obstacleSprites = AssetDatabase.LoadAllAssetsAtPath(envDir + "Botellas_charcolodo_Nvl1.png").OfType<Sprite>().ToArray();
+        Sprite mudPuddleSprite = obstacleSprites.FirstOrDefault(s => s.name == "Charco_1") ?? obstacleSprites.FirstOrDefault(s => s.name.Contains("Charco"));
+        Sprite bottlesSprite = obstacleSprites.FirstOrDefault(s => s.name == "Botellas_caidas") ?? obstacleSprites.FirstOrDefault(s => s.name.Contains("Botella"));
+        Sprite brokenGlassSprite = obstacleSprites.FirstOrDefault(s => s.name == "Vidrios_rotos");
+        AudioClip glassSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/vidrio.mp3");
+
+        Sprite[] crateSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/_originals/Contenedores_Sacos_Nvl1.png").OfType<Sprite>().ToArray();
+        Sprite crateSprite = crateSprites.FirstOrDefault(s => s.name.Contains("Contenedores_Sacos_Nvl1_0") || s.name.Contains("0")) 
+                             ?? crateSprites.FirstOrDefault();
+        Sprite barrelSprite = crateSprites.FirstOrDefault(s => s.name.Contains("4") || s.name.Contains("5")) 
+                              ?? crateSprites.LastOrDefault();
+
+        // Contenedor principal del escenario
+        GameObject rootEnv = GameObject.Find("Escenario_Callejon_Adaptado");
+        if (rootEnv == null) rootEnv = new GameObject("Escenario_Callejon_Adaptado");
+
+        // Limpieza segura de hijos previos
+        for (int i = rootEnv.transform.childCount - 1; i >= 0; i--)
+        {
+            var child = rootEnv.transform.GetChild(i).gameObject;
+            var stairsComps = child.GetComponentsInChildren<Stairs2D>(true);
+            foreach (var sc in stairsComps) UnityEngine.Object.DestroyImmediate(sc);
+            UnityEngine.Object.DestroyImmediate(child);
+        }
+
+        // 3.1 PLANTA BAJA: Pavimento de Adoquines (de X = -7.5 a X = 8.5)
+        GameObject cobbleRoot = GetOrCreateChild(rootEnv, "Calle_Empedrada");
+        if (cobbleTile != null)
+        {
+            int tileIndex = 1;
+            for (float x = -7.5f; x <= 8.5f; x += 2.5f)
+            {
+                GameObject tileObj = GetOrCreateChild(cobbleRoot, $"Adoquin_{tileIndex++}");
+                tileObj.transform.position = new Vector3(x, 1.1f, 0f);
+                SpriteRenderer sr = GetOrAddComponent<SpriteRenderer>(tileObj);
+                sr.sprite = cobbleTile;
+                sr.sortingLayerName = "Background";
+                sr.sortingOrder = -2;
+            }
+        }
+
+        // 3.2 ESTRUCTURA CENTRAL: Muro de Cantera con Escalera, Nicho y Enredadera (Centro)
+        GameObject stairsObj = GetOrCreateChild(rootEnv, "Escalera_Cantera_Colonial");
+        stairsObj.transform.position = new Vector3(0.0f, 3.1f, 0f);
+        SpriteRenderer stairsSr = GetOrAddComponent<SpriteRenderer>(stairsObj);
+        if (stairsSprite != null)
+        {
+            stairsSr.sprite = stairsSprite;
+            stairsSr.sortingLayerName = "Default";
+            stairsSr.sortingOrder = 2; // Queda detrás del jugador
+        }
+
+        // Rampa de escalones para subir y bajar con W/D o A/S
+        GameObject rampTriggerObj = GetOrCreateChild(stairsObj, "Rampa_Escalones_Trigger");
+        rampTriggerObj.transform.localPosition = new Vector3(-0.3f, 0.0f, 0f);
+        BoxCollider2D rampCol = GetOrAddComponent<BoxCollider2D>(rampTriggerObj);
+        rampCol.size = new Vector2(3.2f, 4.0f);
+        rampCol.isTrigger = true;
+
+        Stairs2D stairs = GetOrAddComponent<Stairs2D>(rampTriggerObj);
+        stairs.bottomY = 1.1f;
+        stairs.topY = 4.8f;
+        stairs.leftX = -1.6f;
+        stairs.rightX = 1.6f;
+
+        // 3.3 FACHADAS COLONIALES LATERALES
+        GameObject facadesRoot = GetOrCreateChild(rootEnv, "Fachadas_Casas");
+
+        // Casa Izquierda (Terracota en 2 plantas con balcón)
+        CreateFacade(facadesRoot, "Casa_Colonial_Izquierda", new Vector3(-5.2f, 4.2f, 0f), fachadaTerracota ?? casa1Sprite);
+
+        // Casa Derecha (Terracota en 2 plantas)
+        CreateFacade(facadesRoot, "Casa_Colonial_Derecha", new Vector3(6.2f, 4.2f, 0f), casa2Sprite ?? fachadaTerracota);
+
+        // Túnel Oscuro Central ("El Callejón") en Planta Alta
+        GameObject tunnelObj = GetOrCreateChild(rootEnv, "Tunel_Callejon_Oscuro");
+        tunnelObj.transform.position = new Vector3(3.5f, 6.0f, 0f);
+        SpriteRenderer tunnelSr = GetOrAddComponent<SpriteRenderer>(tunnelObj);
+        if (darkTunnelSprite != null)
+        {
+            tunnelSr.sprite = darkTunnelSprite;
+            tunnelSr.sortingLayerName = "Background";
+            tunnelSr.sortingOrder = 1;
+        }
+
+        // 3.4 PLANTA ALTA: Barandales de Hierro Forjado (Borde de la Terraza)
+        GameObject railingsRoot = GetOrCreateChild(rootEnv, "Barandales_Terraza");
+        
+        // Barandal Izquierdo
+        GameObject railIzq = GetOrCreateChild(railingsRoot, "Barandal_Izq");
+        railIzq.transform.position = new Vector3(-3.8f, 4.2f, 0f);
+        SpriteRenderer rSr1 = GetOrAddComponent<SpriteRenderer>(railIzq);
+        if (railingSprite != null)
+        {
+            rSr1.sprite = railingSprite;
+            rSr1.sortingLayerName = "Props";
+            rSr1.sortingOrder = 15; // Por delante de los pies de Carlos
+        }
+
+        // Barandal Derecho
+        GameObject railDer = GetOrCreateChild(railingsRoot, "Barandal_Der");
+        railDer.transform.position = new Vector3(4.6f, 4.2f, 0f);
+        SpriteRenderer rSr2 = GetOrAddComponent<SpriteRenderer>(railDer);
+        if (railingSprite != null)
+        {
+            rSr2.sprite = railingSprite;
+            rSr2.sortingLayerName = "Props";
+            rSr2.sortingOrder = 15;
+        }
+
+        // Letrero de madera colgante en la terraza
+        if (signSprite != null)
+        {
+            CreateProp(rootEnv, "Letrero_Colgante_Callejon", new Vector3(4.8f, 6.6f, 0f), signSprite, 14);
+        }
+
+        // 3.5 FAROLES COLONIALES CON LUZ CÁLIDA 2D (Idénticos a la imagen)
+        GameObject lightsRoot = GetOrCreateChild(rootEnv, "Faroles_Iluminacion");
+        Vector3[] lanternPositions = new Vector3[]
+        {
+            new Vector3(-4.8f, 3.2f, 0f),  // Casa izquierda (Planta baja)
+            new Vector3(-4.0f, 6.5f, 0f),  // Balcón casa izquierda (Planta alta)
+            new Vector3(1.8f, 2.8f, 0f),   // Muro de cantera central (Planta baja)
+            new Vector3(3.8f, 6.8f, 0f),   // Entrada del túnel (Planta alta)
+            new Vector3(6.5f, 3.2f, 0f),   // Casa derecha (Planta baja)
+            new Vector3(8.0f, 6.5f, 0f)    // Casa derecha (Planta alta)
+        };
+
+        for (int i = 0; i < lanternPositions.Length; i++)
+        {
+            GameObject lanternObj = GetOrCreateChild(lightsRoot, $"Farol_{i + 1}");
+            lanternObj.transform.position = lanternPositions[i];
+            SpriteRenderer lSr = GetOrAddComponent<SpriteRenderer>(lanternObj);
+            if (wallLantern != null)
+            {
+                lSr.sprite = wallLantern;
+                lSr.sortingLayerName = "Props";
+                lSr.sortingOrder = 12;
+            }
+
+            Transform lightT = lanternObj.transform.Find("Luz_Point2D");
+            GameObject lightObj = lightT != null ? lightT.gameObject : new GameObject("Luz_Point2D");
+            lightObj.transform.SetParent(lanternObj.transform, false);
+            lightObj.transform.localPosition = new Vector3(0f, 0.15f, 0f);
+
+            Light2D l2d = GetOrAddComponent<Light2D>(lightObj);
+            l2d.lightType = Light2D.LightType.Point;
+            l2d.color = new Color(1f, 0.65f, 0.25f, 1f);
+            l2d.intensity = 1.8f;
+            l2d.pointLightOuterRadius = 4.0f;
+            l2d.pointLightInnerRadius = 0.6f;
+
+            GetOrAddComponent<LightFlicker>(lightObj);
+        }
+
+        // ========================================================
+        // 3.6 PUNTOS DE SIGILO Y OBSTÁCULOS IDENTIFICABLES
+        // ========================================================
+        GameObject stealthRoot = GetOrCreateChild(rootEnv, "Escondites_Sigilo");
+        
+        // Planta Baja: Pila de cajas y barril al pie del muro de cantera (como en la imagen)
+        CreateCrate(stealthRoot, "Cajas_PlantaBaja_1", new Vector3(3.2f, 1.25f, 0f), crateSprite);
+        CreateCrate(stealthRoot, "Cajas_PlantaBaja_2", new Vector3(3.9f, 1.25f, 0f), crateSprite);
+        CreateCrate(stealthRoot, "Cajas_PlantaBaja_3", new Vector3(3.5f, 1.85f, 0f), crateSprite);
+        CreateCrate(stealthRoot, "Barril_PlantaBaja", new Vector3(4.8f, 1.25f, 0f), barrelSprite);
+
+        // Planta Alta: Cajas en la penumbra de la terraza
+        CreateCrate(stealthRoot, "Cajas_Terraza_1", new Vector3(4.8f, 5.2f, 0f), crateSprite);
+
+        GameObject obstaclesRoot = GetOrCreateChild(rootEnv, "Obstaculos_Callejon");
+        // Botellas en el suelo (Alertan a La Llorona; saltables con [Espacio])
+        CreateNoiseObstacle(obstaclesRoot, "Botellas_Calle", new Vector3(-2.8f, 1.05f, 0f), bottlesSprite, brokenGlassSprite, glassSound);
+        CreateNoiseObstacle(obstaclesRoot, "Botellas_Terraza", new Vector3(-2.2f, 4.8f, 0f), bottlesSprite, brokenGlassSprite, glassSound);
+
+        // Charco de lodo en Planta Baja (Ralentiza 50%; saltable con [Espacio])
+        CreateMudPuddle(obstaclesRoot, "Charco_Lodo", new Vector3(-4.5f, 1.15f, 0f), mudPuddleSprite);
+
+        // Macetas de barro decorativas
+        if (flowerPot != null)
+        {
+            CreateProp(rootEnv, "Maceta_Puerta_Izq", new Vector3(-6.2f, 1.2f, 0f), flowerPot, 10);
+            CreateProp(rootEnv, "Maceta_Puerta_Der", new Vector3(5.8f, 1.2f, 0f), flowerPot, 10);
+            CreateProp(rootEnv, "Maceta_Terraza", new Vector3(-2.2f, 5.2f, 0f), flowerPot, 10);
+        }
+
+        // ========================================================
+        // 3.7 LA META DEL NIVEL (Dentro del Túnel del Callejón Oscuro)
+        // ========================================================
+        GameObject metaZone = GetOrCreateChild(rootEnv, "Zona_Meta_Tunel");
+        metaZone.transform.position = new Vector3(3.5f, 6.0f, 0f);
+
+        GameObject metaLightObj = GetOrCreateChild(metaZone, "Luz_Dorada_Meta");
+        metaLightObj.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+        Light2D metaLight = GetOrAddComponent<Light2D>(metaLightObj);
+        metaLight.lightType = Light2D.LightType.Point;
+        metaLight.color = new Color(1f, 0.85f, 0.40f, 1f);
+        metaLight.intensity = 2.2f;
+        metaLight.pointLightOuterRadius = 4.2f;
+        metaLight.pointLightInnerRadius = 0.8f;
+
+        GameObject goalObj = GameObject.Find("Salida_Callejon_Meta");
+        if (goalObj == null) goalObj = GameObject.Find("MetaTrigger");
+        if (goalObj == null) goalObj = new GameObject("Salida_Callejon_Meta");
+
+        goalObj.transform.position = new Vector3(3.5f, 6.0f, 0f);
+        goalObj.SetActive(true);
+
+        BoxCollider2D goalCol = GetOrAddComponent<BoxCollider2D>(goalObj);
+        goalCol.size = new Vector2(2.5f, 2.0f);
+        goalCol.offset = Vector2.zero;
+        goalCol.isTrigger = true;
+
+        GetOrAddComponent<LevelGoal>(goalObj);
+
+        // ========================================================
+        // 3.8 MUROS Y LÍMITES SÓLIDOS (Libertad en 2 Pisos sin Perderse)
+        // ========================================================
+        GameObject boundsRoot = GetOrCreateChild(rootEnv, "Limites_Callejon");
+
+        // Muros perimetrales exteriores
+        CreateSolidBarrier(boundsRoot, "Muro_Exterior_Izq", new Vector2(-7.0f, 3.5f), new Vector2(0.5f, 12f));
+        CreateSolidBarrier(boundsRoot, "Muro_Exterior_Der", new Vector2(8.0f, 3.5f), new Vector2(0.5f, 12f));
+
+        // Borde inferior de la calle (Planta Baja)
+        CreateSolidBarrier(boundsRoot, "Borde_Inferior_Calle", new Vector2(0.5f, 0.45f), new Vector2(16f, 0.5f));
+
+        // Muro trasero de Planta Baja (dejando abierta la zona de escaleras de X = -1.6 a 1.6)
+        CreateSolidBarrier(boundsRoot, "Pared_PlantaBaja_Izq", new Vector2(-4.3f, 2.2f), new Vector2(5.4f, 0.4f));
+        CreateSolidBarrier(boundsRoot, "Pared_PlantaBaja_Der", new Vector2(4.8f, 2.2f), new Vector2(6.4f, 0.4f));
+
+        // Barandal frontal de Planta Alta (dejando abierta la desembocadura de la escalera)
+        CreateSolidBarrier(boundsRoot, "Barandal_Frontal_Izq", new Vector2(-4.3f, 4.3f), new Vector2(5.4f, 0.35f));
+        CreateSolidBarrier(boundsRoot, "Barandal_Frontal_Der", new Vector2(4.8f, 4.3f), new Vector2(6.4f, 0.35f));
+
+        // Pared trasera de Planta Alta (dejando abierto el túnel central de X = 2.5 a 4.5)
+        CreateSolidBarrier(boundsRoot, "Pared_PlantaAlta_Izq", new Vector2(-2.2f, 5.6f), new Vector2(9.5f, 0.4f));
+        CreateSolidBarrier(boundsRoot, "Pared_PlantaAlta_Der", new Vector2(6.2f, 5.6f), new Vector2(3.6f, 0.4f));
+        CreateSolidBarrier(boundsRoot, "Fondo_Tunel_Meta", new Vector2(3.5f, 7.1f), new Vector2(2.5f, 0.4f));
+
+        // 3.9 LA LLORONA (Patrullando la Planta Baja de la calle)
+        GameObject llorona = GameObject.Find("Llorona");
+        if (llorona != null)
+        {
+            llorona.transform.position = new Vector3(5.5f, 1.25f, 0f);
+            SpriteRenderer lloSr = llorona.GetComponent<SpriteRenderer>();
+            if (lloSr != null)
+            {
+                lloSr.sortingLayerName = "Characters";
+                lloSr.sortingOrder = 10;
+            }
+
+            GameObject wp1 = GameObject.Find("WP_Codo1") ?? GameObject.Find("WP_Balcones");
+            if (wp1 != null) wp1.transform.position = new Vector3(5.5f, 1.25f, 0f);
+            GameObject wp2 = GameObject.Find("WP_Codo2");
+            if (wp2 != null) wp2.transform.position = new Vector3(-3.5f, 1.25f, 0f);
+        }
+    }
+
+    // ==========================================
+    // 4. CONFIGURACIÓN DE CÁMARA Y JUGADOR
+    // ==========================================
+    static void ConfigureCameraAndPlayer()
+    {
+        // Ubicar a Carlos al inicio sobre la terraza superior (tal como en la imagen)
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            player.transform.position = new Vector3(0.0f, 4.8f, 0f);
+
+            SpriteRenderer playerSr = player.GetComponent<SpriteRenderer>();
+            if (playerSr != null)
+            {
+                playerSr.sortingLayerName = "Characters";
+                playerSr.sortingOrder = 10;
+            }
+        }
+
+        // Confinar la cámara al encuadre colonial de 2 plantas
+        Camera cam = Camera.main;
+        if (cam != null)
+        {
+            cam.orthographic = true;
+            cam.orthographicSize = 5.0f;
+            cam.transform.position = new Vector3(0.5f, 3.8f, -10f);
+
+            CameraFollow2D follow = cam.GetComponent<CameraFollow2D>();
+            if (follow != null)
+            {
+                SerializedObject so = new SerializedObject(follow);
+                var propTarget = so.FindProperty("target");
+                if (propTarget != null && player != null) propTarget.objectReferenceValue = player.transform;
+                var propSmooth = so.FindProperty("smoothTime");
+                if (propSmooth != null) propSmooth.floatValue = 0.15f;
+                var propUseBounds = so.FindProperty("useBounds");
+                if (propUseBounds != null) propUseBounds.boolValue = true;
+                var propMin = so.FindProperty("minBounds");
+                if (propMin != null) propMin.vector2Value = new Vector2(-0.5f, 3.6f);
+                var propMax = so.FindProperty("maxBounds");
+                if (propMax != null) propMax.vector2Value = new Vector2(1.5f, 4.0f);
+                so.ApplyModifiedProperties();
+            }
+        }
+    }
+
+    // ==========================================
+    // MÉTODOS AUXILIARES SEGUROS
+    // ==========================================
+    static void CreateNoiseObstacle(GameObject parent, string name, Vector3 pos, Sprite normalSprite, Sprite brokenSprite, AudioClip sound)
+    {
+        GameObject obj = GetOrCreateChild(parent, name);
+        obj.transform.position = pos;
+
+        SpriteRenderer sr = GetOrAddComponent<SpriteRenderer>(obj);
+        if (normalSprite != null)
+        {
+            sr.sprite = normalSprite;
+            sr.sortingLayerName = "Props";
+            sr.sortingOrder = 6;
+        }
+
+        BoxCollider2D col = GetOrAddComponent<BoxCollider2D>(obj);
+        col.size = new Vector2(0.85f, 0.45f);
+        col.isTrigger = true;
+
+        NoiseObstacle noise = GetOrAddComponent<NoiseObstacle>(obj);
+        SerializedObject so = new SerializedObject(noise);
+        var propBroken = so.FindProperty("brokenSprite");
+        if (propBroken != null && brokenSprite != null) propBroken.objectReferenceValue = brokenSprite;
+        var propSound = so.FindProperty("glassBreakSound");
+        if (propSound != null && sound != null) propSound.objectReferenceValue = sound;
+        var propRadius = so.FindProperty("alertRadius");
+        if (propRadius != null) propRadius.floatValue = 18f;
+        so.ApplyModifiedProperties();
+    }
+
+    static void CreateMudPuddle(GameObject parent, string name, Vector3 pos, Sprite sprite)
+    {
+        GameObject obj = GetOrCreateChild(parent, name);
+        obj.transform.position = pos;
+
+        SpriteRenderer sr = GetOrAddComponent<SpriteRenderer>(obj);
+        if (sprite != null)
+        {
+            sr.sprite = sprite;
+            sr.sortingLayerName = "Background";
+            sr.sortingOrder = -1;
+        }
+
+        BoxCollider2D col = GetOrAddComponent<BoxCollider2D>(obj);
+        col.size = new Vector2(1.3f, 0.65f);
+        col.isTrigger = true;
+
+        GetOrAddComponent<MudPuddle>(obj);
+    }
+
+    static void CreateFacade(GameObject parent, string name, Vector3 pos, Sprite sprite)
+    {
+        GameObject facade = GetOrCreateChild(parent, name);
+        facade.transform.position = pos;
+        SpriteRenderer sr = GetOrAddComponent<SpriteRenderer>(facade);
+        if (sprite != null)
+        {
+            sr.sprite = sprite;
+            sr.sortingLayerName = "Background";
+            sr.sortingOrder = 0;
+        }
+    }
+
+    static void CreateSolidBarrier(GameObject parent, string name, Vector2 pos, Vector2 size)
+    {
+        GameObject barrier = GetOrCreateChild(parent, name);
+        barrier.transform.position = new Vector3(pos.x, pos.y, 0f);
+        BoxCollider2D col = GetOrAddComponent<BoxCollider2D>(barrier);
+        col.size = size;
+        col.offset = Vector2.zero;
+        col.isTrigger = false;
+    }
+
+    static T GetOrAddComponent<T>(GameObject go) where T : Component
+    {
+        T comp = go.GetComponent<T>();
+        if (comp == null)
+        {
+            comp = go.AddComponent<T>();
+        }
+        return comp;
+    }
+
+    static GameObject GetOrCreateChild(GameObject parent, string name)
+    {
+        Transform child = parent.transform.Find(name);
+        if (child != null) return child.gameObject;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+        return go;
+    }
+
+    static void CreateCrate(GameObject parent, string name, Vector3 pos, Sprite sprite)
+    {
+        GameObject crate = GetOrCreateChild(parent, name);
+        crate.transform.position = pos;
+        SpriteRenderer sr = GetOrAddComponent<SpriteRenderer>(crate);
+        if (sprite != null)
+        {
+            sr.sprite = sprite;
+            sr.sortingLayerName = "Props";
+            sr.sortingOrder = 8;
+        }
+
+        BoxCollider2D col = GetOrAddComponent<BoxCollider2D>(crate);
+        col.size = new Vector2(0.9f, 0.9f);
+
+        GetOrAddComponent<HideSpot>(crate);
+    }
+
+    static void CreateProp(GameObject parent, string name, Vector3 pos, Sprite sprite, int sortingOrder)
+    {
+        GameObject prop = GetOrCreateChild(parent, name);
+        prop.transform.position = pos;
+        SpriteRenderer sr = GetOrAddComponent<SpriteRenderer>(prop);
+        if (sprite != null)
+        {
+            sr.sprite = sprite;
+            sr.sortingLayerName = "Props";
+            sr.sortingOrder = sortingOrder;
+        }
+    }
+
+    static GameObject GetOrCreateUIRect(Transform parent, string name)
+    {
+        Transform existing = parent.Find(name);
+        if (existing != null)
+        {
+            if (existing.GetComponent<RectTransform>() == null)
+            {
+                UnityEngine.Object.DestroyImmediate(existing.gameObject);
+            }
+            else
+            {
+                return existing.gameObject;
+            }
+        }
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        return go;
+    }
+}
+#endif

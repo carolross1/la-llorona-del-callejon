@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Salto / Brinco")]
     [SerializeField] float jumpDuration = 0.45f;
     [SerializeField] float jumpHeight = 1.2f;
-    [SerializeField] float jumpStaminaCost = 15f;
+    [SerializeField] float jumpStaminaCost = 5f;
 
     Rigidbody2D rb;
     Collider2D playerCollider;

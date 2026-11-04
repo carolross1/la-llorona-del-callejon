@@ -84,4 +84,22 @@ public class CameraFollow2D : MonoBehaviour
         maxBounds = max;
         useBounds = true;
     }
+
+    /// <summary>
+    /// Configura el tamaño ortográfico (zoom) de la cámara.
+    /// </summary>
+    public void SetOrthoSize(float size)
+    {
+        orthoSize = size;
+        if (cam == null) cam = GetComponent<Camera>();
+        if (cam != null) cam.orthographicSize = size;
+    }
+
+    /// <summary>
+    /// Configura el desplazamiento respecto al objetivo.
+    /// </summary>
+    public void SetOffset(Vector3 newOffset)
+    {
+        offset = newOffset;
+    }
 }

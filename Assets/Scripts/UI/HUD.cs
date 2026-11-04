@@ -107,9 +107,9 @@ public class HUD : MonoBehaviour
     public void UpdateCandleCount(int count)
     {
         if (candleInventoryRoot != null)
-            candleInventoryRoot.SetActive(count > 0);
+            candleInventoryRoot.SetActive(true);
         if (candleCountText != null)
-            candleCountText.text = $"[F] Orar / Ofrenda (x{count})";
+            candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0";
     }
 
     public void UpdateLives(int lives)

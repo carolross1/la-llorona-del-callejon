@@ -365,10 +365,10 @@ public static class UIBuilder
 
     public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity", "Cruza el mercado sin que La Llorona te vea");
     public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity", "Llega al final del callejón esquivando los obstáculos");
-    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Cruza el atrio — usa velas para distraer a La Llorona");
+    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Llega a las puertas de la Parroquia de Dolores", true);
     public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "¡Escapa hacia tu casa! Cuidado con las ánimas y el perro");
 
-    public static void BuildLevelUICanvas(string path, string objetivoTexto = "")
+    public static void BuildLevelUICanvas(string path, string objetivoTexto = "", bool minimalHud = false)
     {
         if (!File.Exists(path))
         {
@@ -651,6 +651,25 @@ public static class UIBuilder
             .GetComponent<Text>();
         tutTxt.fontStyle = FontStyle.Bold;
         tutGo.SetActive(false);
+
+                if (minimalHud)
+        {
+            // Solo veladoras y contador (tiempo) para que no se vea amontonado
+            heartsRoot.SetActive(false);
+            staminaRoot.SetActive(false);
+            scoreTxt.gameObject.SetActive(false);
+            rightCard.SetActive(false);
+            eyeGo.SetActive(false);
+
+            centerCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -24f);
+            centerCard.GetComponent<RectTransform>().sizeDelta = new Vector2(240f, 48f);
+            timerTxt.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+            timerTxt.fontSize = 24;
+
+            candleRoot.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
+            leftRoot.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 48f);
+            candleRoot.SetActive(true);
+        }
 
         // Enlazar referencias de HUD.cs
         SerializedObject soHud = new SerializedObject(hud);

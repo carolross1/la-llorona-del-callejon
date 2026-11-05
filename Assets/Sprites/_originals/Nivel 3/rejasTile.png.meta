@@ -1,0 +1,548 @@
+fileFormatVersion: 2
+guid: e52acf858a2fdaf47a4ac32420d2e6f4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -34943299303804433
+    second: rejasTile_0
+  - first:
+      213: -5476427273424548692
+    second: rejasTile_1
+  - first:
+      213: 6346936397456166165
+    second: rejasTile_2
+  - first:
+      213: -3163950870967312238
+    second: rejasTile_3
+  - first:
+      213: -26963787032586584
+    second: rejasTile_4
+  - first:
+      213: 9026221975924020372
+    second: rejasTile_5
+  - first:
+      213: 7891095398193881956
+    second: rejasTile_6
+  - first:
+      213: -4912051261957539185
+    second: rejasTile_7
+  - first:
+      213: -2585911034510139102
+    second: rejasTile_8
+  - first:
+      213: -1088828263578530121
+    second: rejasTile_9
+  - first:
+      213: 6650806174407805276
+    second: rejasTile_10
+  - first:
+      213: -2004794480155808258
+    second: rejasTile_11
+  - first:
+      213: -3253240528262042099
+    second: rejasTile_12
+  - first:
+      213: 2423915810008836776
+    second: rejasTile_13
+  - first:
+      213: 3674063531973502768
+    second: rejasTile_14
+  - first:
+      213: -1619654215908481574
+    second: rejasTile_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rejasTile_0
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 982
+        width: 71
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe177b1214bd38ff0800000000000000
+      internalID: -34943299303804433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_1
+      rect:
+        serializedVersion: 2
+        x: 701
+        y: 683
+        width: 418
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cacc4410962dff3b0800000000000000
+      internalID: -5476427273424548692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_2
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 1003
+        width: 59
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51d4f56a609d41850800000000000000
+      internalID: 6346936397456166165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_3
+      rect:
+        serializedVersion: 2
+        x: 1360
+        y: 943
+        width: 93
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 290a43932736714d0800000000000000
+      internalID: -3163950870967312238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_4
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 364
+        width: 549
+        height: 622
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a69f1c149430aff0800000000000000
+      internalID: -26963787032586584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_5
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 687
+        width: 226
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49496ca6015934d70800000000000000
+      internalID: 9026221975924020372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_6
+      rect:
+        serializedVersion: 2
+        x: 1084
+        y: 688
+        width: 269
+        height: 293
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 463e012b47dc28d60800000000000000
+      internalID: 7891095398193881956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_7
+      rect:
+        serializedVersion: 2
+        x: 1373
+        y: 351
+        width: 163
+        height: 580
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8af2840763e4dbb0800000000000000
+      internalID: -4912051261957539185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_8
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 365
+        width: 250
+        height: 280
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 221a2476d9ffc1cd0800000000000000
+      internalID: -2585911034510139102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_9
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 446
+        width: 254
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7be0fff8674b3e0f0800000000000000
+      internalID: -1088828263578530121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_10
+      rect:
+        serializedVersion: 2
+        x: 1100
+        y: 419
+        width: 263
+        height: 198
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c594d876af86c4c50800000000000000
+      internalID: 6650806174407805276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 610
+        height: 352
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efd26aaca0a8d24e0800000000000000
+      internalID: -2004794480155808258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_12
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 46
+        width: 197
+        height: 290
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0e6908d9fa2ad2d0800000000000000
+      internalID: -3253240528262042099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_13
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 20
+        width: 312
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aaa705369a73a120800000000000000
+      internalID: 2423915810008836776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_14
+      rect:
+        serializedVersion: 2
+        x: 1202
+        y: 16
+        width: 223
+        height: 250
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0376f79f055ecf230800000000000000
+      internalID: 3674063531973502768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rejasTile_15
+      rect:
+        serializedVersion: 2
+        x: 1402
+        y: 0
+        width: 134
+        height: 270
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad5afc96215d589e0800000000000000
+      internalID: -1619654215908481574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      rejasTile_0: -34943299303804433
+      rejasTile_1: -5476427273424548692
+      rejasTile_10: 6650806174407805276
+      rejasTile_11: -2004794480155808258
+      rejasTile_12: -3253240528262042099
+      rejasTile_13: 2423915810008836776
+      rejasTile_14: 3674063531973502768
+      rejasTile_15: -1619654215908481574
+      rejasTile_2: 6346936397456166165
+      rejasTile_3: -3163950870967312238
+      rejasTile_4: -26963787032586584
+      rejasTile_5: 9026221975924020372
+      rejasTile_6: 7891095398193881956
+      rejasTile_7: -4912051261957539185
+      rejasTile_8: -2585911034510139102
+      rejasTile_9: -1088828263578530121
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

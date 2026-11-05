@@ -5,14 +5,13 @@ using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Representa una ofrenda (vela encendida) colocada en el suelo para distraer a La Llorona.
-/// Si La Llorona entra en su radio de visión/detección, se acerca y se detiene 3 segundos.
+/// Al colocarse pacifica a La Llorona y se mantiene encendida durante la oracion.
 /// </summary>
 public class Offering : MonoBehaviour
 {
     [Header("Configuración de Distracción")]
-    [SerializeField] float attractionRadius = 6.0f;
-    [SerializeField] float distractionDuration = 3.0f;
-    [SerializeField] float lifetimeAfterDistraction = 3.5f;
+    [SerializeField] float attractionRadius = 30.0f;
+    [SerializeField] float distractionDuration = 7.0f;
 
     [Header("Componentes Visuales")]
     [SerializeField] Light2D candleLight;
@@ -24,22 +23,22 @@ public class Offering : MonoBehaviour
     {
         if (candleLight == null) candleLight = GetComponentInChildren<Light2D>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        TriggerDistraction();
     }
 
-    void Update()
+    public void TriggerDistraction()
     {
         if (hasTriggered) return;
+        hasTriggered = true;
 
         LloronaAI llorona = FindAnyObjectByType<LloronaAI>();
-        if (llorona == null) return;
-
-        float dist = Vector2.Distance(transform.position, llorona.transform.position);
-        if (dist <= attractionRadius)
+        if (llorona != null)
         {
-            hasTriggered = true;
             llorona.Distract(transform.position, distractionDuration);
-            StartCoroutine(ExtinguishRoutine());
         }
+
+        StartCoroutine(ExtinguishRoutine());
     }
 
     IEnumerator ExtinguishRoutine()
@@ -51,15 +50,15 @@ public class Offering : MonoBehaviour
         {
             float startInt = candleLight.intensity;
             float t = 0f;
-            while (t < 0.5f)
+            while (t < 1.0f)
             {
                 t += Time.deltaTime;
-                candleLight.intensity = Mathf.Lerp(startInt, 0f, t / 0.5f);
+                candleLight.intensity = Mathf.Lerp(startInt, 0f, t);
                 yield return null;
             }
         }
 
-        Destroy(gameObject, Mathf.Max(0.5f, lifetimeAfterDistraction - distractionDuration));
+        Destroy(gameObject, 0.5f);
     }
 
     void OnDrawGizmosSelected()

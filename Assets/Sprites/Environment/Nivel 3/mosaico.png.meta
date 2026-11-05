@@ -1,0 +1,886 @@
+fileFormatVersion: 2
+guid: dbc732fbe22fc2640ae6fc60b65c1b73
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3710882213143344526
+    second: mosaico_0
+  - first:
+      213: 3253541377213920514
+    second: mosaico_1
+  - first:
+      213: -9220807361224813078
+    second: mosaico_2
+  - first:
+      213: 719237072275668127
+    second: mosaico_3
+  - first:
+      213: -8786260185907248031
+    second: mosaico_4
+  - first:
+      213: -5358006272317200352
+    second: mosaico_5
+  - first:
+      213: 6498247003192840195
+    second: mosaico_6
+  - first:
+      213: -5477657274110891350
+    second: mosaico_7
+  - first:
+      213: 1208980357699076818
+    second: mosaico_8
+  - first:
+      213: 2574171593752942242
+    second: mosaico_9
+  - first:
+      213: 3390152917701008785
+    second: mosaico_10
+  - first:
+      213: -5196869387488602098
+    second: mosaico_11
+  - first:
+      213: 8297512444667503333
+    second: mosaico_12
+  - first:
+      213: 2095832893841999925
+    second: mosaico_13
+  - first:
+      213: -1650012925084207767
+    second: mosaico_14
+  - first:
+      213: 8733677854015935005
+    second: mosaico_15
+  - first:
+      213: -3635914419114896024
+    second: mosaico_16
+  - first:
+      213: -5610517612968932471
+    second: mosaico_17
+  - first:
+      213: -2086937787047692906
+    second: mosaico_18
+  - first:
+      213: 8323918361050777725
+    second: mosaico_19
+  - first:
+      213: -3040073159167497370
+    second: mosaico_20
+  - first:
+      213: 3400276404223868410
+    second: mosaico_21
+  - first:
+      213: 7322668552420949468
+    second: mosaico_22
+  - first:
+      213: 655056822928994073
+    second: mosaico_23
+  - first:
+      213: 4237011957504135223
+    second: mosaico_24
+  - first:
+      213: 1871808391689742960
+    second: mosaico_25
+  - first:
+      213: -6300689753604039084
+    second: mosaico_26
+  - first:
+      213: -1953101134499891668
+    second: mosaico_27
+  - first:
+      213: -6700667359674047204
+    second: mosaico_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: mosaico_0
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 824
+        width: 317
+        height: 176
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a864ac94c408cc0800000000000000
+      internalID: -3710882213143344526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_1
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 823
+        width: 100
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 205fed205a6e62d20800000000000000
+      internalID: 3253541377213920514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_2
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 823
+        width: 210
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae553e31f8c190080800000000000000
+      internalID: -9220807361224813078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_3
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 823
+        width: 311
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9c784a7e4e3bf900800000000000000
+      internalID: 719237072275668127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_4
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 823
+        width: 99
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16447da99eee01680800000000000000
+      internalID: -8786260185907248031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_5
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 810
+        width: 253
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 028e73aeea984a5b0800000000000000
+      internalID: -5358006272317200352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_6
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 611
+        width: 294
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3005e0068396e2a50800000000000000
+      internalID: 6498247003192840195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_7
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 611
+        width: 138
+        height: 176
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa29472bb37bf3b0800000000000000
+      internalID: -5477657274110891350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_8
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 611
+        width: 271
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d20419da3927c010800000000000000
+      internalID: 1208980357699076818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_9
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 611
+        width: 275
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a69b8c0d6b49b320800000000000000
+      internalID: 2574171593752942242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_10
+      rect:
+        serializedVersion: 2
+        x: 1125
+        y: 611
+        width: 136
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19d92d9ed1e3c0f20800000000000000
+      internalID: 3390152917701008785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_11
+      rect:
+        serializedVersion: 2
+        x: 1298
+        y: 589
+        width: 214
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e08d3a683d201e7b0800000000000000
+      internalID: -5196869387488602098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_12
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 427
+        width: 434
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e22ac73b9fa62370800000000000000
+      internalID: 8297512444667503333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_13
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 427
+        width: 66
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 538080aa9e4e51d10800000000000000
+      internalID: 2095832893841999925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_14
+      rect:
+        serializedVersion: 2
+        x: 632
+        y: 427
+        width: 401
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9657d8d9cf9f919e0800000000000000
+      internalID: -1650012925084207767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_15
+      rect:
+        serializedVersion: 2
+        x: 1081
+        y: 427
+        width: 56
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d12d0573cb1443970800000000000000
+      internalID: 8733677854015935005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_16
+      rect:
+        serializedVersion: 2
+        x: 1184
+        y: 427
+        width: 328
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8659fe68913aa8dc0800000000000000
+      internalID: -3635914419114896024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_17
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 210
+        width: 247
+        height: 201
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98b0ae0f4ff6322b0800000000000000
+      internalID: -5610517612968932471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_18
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 210
+        width: 231
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 695bea6c325b903e0800000000000000
+      internalID: -2086937787047692906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_19
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 218
+        width: 288
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7888c9b5af748370800000000000000
+      internalID: 8323918361050777725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_20
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 218
+        width: 402
+        height: 159
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66b2f98919d7fc5d0800000000000000
+      internalID: -3040073159167497370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_21
+      rect:
+        serializedVersion: 2
+        x: 1333
+        y: 214
+        width: 179
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afdf7ebcf55303f20800000000000000
+      internalID: 3400276404223868410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_22
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 46
+        width: 284
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdd79f250485f9560800000000000000
+      internalID: 7322668552420949468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_23
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 41
+        width: 84
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91fe066b5ba371900800000000000000
+      internalID: 655056822928994073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_24
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 46
+        width: 224
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 730dd1c3de3ecca30800000000000000
+      internalID: 4237011957504135223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_25
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 46
+        width: 366
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07a2342a0dff9f910800000000000000
+      internalID: 1871808391689742960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_26
+      rect:
+        serializedVersion: 2
+        x: 1142
+        y: 41
+        width: 83
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45edc743d047f88a0800000000000000
+      internalID: -6300689753604039084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_27
+      rect:
+        serializedVersion: 2
+        x: 1271
+        y: 41
+        width: 98
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c26b8bbbdd035e4e0800000000000000
+      internalID: -1953101134499891668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mosaico_28
+      rect:
+        serializedVersion: 2
+        x: 1409
+        y: 46
+        width: 103
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c15e29cb9827203a0800000000000000
+      internalID: -6700667359674047204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      mosaico_0: -3710882213143344526
+      mosaico_1: 3253541377213920514
+      mosaico_10: 3390152917701008785
+      mosaico_11: -5196869387488602098
+      mosaico_12: 8297512444667503333
+      mosaico_13: 2095832893841999925
+      mosaico_14: -1650012925084207767
+      mosaico_15: 8733677854015935005
+      mosaico_16: -3635914419114896024
+      mosaico_17: -5610517612968932471
+      mosaico_18: -2086937787047692906
+      mosaico_19: 8323918361050777725
+      mosaico_2: -9220807361224813078
+      mosaico_20: -3040073159167497370
+      mosaico_21: 3400276404223868410
+      mosaico_22: 7322668552420949468
+      mosaico_23: 655056822928994073
+      mosaico_24: 4237011957504135223
+      mosaico_25: 1871808391689742960
+      mosaico_26: -6300689753604039084
+      mosaico_27: -1953101134499891668
+      mosaico_28: -6700667359674047204
+      mosaico_3: 719237072275668127
+      mosaico_4: -8786260185907248031
+      mosaico_5: -5358006272317200352
+      mosaico_6: 6498247003192840195
+      mosaico_7: -5477657274110891350
+      mosaico_8: 1208980357699076818
+      mosaico_9: 2574171593752942242
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

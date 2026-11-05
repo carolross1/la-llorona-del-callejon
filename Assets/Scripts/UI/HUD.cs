@@ -11,6 +11,8 @@ using UnityEngine.UI;
 public class HUD : MonoBehaviour
 {
     public static HUD Instance { get; private set; }
+    public static int ActiveShrinesLit = 0;
+    public static int TotalShrines = 0;
 
     [Header("Corazones de Vida")]
     [SerializeField] Image[] heartImages;
@@ -55,6 +57,10 @@ public class HUD : MonoBehaviour
     [SerializeField] CanvasGroup tutorialCanvasGroup;
 
     Coroutine tutorialCoroutine;
+
+    [Header("Indicador de Salida Dinámico")]
+    [SerializeField] Transform exitGoalTransform;
+    Transform playerCachedTransform;
 
     void Awake()
     {
@@ -103,9 +109,14 @@ public class HUD : MonoBehaviour
     public void UpdateCandleCount(int count)
     {
         if (candleInventoryRoot != null)
-            candleInventoryRoot.SetActive(count > 0);
+            candleInventoryRoot.SetActive(true);
         if (candleCountText != null)
-            candleCountText.text = $"×{count}   [F] Colocar";
+        {
+            if (TotalShrines > 0)
+                candleCountText.text = $"Ofrendas: {ActiveShrinesLit}/{TotalShrines}   Velas: {count}  [F]";
+            else
+                candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0";
+        }
     }
 
     public void UpdateLives(int lives)

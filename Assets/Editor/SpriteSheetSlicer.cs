@@ -29,6 +29,7 @@ public static class SpriteSheetSlicer
         SliceTilesAdoquinNvl2();
         SlicePuertasNvl2();
         SliceAccesoriosNvl2();
+        SliceNivel3();
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -246,6 +247,99 @@ public static class SpriteSheetSlicer
         ApplySlicing(path, slices, 150f);
     }
 
+    // -- 11. Environment/Nivel 3/ -----------------------------------------------
+    public static void SliceNivel3()
+    {
+        SliceCatedralNvl3();
+        SliceAccesoriosNvl3();
+        SliceFuenteNvl3();
+        SliceRejaYFarolesNvl3();
+        SliceOfrendasNvl3();
+    }
+
+    public static void SliceCatedralNvl3()
+    {
+        string path = "Assets/Sprites/Environment/Nivel 3/catedral.png";
+        if (!File.Exists(path)) return;
+        SliceData[] slices = new[]
+        {
+            new SliceData("Catedral_Dolores", new Rect(0, 0, 1312, 1199), new Vector2(0.5f, 0.05f))
+        };
+        ApplySlicing(path, slices, 100f);
+    }
+
+    public static void SliceAccesoriosNvl3()
+    {
+        string path = "Assets/Sprites/Environment/Nivel 3/accesorios.png";
+        if (!File.Exists(path)) return;
+        SliceData[] slices = new[]
+        {
+            new SliceData("Banca_Hierro_N3",     new Rect(108,  592, 412, 304), new Vector2(0.5f, 0.05f)),
+            new SliceData("Confesionario_N3",    new Rect(644,  532, 276, 472), new Vector2(0.5f, 0.05f)),
+            new SliceData("Cripta_Cantera_N3",   new Rect(1084, 524, 360, 464), new Vector2(0.5f, 0.05f)),
+            new SliceData("Maceta_Barro_1",      new Rect(80,    56, 156, 196), new Vector2(0.5f, 0.05f)),
+            new SliceData("Cipres_Colonial_1",   new Rect(240,   56, 132, 460), new Vector2(0.5f, 0.05f)),
+            new SliceData("Cipres_Colonial_2",   new Rect(392,   56, 136, 492), new Vector2(0.5f, 0.05f)),
+            new SliceData("Cipres_Colonial_3",   new Rect(532,   56, 120, 444), new Vector2(0.5f, 0.05f)),
+            new SliceData("Maceta_Barro_2",      new Rect(648,   56, 160, 196), new Vector2(0.5f, 0.05f)),
+            new SliceData("Altar_Atrio_N3",      new Rect(860,   48, 560, 420), new Vector2(0.5f, 0.05f))
+        };
+        ApplySlicing(path, slices, 120f);
+    }
+
+    public static void SliceFuenteNvl3()
+    {
+        string path = "Assets/Sprites/Environment/Nivel 3/fuente.png";
+        if (!File.Exists(path)) return;
+        SliceData[] slices = new[]
+        {
+            new SliceData("Fuente_Octagonal_N3", new Rect(68,   184, 632, 704), new Vector2(0.5f, 0.25f)),
+            new SliceData("Tile_Piedra_1",       new Rect(784,  556, 344, 340), new Vector2(0.5f, 0.5f)),
+            new SliceData("Tile_Piedra_2",       new Rect(1152, 556, 340, 340), new Vector2(0.5f, 0.5f)),
+            new SliceData("Tile_Piedra_3",       new Rect(788,  176, 344, 340), new Vector2(0.5f, 0.5f)),
+            new SliceData("Tile_Piedra_4",       new Rect(1152, 176, 340, 340), new Vector2(0.5f, 0.5f))
+        };
+        ApplySlicing(path, slices, 100f);
+    }
+
+    public static void SliceRejaYFarolesNvl3()
+    {
+        string path = "Assets/Sprites/Environment/Nivel 3/rejaYfaroles.png";
+        if (!File.Exists(path)) return;
+        SliceData[] slices = new[]
+        {
+            new SliceData("Reja_Superior",       new Rect(52,  516, 780, 316), new Vector2(0.5f, 0.05f)),
+            new SliceData("Porton_Atrio_N3",     new Rect(924, 472, 560, 528), new Vector2(0.5f, 0.05f)),
+            new SliceData("Farol_Pared_N3",      new Rect(80,  124, 168, 268), new Vector2(0.5f, 0.5f)),
+            new SliceData("Farol_Colgante_1",    new Rect(320, 124, 100, 248), new Vector2(0.5f, 0.5f)),
+            new SliceData("Farol_Colgante_2",    new Rect(480, 104, 104, 280), new Vector2(0.5f, 0.5f)),
+            new SliceData("Farola_Pie_N3",       new Rect(680,  44,  88, 432), new Vector2(0.5f, 0.05f)),
+            new SliceData("Reja_Inferior",       new Rect(844,  68, 656, 308), new Vector2(0.5f, 0.05f))
+        };
+        ApplySlicing(path, slices, 100f);
+    }
+
+    public static void SliceOfrendasNvl3()
+    {
+        string path = "Assets/Sprites/Environment/Nivel 3/ofrendas.png";
+        if (!File.Exists(path)) return;
+        SliceData[] slices = new[]
+        {
+            new SliceData("Charco_AguaBendita",  new Rect(908,  696, 592, 228), new Vector2(0.5f, 0.5f)),
+            new SliceData("Vaso_Vela_Roja_1",    new Rect(592,  748,  84, 192), new Vector2(0.5f, 0.2f)),
+            new SliceData("Vaso_Vela_Roja_2",    new Rect(720,  752,  96, 180), new Vector2(0.5f, 0.2f)),
+            new SliceData("Candelabro_Vela",     new Rect(76,   680, 124, 304), new Vector2(0.5f, 0.1f)),
+            new SliceData("Vela_Blanca_Grande",  new Rect(412,  732, 132, 252), new Vector2(0.5f, 0.1f)),
+            new SliceData("Vidrios_Jarron_Roto", new Rect(940,  444, 168, 176), new Vector2(0.5f, 0.5f)),
+            new SliceData("Sahumador_Roto",      new Rect(1264, 380, 160, 256), new Vector2(0.5f, 0.5f)),
+            new SliceData("Ramo_Cempasuchil_1",  new Rect(44,    48, 272, 308), new Vector2(0.5f, 0.5f)),
+            new SliceData("Ramo_Terciopelo",     new Rect(352,   48, 276, 272), new Vector2(0.5f, 0.5f)),
+            new SliceData("Ramo_Alcatraces",     new Rect(660,   44, 244, 276), new Vector2(0.5f, 0.5f)),
+            new SliceData("Ramo_Mixto_Ofrenda",  new Rect(1168,  44, 336, 280), new Vector2(0.5f, 0.5f))
+        };
+        ApplySlicing(path, slices, 100f);
+    }
+
     // ── Aplicación mediante TextureImporter ───────────────────────────────────
 
     public struct SliceData
@@ -303,3 +397,4 @@ public static class SpriteSheetSlicer
         Debug.Log($"[SpriteSheetSlicer] Cortado exitoso: {assetPath} ({slices.Length} sprites, PPU {pixelsPerUnit}).");
     }
 }
+

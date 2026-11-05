@@ -1,0 +1,402 @@
+fileFormatVersion: 2
+guid: eddfabf2f5252ec449c649e0d7d68d79
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3896422656307947174
+    second: accesorios_0
+  - first:
+      213: -893759204629015497
+    second: accesorios_1
+  - first:
+      213: 2288467814966859921
+    second: accesorios_2
+  - first:
+      213: 2887006174138627782
+    second: accesorios_3
+  - first:
+      213: -7533256555527514990
+    second: accesorios_4
+  - first:
+      213: -2740101363599732125
+    second: accesorios_5
+  - first:
+      213: -45375265195717470
+    second: accesorios_6
+  - first:
+      213: -539607693991519500
+    second: accesorios_7
+  - first:
+      213: 6067315586527554814
+    second: accesorios_8
+  - first:
+      213: 508603285548010027
+    second: Banca_Hierro_N3
+  - first:
+      213: -388967841850864950
+    second: Confesionario_N3
+  - first:
+      213: 2027183215734771232
+    second: Cripta_Cantera_N3
+  - first:
+      213: 2343763211484989049
+    second: Maceta_Barro_1
+  - first:
+      213: -411828254851648396
+    second: Cipres_Colonial_1
+  - first:
+      213: -1335341072148065339
+    second: Cipres_Colonial_2
+  - first:
+      213: 6762429298707281026
+    second: Cipres_Colonial_3
+  - first:
+      213: -636276447681957325
+    second: Maceta_Barro_2
+  - first:
+      213: -2041574004584592811
+    second: Altar_Atrio_N3
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 120
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Banca_Hierro_N3
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 592
+        width: 412
+        height: 304
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2a8fa65efbee0700800000000000000
+      internalID: 508603285548010027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Confesionario_N3
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 532
+        width: 276
+        height: 472
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acacd650fcb1a9af0800000000000000
+      internalID: -388967841850864950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cripta_Cantera_N3
+      rect:
+        serializedVersion: 2
+        x: 1084
+        y: 524
+        width: 360
+        height: 464
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02e418ce460022c10800000000000000
+      internalID: 2027183215734771232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maceta_Barro_1
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 56
+        width: 156
+        height: 196
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 976013a1938b68020800000000000000
+      internalID: 2343763211484989049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cipres_Colonial_1
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 56
+        width: 132
+        height: 460
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47439195264e84af0800000000000000
+      internalID: -411828254851648396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cipres_Colonial_2
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 56
+        width: 136
+        height: 492
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c310acae5ae77de0800000000000000
+      internalID: -1335341072148065339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cipres_Colonial_3
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 56
+        width: 120
+        height: 444
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28434284e99f8dd50800000000000000
+      internalID: 6762429298707281026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Maceta_Barro_2
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 56
+        width: 160
+        height: 196
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33238f421fd7b27f0800000000000000
+      internalID: -636276447681957325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Altar_Atrio_N3
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 48
+        width: 560
+        height: 420
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55a4012724fdaa3e0800000000000000
+      internalID: -2041574004584592811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Altar_Atrio_N3: -2041574004584592811
+      Banca_Hierro_N3: 508603285548010027
+      Cipres_Colonial_1: -411828254851648396
+      Cipres_Colonial_2: -1335341072148065339
+      Cipres_Colonial_3: 6762429298707281026
+      Confesionario_N3: -388967841850864950
+      Cripta_Cantera_N3: 2027183215734771232
+      Maceta_Barro_1: 2343763211484989049
+      Maceta_Barro_2: -636276447681957325
+      accesorios_0: -3896422656307947174
+      accesorios_1: -893759204629015497
+      accesorios_2: 2288467814966859921
+      accesorios_3: 2887006174138627782
+      accesorios_4: -7533256555527514990
+      accesorios_5: -2740101363599732125
+      accesorios_6: -45375265195717470
+      accesorios_7: -539607693991519500
+      accesorios_8: 6067315586527554814
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

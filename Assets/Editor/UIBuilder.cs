@@ -251,24 +251,25 @@ public static class UIBuilder
             CreateImage(canvasGo.transform, "Fondo", new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
         }
 
-        // Título estilizado sobre cartela ornamental
-        GameObject titleCard = CreateImageSprite(canvasGo.transform, "TitleBanner", BannersMenuSprite ?? PlacaNormal,
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(720f, 84f));
-        titleCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -40f);
-        Image titleImg = titleCard.GetComponent<Image>();
-        titleImg.type = Image.Type.Sliced;
-        titleImg.color = new Color(0.12f, 0.08f, 0.16f, 0.95f);
+        // Título superior SIEMPRE visible
+        GameObject titleCard = new GameObject("TitleCard");
+        titleCard.transform.SetParent(canvasGo.transform, false);
+        RectTransform titleRt = titleCard.AddComponent<RectTransform>();
+        titleRt.anchorMin = titleRt.anchorMax = new Vector2(0.5f, 1f);
+        titleRt.pivot = new Vector2(0.5f, 1f);
+        titleRt.anchoredPosition = new Vector2(0f, -30f);
+        titleRt.sizeDelta = new Vector2(700f, 70f);
 
         CreateText(titleCard.transform, "Titulo", "SELECCIONAR NIVEL",
-            36, TextAnchor.MiddleCenter, new Color(1f, 0.90f, 0.45f),
+            38, TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.40f),
             Vector2.zero, Vector2.one, Vector2.zero);
 
         // Cuadrícula 2x2 para las 4 tarjetas de nivel
         string[] nombres = { "Nivel 1\nEl Mercado", "Nivel 2\nEl Callejón", "Nivel 3\nEl Atrio", "Nivel 4\nEl Panteón" };
         string[] escenas = { "Level1_Mercado", "Level2_Callejon", "Level3_Atrio", "Level4_Cementerio" };
         Vector2[] pos = {
-            new Vector2(-280f,  90f), new Vector2( 280f,  90f),
-            new Vector2(-280f, -140f), new Vector2( 280f, -140f)
+            new Vector2(-290f,  75f), new Vector2( 290f,  75f),
+            new Vector2(-290f, -145f), new Vector2( 290f, -145f)
         };
 
         Button[] levelBtns = new Button[4];
@@ -282,15 +283,15 @@ public static class UIBuilder
             cardRt.anchorMin = cardRt.anchorMax = new Vector2(0.5f, 0.5f);
             cardRt.pivot = new Vector2(0.5f, 0.5f);
             cardRt.anchoredPosition = pos[i];
-            cardRt.sizeDelta = new Vector2(480f, 190f);
+            cardRt.sizeDelta = new Vector2(540f, 185f);
 
-            // Fondo de la tarjeta con Banners góticos
+            // Fondo de la tarjeta con PlacaNormal bien proporcionada
             Image cardBg = cardGo.AddComponent<Image>();
-            cardBg.sprite = BannersMenuSprite ?? PlacaNormal;
+            cardBg.sprite = PlacaNormal;
             cardBg.type = Image.Type.Sliced;
-            cardBg.color = Color.white;
+            cardBg.color = new Color(0.14f, 0.10f, 0.18f, 0.96f);
 
-            // Relleno interior oscuro para asegurar contraste de miniaturas y texto
+            // Relleno interior oscuro
             GameObject cardIn = new GameObject("InnerDark");
             cardIn.transform.SetParent(cardGo.transform, false);
             RectTransform cardInRt = cardIn.AddComponent<RectTransform>();
@@ -299,7 +300,7 @@ public static class UIBuilder
             cardInRt.offsetMin = new Vector2(8f, 8f);
             cardInRt.offsetMax = new Vector2(-8f, -8f);
             Image cardInImg = cardIn.AddComponent<Image>();
-            cardInImg.color = new Color(0.06f, 0.04f, 0.09f, 0.90f);
+            cardInImg.color = new Color(0.06f, 0.04f, 0.09f, 0.92f);
 
             Button btn = cardGo.AddComponent<Button>();
             SpriteState ss = new SpriteState
@@ -313,7 +314,7 @@ public static class UIBuilder
             cardGo.AddComponent<ButtonHoverEffect>();
             levelBtns[i] = btn;
 
-            // Miniatura tomada de Salida_0..3
+            // Miniatura del nivel
             GameObject thumbGo = new GameObject("Miniatura");
             thumbGo.transform.SetParent(cardGo.transform, false);
             Image thumbImg = thumbGo.AddComponent<Image>();
@@ -324,26 +325,26 @@ public static class UIBuilder
             thumbRt.anchorMax = new Vector2(0f, 0.5f);
             thumbRt.pivot = new Vector2(0f, 0.5f);
             thumbRt.anchoredPosition = new Vector2(24f, 0f);
-            thumbRt.sizeDelta = new Vector2(170f, 130f);
+            thumbRt.sizeDelta = new Vector2(175f, 135f);
 
             // Texto con el nombre del nivel
-            CreateText(cardGo.transform, "NombreNivel", nombres[i], 22,
+            CreateText(cardGo.transform, "NombreNivel", nombres[i], 24,
                 TextAnchor.MiddleLeft, new Color(1f, 0.94f, 0.80f),
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(230f, 80f))
-                .GetComponent<RectTransform>().anchoredPosition = new Vector2(215f, 10f);
+                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(300f, 80f))
+                .GetComponent<RectTransform>().anchoredPosition = new Vector2(220f, 10f);
 
-            // Candado / Etiqueta de BLOQUEADO
+            // Candado / Bloqueado
             GameObject lockGo = new GameObject("BloqueadoTag");
             lockGo.transform.SetParent(cardGo.transform, false);
             RectTransform lockRt = lockGo.AddComponent<RectTransform>();
             lockRt.anchorMin = lockRt.anchorMax = new Vector2(0.5f, 0.5f);
             lockRt.anchoredPosition = Vector2.zero;
-            lockRt.sizeDelta = new Vector2(440f, 160f);
+            lockRt.sizeDelta = new Vector2(520f, 165f);
 
-            GameObject lockBg = CreateImage(lockGo.transform, "SombraBloqueo",
-                new Color(0.05f, 0.05f, 0.05f, 0.78f), Vector2.zero, Vector2.one);
+            CreateImage(lockGo.transform, "SombraBloqueo",
+                new Color(0.04f, 0.04f, 0.06f, 0.82f), Vector2.zero, Vector2.one);
 
-            CreateText(lockGo.transform, "LockText", "🔒 BLOQUEADO", 22,
+            CreateText(lockGo.transform, "LockText", "🔒 BLOQUEADO", 24,
                 TextAnchor.MiddleCenter, new Color(0.95f, 0.35f, 0.35f),
                 Vector2.zero, Vector2.one, Vector2.zero);
 
@@ -351,9 +352,13 @@ public static class UIBuilder
             lockGo.SetActive(false);
         }
 
-        // Botón Volver
-        Button btnBack = CreatePlacaButton(canvasGo.transform, "Btn_Volver", "← VOLVER",
-            new Vector2(0f, -370f), new Vector2(300f, 62f), 24);
+        // Botón Volver SIEMPRE visible en la parte inferior
+        Button btnBack = CreatePlacaButton(canvasGo.transform, "Btn_Volver", "← VOLVER AL MENÚ",
+            new Vector2(0f, 36f), new Vector2(360f, 56f), 22, true);
+        RectTransform rtBack = btnBack.GetComponent<RectTransform>();
+        rtBack.anchorMin = rtBack.anchorMax = new Vector2(0.5f, 0f);
+        rtBack.pivot = new Vector2(0.5f, 0f);
+        rtBack.anchoredPosition = new Vector2(0f, 36f);
 
         LevelSelectUI lvlSel = canvasGo.AddComponent<LevelSelectUI>();
         SerializedObject so = new SerializedObject(lvlSel);
@@ -413,41 +418,61 @@ public static class UIBuilder
             CreateImage(canvasGo.transform, "Fondo", new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
         }
 
-        CreateText(canvasGo.transform, "Titulo", "CRÉDITOS", 40,
+        CreateText(canvasGo.transform, "Titulo", "CRÉDITOS", 44,
             TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.40f),
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(600, 70))
-            .GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -50f);
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(600f, 70f))
+            .GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -40f);
 
-        GameObject cardGo = CreateImageSprite(canvasGo.transform, "CardCreditos", MarcoHudSprite ?? PlacaNormal,
-            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(840f, 480f));
-        cardGo.GetComponent<Image>().type = Image.Type.Sliced;
+        // Tarjeta amplia y majestuosa (1040 × 580 px) para que el texto respire y no quede comprimido ni deforme
+        GameObject cardGo = CreateImageSprite(canvasGo.transform, "CardCreditos", PlacaNormal,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1040f, 580f));
+        Image cardImg = cardGo.GetComponent<Image>();
+        cardImg.type = Image.Type.Sliced;
+        cardImg.color = new Color(0.12f, 0.08f, 0.16f, 0.98f);
+        RectTransform rtCard = cardGo.GetComponent<RectTransform>();
+        rtCard.anchoredPosition = new Vector2(0f, 20f);
 
+        // Fondo interior negro terciopelo al 96% de opacidad para máximo contraste
         GameObject cardInner = new GameObject("InnerDark");
         cardInner.transform.SetParent(cardGo.transform, false);
         RectTransform rtCi = cardInner.AddComponent<RectTransform>();
         rtCi.anchorMin = Vector2.zero;
         rtCi.anchorMax = Vector2.one;
-        rtCi.offsetMin = new Vector2(12f, 12f);
-        rtCi.offsetMax = new Vector2(-12f, -12f);
+        rtCi.offsetMin = new Vector2(14f, 14f);
+        rtCi.offsetMax = new Vector2(-14f, -14f);
         Image ciImg = cardInner.AddComponent<Image>();
-        ciImg.color = new Color(0.06f, 0.04f, 0.09f, 0.94f);
+        ciImg.color = new Color(0.05f, 0.03f, 0.08f, 0.96f);
 
         string credText =
-            "LA LLORONA DEL CALLEJÓN\n" +
+            "✦  LA LLORONA DEL CALLEJÓN  ✦\n" +
             "Proyecto de Desarrollo de Videojuegos 2D\n\n" +
-            "Diseño y Dirección: Carol y Princes · UTNG\n\n" +
-            "Arte y Concepto Visual: Hojas oficiales del proyecto\n" +
-            "Tipografía: Pixelify Sans (Licencia SIL Open Font License - OFL)\n" +
-            "Efectos Sonoros y Ambientales: Freesound (Licencia CC0)\n\n" +
+            "DIRECCIÓN Y DISEÑO\n" +
+            "Carol y Princes · UTNG\n\n" +
+            "ARTE Y CONCEPTO VISUAL\n" +
+            "Concepto Original y Sprites Oficiales del Proyecto\n\n" +
+            "EFECTOS DE SONIDO Y AMBIENTE\n" +
+            "Freesound (Licencia CC0) · UTNG\n\n" +
             "Agradecimiento especial a la comunidad y docentes de UTNG";
 
-        CreateText(cardGo.transform, "TextoCreditos", credText, 21,
-            TextAnchor.MiddleCenter, new Color(0.96f, 0.94f, 0.88f),
-            Vector2.zero, Vector2.one, new Vector2(-40f, -40f));
+        GameObject txtGo = CreateText(cardInner.transform, "TextoCreditos", credText, 23,
+            TextAnchor.MiddleCenter, new Color(1f, 0.95f, 0.85f),
+            Vector2.zero, Vector2.one, new Vector2(-50f, -40f));
+        Text txtComp = txtGo.GetComponent<Text>();
+        txtComp.lineSpacing = 1.25f;
 
+        // Botón Volver SIEMPRE visible y anclado a la base inferior
         Button btnBack = CreatePlacaButton(canvasGo.transform, "Btn_Volver", "← VOLVER AL MENÚ",
-            new Vector2(0f, -380f), new Vector2(340f, 62f), 22);
-        btnBack.onClick.AddListener(() => SceneManager.LoadScene("MainMenu"));
+            new Vector2(0f, 36f), new Vector2(360f, 56f), 22, true);
+        RectTransform rtBack = btnBack.GetComponent<RectTransform>();
+        rtBack.anchorMin = rtBack.anchorMax = new Vector2(0.5f, 0f);
+        rtBack.pivot = new Vector2(0.5f, 0f);
+        rtBack.anchoredPosition = new Vector2(0f, 36f);
+
+        // Enlazar componente CreditsUI para garantizar que el botón funcione SIEMPRE al hacer clic
+        CreditsUI credUi = canvasGo.AddComponent<CreditsUI>();
+        SerializedObject soCred = new SerializedObject(credUi);
+        soCred.FindProperty("backButton").objectReferenceValue = btnBack;
+        soCred.ApplyModifiedProperties();
 
         EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), path);
         Debug.Log("[UIBuilder] Escena Credits generada.");
@@ -944,11 +969,11 @@ public static class UIBuilder
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.sizeDelta = new Vector2(width, height);
 
-        // Marco gótico barroco
+        // Marco gótico noble con proporciones limpias sin deformaciones
         Image img = panel.AddComponent<Image>();
-        img.sprite = MarcoHudSprite ?? PlacaNormal;
+        img.sprite = PlacaNormal;
         img.type = Image.Type.Sliced;
-        img.color = Color.white;
+        img.color = new Color(0.14f, 0.10f, 0.18f, 0.98f);
 
         // Relleno interior 100% opaco para asegurar cero sangrado visual del juego
         GameObject innerBack = new GameObject("FondoOpacoModal");
@@ -976,11 +1001,11 @@ public static class UIBuilder
         go.transform.SetParent(parent, false);
 
         Image img = go.AddComponent<Image>();
-        // Estado visual con los nuevos banners góticos de calaveras y flores
-        Sprite baseSprite = BannersMenuSprite ?? ((isPrimary && PlacaResaltada != null) ? PlacaResaltada : PlacaNormal);
+        // Usar PlacaResaltada para botones primarios dorados y PlacaNormal para secundarios nobles
+        Sprite baseSprite = (isPrimary && PlacaResaltada != null) ? PlacaResaltada : PlacaNormal;
         img.sprite = baseSprite;
         img.type   = Image.Type.Sliced;
-        img.color  = isPrimary ? new Color(1f, 0.96f, 0.86f, 1f) : new Color(0.92f, 0.90f, 0.92f, 1f);
+        img.color  = isPrimary ? new Color(1f, 0.96f, 0.86f, 1f) : new Color(0.95f, 0.95f, 0.95f, 1f);
 
         Button btn = go.AddComponent<Button>();
         SpriteState ss = new SpriteState

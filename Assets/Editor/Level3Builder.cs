@@ -204,8 +204,10 @@ public static class Level3Builder
         Sprite sAltar         = accSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? accSprites.ElementAtOrDefault(8);
 
         // Sección 1: Bancas en la Calzada Sur
-        CreateHideSpotOfficial(props, "Banca_Calzada_Oeste", sBanca,  8.5f, 3.8f, 1.1f, hideSpotLayer);
-        CreateHideSpotOfficial(props, "Banca_Calzada_Este",  sBanca, 27.5f, 3.8f, 1.1f, hideSpotLayer);
+        CreateHideSpotOfficial(props, "Banca_Calzada_Oeste", sBanca,  8.5f, 3.8f, 1.1f, hideSpotLayer, wallsLayer,
+            new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
+        CreateHideSpotOfficial(props, "Banca_Calzada_Este",  sBanca, 27.5f, 3.8f, 1.1f, hideSpotLayer, wallsLayer,
+            new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
         // Sección 2: Altar y Confesionario en el Ala Oeste (Plazoleta del Altar)
         if (sAltar != null)
@@ -221,15 +223,20 @@ public static class Level3Builder
             l2dAltar.pointLightOuterRadius = 4.8f;
             lAltar.AddComponent<LightFlicker>();
         }
-        CreateHideSpotOfficial(props, "Confesionario_Ala_Oeste", sConfesionario, 5.5f, 9.5f, 1.15f, hideSpotLayer);
+        CreateHideSpotOfficial(props, "Confesionario_Ala_Oeste", sConfesionario, 5.5f, 9.5f, 1.15f, hideSpotLayer, wallsLayer,
+            new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
 
         // Sección 2: Criptas en el Ala Este (Jardín de las Criptas)
-        CreateHideSpotOfficial(props, "Cripta_Ala_Este", sCripta, 28.5f, 14.0f, 1.1f, hideSpotLayer);
-        CreateHideSpotOfficial(props, "Banca_Jardin_Este", sBanca, 30.5f, 9.5f, 1.1f, hideSpotLayer);
+        CreateHideSpotOfficial(props, "Cripta_Ala_Este", sCripta, 28.5f, 14.0f, 1.1f, hideSpotLayer, wallsLayer,
+            new Vector2(2.4f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.8f, 1.8f), new Vector2(0f, -0.4f));
+        CreateHideSpotOfficial(props, "Banca_Jardin_Este", sBanca, 30.5f, 9.5f, 1.1f, hideSpotLayer, wallsLayer,
+            new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
         // Sección 3: Confesionario y Cripta adicionales en la explanada superior
-        CreateHideSpotOfficial(props, "Confesionario_Atrio_Sup", sConfesionario,  7.0f, 19.5f, 1.15f, hideSpotLayer);
-        CreateHideSpotOfficial(props, "Cripta_Atrio_Sup",       sCripta,        29.0f, 19.5f, 1.1f, hideSpotLayer);
+        CreateHideSpotOfficial(props, "Confesionario_Atrio_Sup", sConfesionario,  7.0f, 19.5f, 1.15f, hideSpotLayer, wallsLayer,
+            new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
+        CreateHideSpotOfficial(props, "Cripta_Atrio_Sup",       sCripta,        29.0f, 19.5f, 1.1f, hideSpotLayer, wallsLayer,
+            new Vector2(2.4f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.8f, 1.8f), new Vector2(0f, -0.4f));
 
         // Cipreses enmarcando el atrio
         if (sCipres != null)
@@ -249,16 +256,16 @@ public static class Level3Builder
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
 
         // Nicho 1: Altar Sagrado (Ala Oeste)
-        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores, sCirculoSantuario);
+        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer);
 
         // Nicho 2: Fuente Sagrada (Plaza Central)
-        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores, sCirculoSantuario);
+        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer);
 
         // Nicho 3: Cripta Sagrada (Ala Este)
-        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores, sCirculoSantuario);
+        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores, sCirculoSantuario, wallsLayer);
 
         // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado para dejar libre el paso central)
-        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro);
+        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro, wallsLayer);
 
         // 8. Trampas de Terreno (Decals espaciados sin bloquear caminos)
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
@@ -343,7 +350,7 @@ public static class Level3Builder
         Debug.Log("[Level3Builder] ¡Nivel 3 monumental (El Atrio de Dolores - Opción A) reconstruido y guardado con éxito!");
     }
 
-    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite)
+    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite, int wallsLayer)
     {
         GameObject go = new GameObject(goName);
         go.transform.SetParent(parent, false);
@@ -362,6 +369,7 @@ public static class Level3Builder
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
         col.size = new Vector2(2.4f, 1.2f);
         col.offset = new Vector2(0f, 0.4f);
+        if (wallsLayer >= 0) go.layer = wallsLayer;
 
         // Ramilletes de cempasúchil a los lados
         if (flowerSprite != null)
@@ -438,14 +446,15 @@ public static class Level3Builder
         l2dDome.pointLightOuterRadius = 3.6f;
         domeGo.SetActive(false);
 
-        // Prompt de interacción [F] con TextMesh nativo
+        // Prompt de interacción [F] con TextMesh nativo legible
         GameObject promptGo = new GameObject("PromptInteraccion");
         promptGo.transform.SetParent(go.transform, false);
-        promptGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
+        promptGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
         TextMesh tm = promptGo.AddComponent<TextMesh>();
         tm.text = $"✦ {displayName} ✦";
-        tm.fontSize = 24;
-        tm.characterSize = 0.08f;
+        tm.fontSize = 32;
+        tm.characterSize = 0.16f;
+        tm.fontStyle = FontStyle.Bold;
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
         tm.color = new Color(1.0f, 0.95f, 0.50f);
@@ -469,7 +478,7 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, goName);
     }
 
-    static void CreateCandleStandOfficial(Transform parent, float x, float y, Sprite altarSprite, Sprite candelabroSprite)
+    static void CreateCandleStandOfficial(Transform parent, float x, float y, Sprite altarSprite, Sprite candelabroSprite, int wallsLayer)
     {
         GameObject go = new GameObject("Mesa_Cirios_Benditos");
         go.transform.SetParent(parent, false);
@@ -483,8 +492,9 @@ public static class Level3Builder
         go.transform.localScale = new Vector3(scaleMesa, scaleMesa, 1.0f);
 
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(2.4f, 1.2f);
+        col.size = new Vector2(2.6f, 1.2f);
         col.offset = new Vector2(0f, 0.4f);
+        if (wallsLayer >= 0) go.layer = wallsLayer;
 
         if (candelabroSprite != null)
         {
@@ -508,11 +518,12 @@ public static class Level3Builder
 
         GameObject promptGo = new GameObject("PromptMesa");
         promptGo.transform.SetParent(go.transform, false);
-        promptGo.transform.localPosition = new Vector3(0f, 1.7f, 0f);
+        promptGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
         TextMesh tm = promptGo.AddComponent<TextMesh>();
         tm.text = "[E] Tomar Veladora Bendita";
-        tm.fontSize = 22;
-        tm.characterSize = 0.08f;
+        tm.fontSize = 30;
+        tm.characterSize = 0.16f;
+        tm.fontStyle = FontStyle.Bold;
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
         tm.color = new Color(1.0f, 0.95f, 0.45f);
@@ -523,7 +534,7 @@ public static class Level3Builder
         CandleStand cs = go.AddComponent<CandleStand>();
         SerializedObject so = new SerializedObject(cs);
         so.FindProperty("interactionRadius").floatValue = 2.4f;
-        so.FindProperty("maxCandlesAllowed").intValue = 2;
+        so.FindProperty("maxCandlesAllowed").intValue = 3;
         so.FindProperty("promptContainer").objectReferenceValue = promptGo;
         so.FindProperty("promptTextMesh").objectReferenceValue = tm;
         so.ApplyModifiedProperties();
@@ -596,14 +607,15 @@ public static class Level3Builder
         // Letrero de estado de la puerta con TextMesh nativo
         GameObject labelGo = new GameObject("LabelPuerta");
         labelGo.transform.SetParent(go.transform, false);
-        labelGo.transform.localPosition = new Vector3(0f, 1.8f, 0f);
+        labelGo.transform.localPosition = new Vector3(0f, 1.9f, 0f);
         TextMesh tm = labelGo.AddComponent<TextMesh>();
         tm.text = "PUERTAS SELLADAS\n(Ofrendas: 0/3)";
-        tm.fontSize = 24;
-        tm.characterSize = 0.09f;
+        tm.fontSize = 34;
+        tm.characterSize = 0.17f;
+        tm.fontStyle = FontStyle.Bold;
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
-        tm.color = new Color(0.9f, 0.5f, 0.8f);
+        tm.color = new Color(0.95f, 0.60f, 0.85f);
         MeshRenderer mr = labelGo.GetComponent<MeshRenderer>();
         mr.sortingOrder = 15;
 
@@ -703,7 +715,7 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-    static void CreateHideSpotOfficial(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer)
+    static void CreateHideSpotOfficial(Transform parent, string name, Sprite sprite, float x, float y, float scale, int hideSpotLayer, int wallsLayer, Vector2 solidColSize, Vector2 solidColOffset, Vector2 trigColSize, Vector2 trigColOffset)
     {
         if (sprite == null) return;
         GameObject go = new GameObject(name);
@@ -715,14 +727,25 @@ public static class Level3Builder
         sr.sprite = sprite;
         sr.sortingOrder = 3;
 
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1.8f, 1.4f);
-        col.offset = new Vector2(0f, 0.35f);
-        if (layer >= 0) go.layer = layer;
+        // 1. Collider sólido en capa Walls para evitar que Carlos o La Llorona atraviesen el objeto
+        BoxCollider2D solidCol = go.AddComponent<BoxCollider2D>();
+        solidCol.size = solidColSize;
+        solidCol.offset = solidColOffset;
+        if (wallsLayer >= 0) go.layer = wallsLayer;
 
+        // 2. Trigger en capa HideSpot para detección de proximidad con Carlos
+        GameObject trigGo = new GameObject("TriggerOcultarse");
+        trigGo.transform.SetParent(go.transform, false);
+        BoxCollider2D trigCol = trigGo.AddComponent<BoxCollider2D>();
+        trigCol.isTrigger = true;
+        trigCol.size = trigColSize;
+        trigCol.offset = trigColOffset;
+        if (hideSpotLayer >= 0) trigGo.layer = hideSpotLayer;
+
+        // 3. Punto de reposo oculto de Carlos
         GameObject hp = new GameObject("HidePoint");
         hp.transform.SetParent(go.transform, false);
-        hp.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+        hp.transform.localPosition = new Vector3(0f, solidColOffset.y + 0.15f, 0f);
 
         HideSpot hs = go.AddComponent<HideSpot>();
         SerializedObject so = new SerializedObject(hs);
@@ -763,9 +786,12 @@ public static class Level3Builder
         sr.sprite = sprite;
         sr.sortingOrder = 1;
 
-        CircleCollider2D cc = go.AddComponent<CircleCollider2D>();
+        // Cápsula horizontal ceñida exactamente al cuerpo visible del charco para no dispararse en falso
+        CapsuleCollider2D cc = go.AddComponent<CapsuleCollider2D>();
+        cc.direction = CapsuleDirection2D.Horizontal;
         cc.isTrigger = true;
-        cc.radius = 1.2f;
+        cc.size = new Vector2(1.1f, 0.55f);
+        cc.offset = new Vector2(0f, -0.05f);
 
         go.AddComponent<MudPuddle>();
         Undo.RegisterCreatedObjectUndo(go, "Charco_AguaBendita");
@@ -781,9 +807,11 @@ public static class Level3Builder
         sr.sprite = sprite;
         sr.sortingOrder = 2;
 
+        // Collider generoso a lo ancho de los fragmentos de cerámica para crujir con cualquier pisada
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
-        bc.size = new Vector2(1.5f, 1.2f);
+        bc.size = new Vector2(2.2f, 1.1f);
+        bc.offset = new Vector2(0f, -0.1f);
 
         go.AddComponent<NoiseObstacle>();
         Undo.RegisterCreatedObjectUndo(go, "Tepalcates_Ruido");

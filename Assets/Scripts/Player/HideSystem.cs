@@ -19,6 +19,7 @@ public class HideSystem : MonoBehaviour
     {
         player = GetComponent<PlayerMovement>();
         sr = GetComponent<SpriteRenderer>();
+        if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         if (rb != null)
         {

@@ -48,6 +48,12 @@ public static class Level3Builder
         // Cargar sprites oficiales del Nivel 3
         Sprite catedralSprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/catedral.png")
             .OfType<Sprite>().FirstOrDefault();
+        Sprite sAltarSagrado = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/altar_sagrado.png")
+            .OfType<Sprite>().FirstOrDefault();
+        Sprite sMesaVelas = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/mesa_velas.png")
+            .OfType<Sprite>().FirstOrDefault();
+        Sprite sSelloPuerta = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/sello_puerta.png")
+            .OfType<Sprite>().FirstOrDefault();
 
         Sprite[] accSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/accesorios.png")
             .OfType<Sprite>().OrderBy(s => s.name).ToArray();
@@ -232,8 +238,8 @@ public static class Level3Builder
 
         // 7. LOS 3 NICHOS SAGRADOS DEL RITUAL ([F] para ofrendar veladora)
         Transform nichosGroup = FreshRoot("Nichos_Sagrados");
-        Sprite sAltarN3 = accSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? ofrendaSprites.ElementAtOrDefault(3);
-        Sprite sCriptaN3 = accSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? ofrendaSprites.ElementAtOrDefault(6);
+        Sprite sAltarN3 = sAltarSagrado ?? accSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? ofrendaSprites.ElementAtOrDefault(3);
+        Sprite sCriptaN3 = sAltarSagrado ?? accSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? ofrendaSprites.ElementAtOrDefault(6);
         Sprite sCandelabro = ofrendaSprites.FirstOrDefault(s => s.name == "Candelabro_Vela") ?? ofrendaSprites.ElementAtOrDefault(3);
         Sprite sFlama = ofrendaSprites.FirstOrDefault(s => s.name == "Vela_Blanca_Grande") ?? ofrendaSprites.ElementAtOrDefault(4);
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
@@ -248,7 +254,7 @@ public static class Level3Builder
         CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores);
 
         // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado para dejar libre el paso central)
-        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sAltarN3, sCandelabro);
+        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro);
 
         // 8. Trampas de Terreno (Decals espaciados sin bloquear caminos)
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
@@ -286,7 +292,7 @@ public static class Level3Builder
 
         // 10. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 21.2f)
         Transform exitGroup = FreshRoot("Salida_Meta");
-        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f);
+        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, sSelloPuerta);
 
         // 11. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
         EnsureGlobalLight(0.50f);
@@ -344,7 +350,9 @@ public static class Level3Builder
         sr.sprite = pedestalSprite;
         sr.sortingOrder = 3;
         sr.color = new Color(0.95f, 0.92f, 0.88f);
-        go.transform.localScale = new Vector3(0.85f, 0.85f, 1f);
+
+        float scaleFactor = (pedestalSprite != null && pedestalSprite.rect.width > 800) ? 0.35f : 0.85f;
+        go.transform.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
 
         // Collider físico para que el pedestal sea un obstáculo sólido
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
@@ -455,7 +463,8 @@ public static class Level3Builder
         sr.sprite = altarSprite;
         sr.sortingOrder = 3;
         sr.color = new Color(0.95f, 0.90f, 0.85f);
-        go.transform.localScale = new Vector3(0.72f, 0.72f, 1.0f);
+        float scaleMesa = (altarSprite != null && altarSprite.rect.width > 800) ? 0.35f : 0.72f;
+        go.transform.localScale = new Vector3(scaleMesa, scaleMesa, 1.0f);
 
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
         col.size = new Vector2(2.4f, 1.2f);
@@ -506,7 +515,7 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, "Mesa_Cirios_Benditos");
     }
 
-    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y)
+    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, Sprite selloSprite)
     {
         GameObject go = new GameObject("Puertas_Parroquia_Meta");
         go.transform.SetParent(parent, false);
@@ -520,15 +529,25 @@ public static class Level3Builder
         bc.enabled = false;
         go.AddComponent<LevelGoal>();
 
-        // Niebla espectral de sellado (morada/oscura)
+        // Niebla espectral de sellado (morada/oscura) con el sprite oficial del estandarte espectral
         GameObject sealMistGo = new GameObject("Aura_Sello_Espectral");
         sealMistGo.transform.SetParent(go.transform, false);
-        sealMistGo.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+        sealMistGo.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+
+        if (selloSprite != null)
+        {
+            SpriteRenderer srSeal = sealMistGo.AddComponent<SpriteRenderer>();
+            srSeal.sprite = selloSprite;
+            srSeal.sortingOrder = 4;
+            srSeal.color = new Color(0.95f, 0.88f, 1.0f, 0.90f);
+            sealMistGo.transform.localScale = new Vector3(0.50f, 0.50f, 1f);
+        }
+
         Light2D l2dSeal = sealMistGo.AddComponent<Light2D>();
         l2dSeal.lightType = Light2D.LightType.Point;
         l2dSeal.color = new Color(0.65f, 0.25f, 0.85f);
-        l2dSeal.intensity = 1.8f;
-        l2dSeal.pointLightOuterRadius = 4.5f;
+        l2dSeal.intensity = 2.2f;
+        l2dSeal.pointLightOuterRadius = 4.8f;
         sealMistGo.AddComponent<LightFlicker>();
 
         // Luz divina del santuario (dorada/cálida, se enciende al abrir)

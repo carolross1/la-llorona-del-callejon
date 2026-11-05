@@ -18,6 +18,7 @@ public class ParroquiaDoorController : MonoBehaviour
 
     [Header("Componentes de la Puerta")]
     [SerializeField] GameObject doorSealVisual;
+    [SerializeField] GameObject openDoorsVisual;
     [SerializeField] Light2D sanctuaryLight;
     [SerializeField] Collider2D goalCollider;
     [SerializeField] TextMesh statusLabel;
@@ -80,6 +81,7 @@ public class ParroquiaDoorController : MonoBehaviour
         if (isOpen) return;
 
         if (doorSealVisual != null) doorSealVisual.SetActive(true);
+        if (openDoorsVisual != null) openDoorsVisual.SetActive(false);
         if (sanctuaryLight != null) sanctuaryLight.enabled = false;
         if (goalCollider != null) goalCollider.enabled = false;
 
@@ -87,6 +89,7 @@ public class ParroquiaDoorController : MonoBehaviour
         {
             statusLabel.text = $"PUERTAS SELLADAS\n(Ofrendas: {litCount}/{requiredShrines})";
             statusLabel.color = new Color(0.9f, 0.5f, 0.8f);
+            statusLabel.gameObject.SetActive(true);
         }
     }
 
@@ -95,6 +98,7 @@ public class ParroquiaDoorController : MonoBehaviour
         isOpen = true;
 
         if (doorSealVisual != null) doorSealVisual.SetActive(false);
+        if (openDoorsVisual != null) openDoorsVisual.SetActive(true);
         if (sanctuaryLight != null) sanctuaryLight.enabled = true;
         if (goalCollider != null) goalCollider.enabled = true;
 
@@ -102,6 +106,8 @@ public class ParroquiaDoorController : MonoBehaviour
         {
             statusLabel.text = "¡PUERTAS ABIERTAS!\n(SANTUARIO)";
             statusLabel.color = new Color(1.0f, 0.95f, 0.55f);
+            // Ocultar el letrero para que la entrada y la fachada queden limpias
+            statusLabel.gameObject.SetActive(false);
         }
 
         // Tañido triunfal de las campanas de la iglesia

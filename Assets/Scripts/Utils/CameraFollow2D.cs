@@ -20,6 +20,15 @@ public class CameraFollow2D : MonoBehaviour
     [Header("Zoom")]
     [SerializeField] float orthoSize = 2.85f;
 
+    [Header("Zoom Dinámico / Panorámico")]
+    [SerializeField] bool dynamicZoom = false;
+    [SerializeField] float zoomMinY = 13.0f;
+    [SerializeField] float zoomMaxY = 21.0f;
+    [SerializeField] float minOrthoSize = 3.6f;
+    [SerializeField] float maxOrthoSize = 4.7f;
+    [SerializeField] float normalOffsetY = 1.1f;
+    [SerializeField] float peakOffsetY = 2.6f;
+
     Camera cam;
     Vector3 velocity;
 
@@ -63,6 +72,18 @@ public class CameraFollow2D : MonoBehaviour
     {
         if (target == null) return;
 
+        if (dynamicZoom)
+        {
+            float t = Mathf.Clamp01((target.position.y - zoomMinY) / Mathf.Max(0.1f, zoomMaxY - zoomMinY));
+            float targetSize = Mathf.Lerp(minOrthoSize, maxOrthoSize, t);
+            if (cam == null) cam = GetComponent<Camera>();
+            if (cam != null)
+            {
+                cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetSize, Time.deltaTime * 3f);
+            }
+            offset.y = Mathf.Lerp(normalOffsetY, peakOffsetY, t);
+        }
+
         Vector3 targetPos = target.position + offset;
 
         if (useBounds)
@@ -83,6 +104,20 @@ public class CameraFollow2D : MonoBehaviour
         minBounds = min;
         maxBounds = max;
         useBounds = true;
+    }
+
+    /// <summary>
+    /// Habilita el zoom y encuadre dinámico al acercarse a zonas monumentales (como la catedral).
+    /// </summary>
+    public void EnableDynamicZoom(float minY, float maxY, float minSize, float maxSize, float normalOffY = 1.1f, float peakOffY = 2.6f)
+    {
+        dynamicZoom = true;
+        zoomMinY = minY;
+        zoomMaxY = maxY;
+        minOrthoSize = minSize;
+        maxOrthoSize = maxSize;
+        normalOffsetY = normalOffY;
+        peakOffsetY = peakOffY;
     }
 
     /// <summary>

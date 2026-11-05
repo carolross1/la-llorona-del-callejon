@@ -180,6 +180,14 @@ public class Candle : MonoBehaviour
         return true;
     }
 
+    public static void AddCandle(int amount = 1)
+    {
+        PlayerCandlesCount += amount;
+        OnCandlesCountChanged?.Invoke(PlayerCandlesCount);
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayCandleSound();
+    }
+
     public static void ResetInventory()
     {
         PlayerCandlesCount = 0;

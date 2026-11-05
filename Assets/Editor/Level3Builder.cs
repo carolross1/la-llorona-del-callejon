@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -86,14 +87,14 @@ public static class Level3Builder
             if (ex != null) Undo.DestroyObjectImmediate(ex);
         }
 
-        // 3. Fachada Monumental de la Parroquia de Dolores (Al Norte del atrio, Y = 21.0f)
+        // 3. Fachada Monumental de la Parroquia de Dolores (Al Norte del atrio, Y = 19.8f)
         Transform bgGroup = FreshRoot("Fondo_Monumental");
         if (catedralSprite != null)
         {
             GameObject catGo = new GameObject("Parroquia_Dolores_Hidalgo");
             catGo.transform.SetParent(bgGroup, false);
-            catGo.transform.position = new Vector3(18.0f, 21.0f, 0f);
-            catGo.transform.localScale = Vector3.one * 1.15f;
+            catGo.transform.position = new Vector3(18.0f, 19.8f, 0f);
+            catGo.transform.localScale = new Vector3(0.78f, 0.78f, 1.0f);
 
             SpriteRenderer srCat = catGo.AddComponent<SpriteRenderer>();
             srCat.sprite = catedralSprite;
@@ -102,17 +103,17 @@ public static class Level3Builder
 
             // Muros laterales que cubren las alas de la fachada y torres
             BoxCollider2D leftWallCol = catGo.AddComponent<BoxCollider2D>();
-            leftWallCol.size = new Vector2(5.5f, 3.5f);
-            leftWallCol.offset = new Vector2(-4.6f, 1.5f);
+            leftWallCol.size = new Vector2(4.5f, 3.2f);
+            leftWallCol.offset = new Vector2(-3.8f, 1.2f);
 
             BoxCollider2D rightWallCol = catGo.AddComponent<BoxCollider2D>();
-            rightWallCol.size = new Vector2(5.5f, 3.5f);
-            rightWallCol.offset = new Vector2(4.6f, 1.5f);
+            rightWallCol.size = new Vector2(4.5f, 3.2f);
+            rightWallCol.offset = new Vector2(3.8f, 1.2f);
 
             // Muro superior detrás de la puerta
             BoxCollider2D doorBackWall = catGo.AddComponent<BoxCollider2D>();
-            doorBackWall.size = new Vector2(3.6f, 1.0f);
-            doorBackWall.offset = new Vector2(0f, 2.3f);
+            doorBackWall.size = new Vector2(3.2f, 1.0f);
+            doorBackWall.offset = new Vector2(0f, 1.9f);
 
             if (wallsLayer >= 0) catGo.layer = wallsLayer;
         }
@@ -232,18 +233,23 @@ public static class Level3Builder
 
         // 7. LOS 3 NICHOS SAGRADOS DEL RITUAL ([F] para ofrendar veladora)
         Transform nichosGroup = FreshRoot("Nichos_Sagrados");
-        Sprite sSahumador = ofrendaSprites.FirstOrDefault(s => s.name == "Sahumador_Roto") ?? ofrendaSprites.ElementAtOrDefault(6);
+        Sprite sAltarN3 = accesoriosSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? ofrendaSprites.ElementAtOrDefault(3);
+        Sprite sCriptaN3 = accesoriosSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? ofrendaSprites.ElementAtOrDefault(6);
         Sprite sCandelabro = ofrendaSprites.FirstOrDefault(s => s.name == "Candelabro_Vela") ?? ofrendaSprites.ElementAtOrDefault(3);
         Sprite sFlama = ofrendaSprites.FirstOrDefault(s => s.name == "Vela_Blanca_Grande") ?? ofrendaSprites.ElementAtOrDefault(4);
+        Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
 
         // Nicho 1: Altar Sagrado (Ala Oeste)
-        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sSahumador, sFlama);
+        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores);
 
         // Nicho 2: Fuente Sagrada (Plaza Central)
-        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sCandelabro, sFlama);
+        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores);
 
         // Nicho 3: Cripta Sagrada (Ala Este)
-        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sSahumador, sFlama);
+        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores);
+
+        // Mesa de Cirios Benditos (Dispensador en la Calzada Sur para evitar soft-lock)
+        CreateCandleStandOfficial(nichosGroup, 18.0f, 3.8f, sAltarN3, sCandelabro);
 
         // 8. Trampas de Terreno (Decals espaciados sin bloquear caminos)
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
@@ -256,12 +262,16 @@ public static class Level3Builder
         CreateNoiseObstacleOfficial(hazards, sTepalcate, 24.0f, 8.5f);
         CreateNoiseObstacleOfficial(hazards, sTepalcate, 12.0f, 16.5f);
 
-        // 5 Veladoras Coleccionables (3 necesarias para los nichos + 2 de reserva para distraer con [F])
-        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  3.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Banca_Oeste",    sVelaRoja, new Vector2( 8.5f,  5.0f));
-        CreateCandlePickupOfficial(hazards, "Vela_Banca_Este",     sVelaRoja, new Vector2(27.5f,  5.0f));
-        CreateCandlePickupOfficial(hazards, "Vela_Fuente_Centro",  sVelaRoja, new Vector2(18.0f,  8.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Atrio_Superior", sVelaRoja, new Vector2(13.0f, 17.5f));
+        // 9 Veladoras Coleccionables repartidas en el atrio
+        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  2.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Entrada_Oeste",  sVelaRoja, new Vector2(14.0f,  4.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Entrada_Este",   sVelaRoja, new Vector2(22.0f,  4.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Jardin_Oeste",   sVelaRoja, new Vector2( 8.5f,  7.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Jardin_Este",    sVelaRoja, new Vector2(27.5f,  7.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Fuente_Sur",     sVelaRoja, new Vector2(18.0f,  9.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Altar_Oeste",    sVelaRoja, new Vector2( 9.5f, 14.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Cripta_Este",    sVelaRoja, new Vector2(26.5f, 14.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Atrio_Superior", sVelaRoja, new Vector2(15.0f, 17.5f));
 
         // 9. Waypoints de Patrulla para La Llorona (Circuito amplio en el atrio extendido)
         Transform wpRoot = FreshRoot("Waypoints");
@@ -275,9 +285,9 @@ public static class Level3Builder
         wps[6] = CreateEmpty(wpRoot, "WP_Cripta_Este",     27.5f, 12.0f);
         wps[7] = CreateEmpty(wpRoot, "WP_Plaza_Sureste",   24.5f,  7.5f);
 
-        // 10. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 22.7f)
+        // 10. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 21.2f)
         Transform exitGroup = FreshRoot("Salida_Meta");
-        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 22.7f);
+        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f);
 
         // 11. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
         EnsureGlobalLight(0.50f);
@@ -288,7 +298,7 @@ public static class Level3Builder
         // 13. La Llorona (Inicia patrullando entre la fuente y el paseo superior)
         SetupLloronaCircular(new Vector2(18.0f, 11.0f), wps, wallsLayer, lloronaLayer, 1.6f, 2.8f, 5.5f, 110.0f);
 
-        // 14. Cámara y Confiner 2D (Seguimiento suave a lo largo del atrio monumental de Y = 1.8 a 22.7)
+        // 14. Cámara y Confiner 2D (Zoom dinámico cinematográfico para revelar la catedral completa)
         Camera cam = Camera.main;
         if (cam == null)
         {
@@ -298,20 +308,21 @@ public static class Level3Builder
             camGo.AddComponent<AudioListener>();
         }
         cam.orthographic = true;
-        cam.orthographicSize = 3.2f;
+        cam.orthographicSize = 3.6f;
         cam.transform.position = new Vector3(18.0f, 4.0f, -10f);
         cam.backgroundColor = new Color(0.04f, 0.03f, 0.08f);
 
         CameraFollow2D camFollow = cam.GetComponent<CameraFollow2D>() ?? cam.gameObject.AddComponent<CameraFollow2D>();
-        camFollow.SetOrthoSize(3.2f);
-        camFollow.SetOffset(new Vector3(0f, 1.2f, -10f));
-        camFollow.SetBounds(new Vector2(10.0f, 3.8f), new Vector2(26.0f, 23.5f));
+        camFollow.SetOrthoSize(3.6f);
+        camFollow.SetOffset(new Vector3(0f, 1.1f, -10f));
+        camFollow.SetBounds(new Vector2(10.0f, 3.8f), new Vector2(26.0f, 25.5f));
+        camFollow.EnableDynamicZoom(minY: 12.0f, maxY: 21.2f, minSize: 3.6f, maxSize: 4.8f, normalOffY: 1.1f, peakOffY: 2.6f);
 
         // 15. Triggers de Tutorial narrativo
         Transform tutRoot = FreshRoot("TutorialTriggers");
         CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
             new Vector2(18.0f, 2.0f), new Vector2(8f, 3f),
-            "¡El Atrio de la Parroquia de Dolores!\nLas puertas del templo están selladas por el luto de La Llorona.\n• Encuentra veladoras y usa [F] en los 3 nichos sagrados para romper el sello.\n• Cada nicho encendido crea una zona segura divina.\n• Pulsa [E] para esconderte en bancas y confesionarios.",
+            "¡El Atrio de la Parroquia de Dolores!\nLas puertas del templo están selladas por el luto espectral.\n• Busca las 3 columnas de luz divina en el atrio (Oeste, Centro, Este).\n• Acércate y pulsa [F] con una veladora para consagrar cada Nicho Sagrado.\n• Si te quedas sin veladoras, acude a la Mesa Bendita en la entrada para reponer.\n• Pulsa [E] para esconderte de La Llorona en bancas y confesionarios.",
             showOnStart: true);
 
         // 16. GameManager y AudioManager
@@ -323,57 +334,97 @@ public static class Level3Builder
         Debug.Log("[Level3Builder] ¡Nivel 3 monumental (El Atrio de Dolores - Opción A) reconstruido y guardado con éxito!");
     }
 
-    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite)
+    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite)
     {
         GameObject go = new GameObject(goName);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
 
-        // Pedestal base
+        // Pedestal base (Altar de cantera o Cripta)
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = pedestalSprite;
         sr.sortingOrder = 3;
-        sr.color = new Color(0.92f, 0.88f, 0.82f);
+        sr.color = new Color(0.95f, 0.92f, 0.88f);
+        go.transform.localScale = new Vector3(0.85f, 0.85f, 1f);
 
         // Collider físico para que el pedestal sea un obstáculo sólido
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1.2f, 0.8f);
-        col.offset = new Vector2(0f, 0.3f);
+        col.size = new Vector2(2.4f, 1.2f);
+        col.offset = new Vector2(0f, 0.4f);
 
-        // Visual de flama sagrada (inicia inactivo)
+        // Ramilletes de cempasúchil a los lados
+        if (flowerSprite != null)
+        {
+            GameObject fl1 = new GameObject("Flores_Izq");
+            fl1.transform.SetParent(go.transform, false);
+            fl1.transform.localPosition = new Vector3(-1.1f, 0.1f, 0f);
+            SpriteRenderer srFl1 = fl1.AddComponent<SpriteRenderer>();
+            srFl1.sprite = flowerSprite;
+            srFl1.sortingOrder = 4;
+            fl1.transform.localScale = Vector3.one * 0.9f;
+
+            GameObject fl2 = new GameObject("Flores_Der");
+            fl2.transform.SetParent(go.transform, false);
+            fl2.transform.localPosition = new Vector3(1.1f, 0.1f, 0f);
+            SpriteRenderer srFl2 = fl2.AddComponent<SpriteRenderer>();
+            srFl2.sprite = flowerSprite;
+            srFl2.sortingOrder = 4;
+            fl2.transform.localScale = new Vector3(-0.9f, 0.9f, 1f);
+        }
+
+        // Visual de flama sagrada (inicia inactivo hasta consagrarse)
         GameObject flameGo = new GameObject("Flama_Sagrada");
         flameGo.transform.SetParent(go.transform, false);
-        flameGo.transform.localPosition = new Vector3(0f, 0.65f, 0f);
+        flameGo.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         SpriteRenderer srFlame = flameGo.AddComponent<SpriteRenderer>();
         srFlame.sprite = flameSprite;
-        srFlame.sortingOrder = 4;
+        srFlame.sortingOrder = 5;
         flameGo.SetActive(false);
 
-        // Luz divina dorada del nicho
+        // Luz divina dorada del nicho consagrado (Santuario)
         GameObject lightGo = new GameObject("Luz_Nicho");
         lightGo.transform.SetParent(go.transform, false);
-        lightGo.transform.localPosition = new Vector3(0f, 0.75f, 0f);
+        lightGo.transform.localPosition = new Vector3(0f, 1.0f, 0f);
         Light2D l2d = lightGo.AddComponent<Light2D>();
         l2d.lightType = Light2D.LightType.Point;
-        l2d.color = new Color(1.0f, 0.82f, 0.40f);
-        l2d.intensity = 2.4f;
-        l2d.pointLightOuterRadius = 6.0f;
+        l2d.color = new Color(1.0f, 0.84f, 0.42f);
+        l2d.intensity = 2.6f;
+        l2d.pointLightOuterRadius = 6.2f;
         lightGo.AddComponent<LightFlicker>();
         l2d.enabled = false;
 
-        // Prompt de interacción [F]
+        // Luz guía etérea (Faro celestial que llama al jugador desde lejos mientras esté apagado)
+        GameObject beaconGo = new GameObject("Luz_Guia_Faro");
+        beaconGo.transform.SetParent(go.transform, false);
+        beaconGo.transform.localPosition = new Vector3(0f, 1.2f, 0f);
+        Light2D l2dBeacon = beaconGo.AddComponent<Light2D>();
+        l2dBeacon.lightType = Light2D.LightType.Point;
+        l2dBeacon.color = new Color(0.65f, 0.90f, 1.0f);
+        l2dBeacon.intensity = 1.8f;
+        l2dBeacon.pointLightOuterRadius = 6.5f;
+        beaconGo.AddComponent<LightFlicker>();
+
+        // Aura de domo santuario (visible al consagrarse)
+        GameObject domeGo = new GameObject("Aura_Santuario");
+        domeGo.transform.SetParent(go.transform, false);
+        domeGo.transform.localPosition = Vector3.zero;
+        Light2D l2dDome = domeGo.AddComponent<Light2D>();
+        l2dDome.lightType = Light2D.LightType.Point;
+        l2dDome.color = new Color(1.0f, 0.88f, 0.35f);
+        l2dDome.intensity = 1.6f;
+        l2dDome.pointLightOuterRadius = 3.6f;
+        domeGo.SetActive(false);
+
+        // Prompt de interacción [F] con TextMeshPro ultra-nítido
         GameObject promptGo = new GameObject("PromptInteraccion");
         promptGo.transform.SetParent(go.transform, false);
-        promptGo.transform.localPosition = new Vector3(0f, 1.4f, 0f);
-        TextMesh tm = promptGo.AddComponent<TextMesh>();
-        tm.text = "[F] Consagrar Ofrenda";
-        tm.fontSize = 22;
-        tm.characterSize = 0.09f;
-        tm.anchor = TextAnchor.MiddleCenter;
-        tm.alignment = TextAlignment.Center;
-        tm.color = new Color(1.0f, 0.90f, 0.50f);
-        MeshRenderer mr = promptGo.GetComponent<MeshRenderer>();
-        mr.sortingOrder = 15;
+        promptGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
+        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+        tmp.text = $"✦ {displayName} ✦";
+        tmp.fontSize = 4.2f;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = new Color(1.0f, 0.95f, 0.50f);
+        tmp.sortingOrder = 15;
         promptGo.SetActive(false);
 
         // Componente ShrineNiche
@@ -383,10 +434,71 @@ public static class Level3Builder
         so.FindProperty("sanctuaryRadius").floatValue = 3.2f;
         so.FindProperty("flameVisual").objectReferenceValue = flameGo;
         so.FindProperty("shrineLight").objectReferenceValue = l2d;
+        so.FindProperty("beaconLight").objectReferenceValue = l2dBeacon;
+        so.FindProperty("sanctuaryDome").objectReferenceValue = domeGo;
         so.FindProperty("promptObject").objectReferenceValue = promptGo;
+        so.FindProperty("promptTextMesh").objectReferenceValue = tmp;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, goName);
+    }
+
+    static void CreateCandleStandOfficial(Transform parent, float x, float y, Sprite altarSprite, Sprite candelabroSprite)
+    {
+        GameObject go = new GameObject("Mesa_Cirios_Benditos");
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = altarSprite;
+        sr.sortingOrder = 3;
+        sr.color = new Color(0.95f, 0.90f, 0.85f);
+        go.transform.localScale = new Vector3(0.72f, 0.72f, 1.0f);
+
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(2.4f, 1.2f);
+        col.offset = new Vector2(0f, 0.4f);
+
+        if (candelabroSprite != null)
+        {
+            GameObject candleChild = new GameObject("Cirios_Mesa");
+            candleChild.transform.SetParent(go.transform, false);
+            candleChild.transform.localPosition = new Vector3(0f, 0.75f, 0f);
+            SpriteRenderer srC = candleChild.AddComponent<SpriteRenderer>();
+            srC.sprite = candelabroSprite;
+            srC.sortingOrder = 4;
+        }
+
+        GameObject lightGo = new GameObject("Luz_Mesa_Cirios");
+        lightGo.transform.SetParent(go.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 0.85f, 0f);
+        Light2D l2d = lightGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.88f, 0.50f);
+        l2d.intensity = 2.0f;
+        l2d.pointLightOuterRadius = 4.5f;
+        lightGo.AddComponent<LightFlicker>();
+
+        GameObject promptGo = new GameObject("PromptMesa");
+        promptGo.transform.SetParent(go.transform, false);
+        promptGo.transform.localPosition = new Vector3(0f, 1.7f, 0f);
+        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+        tmp.text = "[E] Tomar Veladora Bendita";
+        tmp.fontSize = 4.0f;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = new Color(1.0f, 0.95f, 0.45f);
+        tmp.sortingOrder = 15;
+        promptGo.SetActive(false);
+
+        CandleStand cs = go.AddComponent<CandleStand>();
+        SerializedObject so = new SerializedObject(cs);
+        so.FindProperty("interactionRadius").floatValue = 2.4f;
+        so.FindProperty("maxCandlesAllowed").intValue = 2;
+        so.FindProperty("promptContainer").objectReferenceValue = promptGo;
+        so.FindProperty("promptTextMesh").objectReferenceValue = tmp;
+        so.ApplyModifiedProperties();
+
+        Undo.RegisterCreatedObjectUndo(go, "Mesa_Cirios_Benditos");
     }
 
     static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y)
@@ -426,19 +538,16 @@ public static class Level3Builder
         lightGo.AddComponent<LightFlicker>();
         l2d.enabled = false;
 
-        // Letrero de estado de la puerta
+        // Letrero de estado de la puerta con TextMeshPro ultra-nítido
         GameObject labelGo = new GameObject("LabelPuerta");
         labelGo.transform.SetParent(go.transform, false);
         labelGo.transform.localPosition = new Vector3(0f, 1.8f, 0f);
-        TextMesh tm = labelGo.AddComponent<TextMesh>();
-        tm.text = "PUERTAS SELLADAS (Ofrendas: 0/3)";
-        tm.fontSize = 26;
-        tm.characterSize = 0.10f;
-        tm.anchor = TextAnchor.MiddleCenter;
-        tm.alignment = TextAlignment.Center;
-        tm.color = new Color(0.9f, 0.5f, 0.8f);
-        MeshRenderer mr = labelGo.GetComponent<MeshRenderer>();
-        mr.sortingOrder = 15;
+        TextMeshPro tmp = labelGo.AddComponent<TextMeshPro>();
+        tmp.text = "PUERTAS SELLADAS (Ofrendas: 0/3)";
+        tmp.fontSize = 5.0f;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = new Color(0.9f, 0.5f, 0.8f);
+        tmp.sortingOrder = 15;
 
         // Controlador de sellado y apertura
         ParroquiaDoorController pdc = go.AddComponent<ParroquiaDoorController>();
@@ -447,7 +556,7 @@ public static class Level3Builder
         so.FindProperty("doorSealVisual").objectReferenceValue = sealMistGo;
         so.FindProperty("sanctuaryLight").objectReferenceValue = l2d;
         so.FindProperty("goalCollider").objectReferenceValue = bc;
-        so.FindProperty("statusLabel").objectReferenceValue = tm;
+        so.FindProperty("statusLabelTMP").objectReferenceValue = tmp;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, "Puertas_Parroquia_Meta");

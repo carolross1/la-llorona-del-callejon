@@ -1,6 +1,7 @@
 // Assets/Scripts/Systems/ShrineNiche.cs
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -21,14 +22,19 @@ public class ShrineNiche : MonoBehaviour
     [Header("Efectos Visuales")]
     [SerializeField] GameObject flameVisual;
     [SerializeField] Light2D shrineLight;
+    [SerializeField] Light2D beaconLight; // Luz guía etérea visible cuando aún no está consagrado
+    [SerializeField] GameObject sanctuaryDome; // Círculo/aura dorada de santuario
 
     [Header("Indicador de Interacción")]
     [SerializeField] GameObject promptObject;
+    [SerializeField] TextMeshPro promptTextMesh;
 
     bool isLit = false;
     public bool IsLit => isLit;
     public string ShrineName => shrineName;
     public float SanctuaryRadius => sanctuaryRadius;
+
+    Transform playerTransform;
 
     void OnEnable()
     {
@@ -43,21 +49,76 @@ public class ShrineNiche : MonoBehaviour
 
     void Start()
     {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) playerTransform = player.transform;
+
         UpdateVisuals();
     }
 
     void Update()
     {
-        if (isLit) return;
-
-        // Mostrar prompt si Carlos está cerca
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null && promptObject != null)
+        if (playerTransform == null)
         {
-            float dist = Vector2.Distance(transform.position, player.transform.position);
-            bool inRange = dist <= 2.2f;
-            if (promptObject.activeSelf != inRange)
-                promptObject.SetActive(inRange);
+            var p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) playerTransform = p.transform;
+            return;
+        }
+
+        float dist = Vector2.Distance(transform.position, playerTransform.position);
+
+        if (!isLit)
+        {
+            // Pulso suave en el faro guía cuando no está encendido
+            if (beaconLight != null)
+            {
+                beaconLight.intensity = 1.2f + Mathf.PingPong(Time.time * 1.5f, 0.8f);
+            }
+
+            if (promptObject != null)
+            {
+                // Visible hasta 6.5 metros para guiar claramente al jugador
+                bool inRange = dist <= 6.5f;
+                if (promptObject.activeSelf != inRange)
+                    promptObject.SetActive(inRange);
+
+                if (inRange && promptTextMesh != null)
+                {
+                    if (dist <= 2.4f)
+                    {
+                        if (Candle.PlayerCandlesCount > 0)
+                        {
+                            promptTextMesh.text = $"[F] Consagrar {shrineName}\n<size=70%><color=#FFE082>(Coloca una veladora bendita)</color></size>";
+                            promptTextMesh.color = new Color(1.0f, 0.95f, 0.5f);
+                        }
+                        else
+                        {
+                            promptTextMesh.text = $"{shrineName}\n<size=70%><color=#FF8A80>(¡Necesitas 1 veladora! Busca en el atrio o en la mesa)</color></size>";
+                            promptTextMesh.color = new Color(1.0f, 0.6f, 0.6f);
+                        }
+                    }
+                    else
+                    {
+                        promptTextMesh.text = $"✦ {shrineName} ✦\n<size=65%><color=#B0BEC5>(Ofrenda sagrada por encender)</color></size>";
+                        promptTextMesh.color = new Color(0.85f, 0.92f, 1.0f, 0.9f);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Ya encendido: mostrar zona segura si el jugador está dentro
+            if (promptObject != null)
+            {
+                bool insideSanctuary = dist <= sanctuaryRadius;
+                if (promptObject.activeSelf != insideSanctuary)
+                    promptObject.SetActive(insideSanctuary);
+
+                if (insideSanctuary && promptTextMesh != null)
+                {
+                    promptTextMesh.text = $"✓ {shrineName}\n<size=70%><color=#81C784>Santuario Consagrado (Zona Segura)</color></size>";
+                    promptTextMesh.color = new Color(0.9f, 1.0f, 0.8f);
+                }
+            }
         }
     }
 
@@ -67,7 +128,6 @@ public class ShrineNiche : MonoBehaviour
         if (!Candle.ConsumeCandle()) return false;
 
         isLit = true;
-        if (promptObject != null) promptObject.SetActive(false);
 
         UpdateVisuals();
 
@@ -92,12 +152,14 @@ public class ShrineNiche : MonoBehaviour
     {
         if (flameVisual != null) flameVisual.SetActive(isLit);
         if (shrineLight != null) shrineLight.enabled = isLit;
+        if (beaconLight != null) beaconLight.enabled = !isLit;
+        if (sanctuaryDome != null) sanctuaryDome.SetActive(isLit);
     }
 
     /// <summary>
     /// Intenta encender el nicho más cercano a la posición del jugador.
     /// </summary>
-    public static bool TryLightNearestShrine(Vector3 playerPos, float maxDist = 2.4f)
+    public static bool TryLightNearestShrine(Vector3 playerPos, float maxDist = 2.6f)
     {
         ShrineNiche nearest = null;
         float minDist = maxDist;

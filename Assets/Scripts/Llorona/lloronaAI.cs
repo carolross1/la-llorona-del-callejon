@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class LloronaAI : MonoBehaviour
 {
-    enum State { Patrol, Wait, Chase, Distracted }
+    enum State { Patrol, Wait, Chase, Distracted, InvestigateBalcony }
 
     [Header("Ajustes de Dificultad (ScriptableObject)")]
     [SerializeField] LloronaSettings settings;
@@ -52,6 +52,12 @@ public class LloronaAI : MonoBehaviour
     Vector2 facing = Vector2.down;
     Vector2 lastSeenPos;
     Vector2 distractionPos;
+
+    // Ruta de escalada al balcón (Nivel 2)
+    Vector2[] balconyPath;
+    int balconyPathIdx = 0;
+    bool isReturningFromBalcony = false;
+    float balconySearchTimer = 0f;
 
     public Vector2 Facing => facing;
     public bool IsChasing => state == State.Chase;
@@ -338,6 +344,51 @@ public class LloronaAI : MonoBehaviour
 
                 if (timer <= 0) state = State.Patrol;
                 break;
+
+            case State.InvestigateBalcony:
+                if (sees) { StartChase(); break; }
+                if (balconyPath == null || balconyPath.Length == 0) { state = State.Patrol; break; }
+
+                if (balconyPathIdx < balconyPath.Length)
+                {
+                    Vector2 targetNode = balconyPath[balconyPathIdx];
+                    MoveTo(targetNode, chaseSpeed * 1.15f);
+                    if (Vector2.Distance(transform.position, targetNode) < 0.45f)
+                    {
+                        balconyPathIdx++;
+                        if (isReturningFromBalcony && balconyPathIdx >= balconyPath.Length)
+                        {
+                            state = State.Patrol;
+                            if (HUD.Instance != null) HUD.Instance.SetEyeAlert(false);
+                        }
+                    }
+                }
+                else if (!isReturningFromBalcony)
+                {
+                    balconySearchTimer -= Time.fixedDeltaTime;
+                    float searchOffset = Mathf.Sin(Time.time * 2.0f) * 2.5f;
+                    Vector2 searchSpot = new Vector2(balconyPath[balconyPath.Length - 1].x + searchOffset, 6.50f);
+                    MoveTo(searchSpot, patrolSpeed * 1.2f);
+
+                    if (balconySearchTimer <= 0f)
+                    {
+                        isReturningFromBalcony = true;
+                        balconyPathIdx = 0;
+                        balconyPath = new Vector2[]
+                        {
+                            new Vector2(14.7f, 6.50f),
+                            new Vector2(10.6f, 3.25f),
+                            new Vector2(4.2f, 3.25f),
+                            new Vector2(0.3f, 0.40f)
+                        };
+                        if (HUD.Instance != null)
+                        {
+                            HUD.Instance.ShowEventNotice("La Llorona no encontró a nadie y regresa a la calle...", 3.0f);
+                            HUD.Instance.SetEyeAlert(false);
+                        }
+                    }
+                }
+                break;
         }
     }
 
@@ -373,6 +424,38 @@ public class LloronaAI : MonoBehaviour
         lastSeenPos = soundPos;
         state = State.Chase;
         timer = alertDuration;
+    }
+
+    /// <summary>
+    /// Alerta a La Llorona cuando el espectro del balcón detecta al jugador en el Piso 3.
+    /// La Llorona sube corriendo por las escaleras hacia la pasarela del Piso 3 para buscar a Carlos.
+    /// </summary>
+    public void AlertBalcony(Vector2 specterPos)
+    {
+        if (state == State.Distracted) return;
+        if (state == State.Chase && player != null && Vector2.Distance(transform.position, player.transform.position) < 4.0f) return;
+
+        state = State.InvestigateBalcony;
+        isReturningFromBalcony = false;
+        balconyPathIdx = 0;
+        balconySearchTimer = 7.5f;
+
+        float targetX = Mathf.Clamp(specterPos.x, 18.0f, 40.0f);
+        balconyPath = new Vector2[]
+        {
+            new Vector2(0.3f, 0.40f),
+            new Vector2(4.2f, 3.25f),
+            new Vector2(10.6f, 3.25f),
+            new Vector2(14.7f, 6.50f),
+            new Vector2(targetX, 6.50f)
+        };
+
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.ShowEventNotice("¡El espectro te ha delatado! ¡La Llorona sube al balcón!", 3.5f);
+            HUD.Instance.SetEyeAlert(true);
+        }
+        PlayScream();
     }
 
     void StartChase()

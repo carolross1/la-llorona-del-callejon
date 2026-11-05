@@ -96,6 +96,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void DrainStamina(float amount)
+    {
+        currentStamina = Mathf.Max(0f, currentStamina - amount);
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.UpdateStamina(StaminaNormalized);
+        }
+    }
+
     void StartJump()
     {
         IsJumping = true;

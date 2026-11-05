@@ -36,6 +36,8 @@ public static class Level2ModularGenerator
         Sprite casa2PisosOrange = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Arco_Colonial.png");          // Casa colonial de 2 pisos con balcón
         Sprite casa1PisoYellow  = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Casa_Colonial_1.png");         // Casa de 1 piso amarilla con puerta y farol
         Sprite casa1PisoOrange  = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Monumento_Salida.png");        // Casa de 1 piso naranja con puerta y ventana
+        Sprite casaTerracota    = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Casa_Colonial_2.png");         // Casa terracota colonial
+        Sprite casaOcre         = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Casa_Colonial_3.png");         // Casa ocre colonial alta
         Sprite muroMamposteria  = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Fachada_Naranja.png");         // Muro de piedra/mampostería para contención
         Sprite muroPiedraLiso   = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Muro_Piedra_Bajo.png");
 
@@ -94,14 +96,24 @@ public static class Level2ModularGenerator
         CreatePiece(facadesGroup, "Muro_Piedra_Stairs4C", new Vector3(51.0f, 2.00f, 0f), muroMamposteria, "Background", -7);
         CreatePiece(facadesGroup, "Muro_Piedra_PreMeta",  new Vector3(54.0f, 1.63f, 0f), muroMamposteria, "Background", -6);
 
+        // ── Telón de Mampostería de Retención (Evita huecos negros entre casas) ──
+        for (float mx = 4.0f; mx <= 52.0f; mx += 6.0f)
+        {
+            CreatePiece(facadesGroup, $"Muro_Fondo_Tier2_{mx:F0}", new Vector3(mx, 4.88f, 0f), muroMamposteria, "Background", -9);
+        }
+        for (float mx = 14.0f; mx <= 48.0f; mx += 6.0f)
+        {
+            CreatePiece(facadesGroup, $"Muro_Fondo_Tier3_{mx:F0}", new Vector3(mx, 8.13f, 0f), muroMamposteria, "Background", -9);
+        }
+
         // ── Fachadas Tier 2 (Terraza y Balcón Continuo, Y = 3.25) ──
         CreatePiece(facadesGroup, "Casa_Terraza_1",        new Vector3( 7.5f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
         CreatePiece(facadesGroup, "Muro_Piedra_Stairs2",   new Vector3(11.5f, 5.25f, 0f), muroMamposteria, "Background", -7);
-        CreatePiece(facadesGroup, "Casa_Terraza_2",        new Vector3(16.5f, 4.50f, 0f), casa1PisoOrange, "Background", -6);
-        CreatePiece(facadesGroup, "Muro_Piedra_Terraza_Mid",new Vector3(20.5f, 4.50f, 0f), muroMamposteria, "Background", -6);
-        CreatePiece(facadesGroup, "Casa_Terraza_3",        new Vector3(25.0f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
-        CreatePiece(facadesGroup, "Casa_Terraza_4",        new Vector3(33.0f, 4.50f, 0f), casa1PisoOrange, "Background", -6);
-        CreatePiece(facadesGroup, "Casa_Terraza_5",        new Vector3(41.0f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_2",        new Vector3(16.5f, 4.88f, 0f), casa1PisoOrange, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_Mid",      new Vector3(21.0f, 4.88f, 0f), casaTerracota ?? casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_3",        new Vector3(26.0f, 4.88f, 0f), casa1PisoYellow, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_4",        new Vector3(33.0f, 4.88f, 0f), casa1PisoOrange, "Background", -6);
+        CreatePiece(facadesGroup, "Casa_Terraza_5",        new Vector3(41.0f, 4.88f, 0f), casaTerracota ?? casa1PisoYellow, "Background", -6);
         CreatePiece(facadesGroup, "Casa_Terraza_Este",     new Vector3(49.5f, 4.88f, 0f), casa1PisoOrange, "Background", -6);
 
         // ── Fachadas Tier 3 (Pasarela Mirador Continua, Y = 6.50) ──
@@ -223,9 +235,12 @@ public static class Level2ModularGenerator
             new Vector3(55.5f, 2.0f, 0f),  // Tier 1: Fachada túnel meta
             new Vector3( 8.5f, 5.0f, 0f),  // Tier 2: Pared casa terraza
             new Vector3(16.0f, 5.0f, 0f),  // Tier 2: Antes de subir a Tier 3
+            new Vector3(21.0f, 5.0f, 0f),  // Tier 2: Frente a la bajada de escalera 1B
             new Vector3(28.0f, 5.0f, 0f),  // Tier 2: Balcón medio
+            new Vector3(36.0f, 5.0f, 0f),  // Tier 2: Balcón centro-este
             new Vector3(44.0f, 5.0f, 0f),  // Tier 2: Balcón este
             new Vector3(17.5f, 8.2f, 0f),  // Tier 3: Pasarela Mirador
+            new Vector3(25.0f, 8.2f, 0f),  // Tier 3: Pasarela Mirador zona espectro
             new Vector3(32.0f, 8.2f, 0f),  // Tier 3: Balcón medio
             new Vector3(39.0f, 8.2f, 0f),  // Tier 3: Balcón este
             new Vector3(26.5f, 11.4f, 0f), // Tier 4: Azoteas altas
@@ -319,6 +334,52 @@ public static class Level2ModularGenerator
                 soAI.ApplyModifiedProperties();
             }
         }
+
+        // ----------------------------------------------------
+        // 10. ESPECTRO MENOR DEL PISO 3 (PASARELA MIRADOR)
+        // ----------------------------------------------------
+        SpawnBalconySpecter(rootEnv);
+    }
+
+    static void SpawnBalconySpecter(GameObject rootEnv)
+    {
+        GameObject specterGroup = GetOrCreateChild(rootEnv, "Amenazas_Balcon");
+        GameObject specterObj = GetOrCreateChild(specterGroup, "Espectro_Piso3");
+        specterObj.transform.position = new Vector3(26.0f, 6.95f, 0f);
+        specterObj.transform.localScale = new Vector3(0.42f, 0.42f, 1f);
+
+        // Sprite espectral translúcido
+        Sprite specterSprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Llorona/llorona_movimiento.png")
+            .OfType<Sprite>().FirstOrDefault(s => s.name.Contains("0"))
+            ?? AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Llorona/llorona.png");
+
+        SpriteRenderer sr = specterObj.GetComponent<SpriteRenderer>();
+        if (sr == null) sr = specterObj.AddComponent<SpriteRenderer>();
+        sr.sprite = specterSprite;
+        sr.color = new Color(0.35f, 0.85f, 1.0f, 0.72f);
+        sr.sortingLayerName = "Characters";
+        sr.sortingOrder = 11;
+
+        // Luz tenue espectral 2D
+        GameObject lightChild = GetOrCreateChild(specterObj, "Luz_Espectral");
+        lightChild.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+        Light2D l2d = lightChild.GetComponent<Light2D>();
+        if (l2d == null) l2d = lightChild.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(0.25f, 0.65f, 1.0f, 1.0f);
+        l2d.pointLightOuterRadius = 3.2f;
+        l2d.pointLightInnerRadius = 0.4f;
+        l2d.intensity = 0.85f;
+
+        // Componente SpecterAI
+        SpecterAI ai = specterObj.GetComponent<SpecterAI>();
+        if (ai == null) ai = specterObj.AddComponent<SpecterAI>();
+
+        AudioClip scream = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_llorona_grito_detect.wav")
+            ?? AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel1/llorona_grito.wav");
+        AudioClip ambient = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_llorona_lamento_loop.wav");
+
+        ai.ConfigurePatrol(18.0f, 40.0f, 1.35f, scream, ambient);
     }
 
     // ========================================================

@@ -1,7 +1,6 @@
 // Assets/Scripts/Systems/ShrineNiche.cs
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -10,6 +9,7 @@ using UnityEngine.Rendering.Universal;
 /// El jugador debe encender los 3 nichos usando una veladora [F] para romper el sello
 /// y abrir las puertas de la Parroquia.
 /// Cada nicho encendido purifica el área, creando una zona segura donde La Llorona no puede entrar.
+/// Utiliza TextMesh nativo de Unity para garantizar cero dependencias de paquetes externos.
 /// </summary>
 public class ShrineNiche : MonoBehaviour
 {
@@ -27,7 +27,7 @@ public class ShrineNiche : MonoBehaviour
 
     [Header("Indicador de Interacción")]
     [SerializeField] GameObject promptObject;
-    [SerializeField] TextMeshPro promptTextMesh;
+    [SerializeField] TextMesh promptTextMesh;
 
     bool isLit = false;
     public bool IsLit => isLit;
@@ -87,19 +87,19 @@ public class ShrineNiche : MonoBehaviour
                     {
                         if (Candle.PlayerCandlesCount > 0)
                         {
-                            promptTextMesh.text = $"[F] Consagrar {shrineName}\n<size=70%><color=#FFE082>(Coloca una veladora bendita)</color></size>";
+                            promptTextMesh.text = $"[F] Consagrar {shrineName}\n(Ofrendar veladora)";
                             promptTextMesh.color = new Color(1.0f, 0.95f, 0.5f);
                         }
                         else
                         {
-                            promptTextMesh.text = $"{shrineName}\n<size=70%><color=#FF8A80>(¡Necesitas 1 veladora! Busca en el atrio o en la mesa)</color></size>";
+                            promptTextMesh.text = $"{shrineName}\n(¡Necesitas 1 veladora!)";
                             promptTextMesh.color = new Color(1.0f, 0.6f, 0.6f);
                         }
                     }
                     else
                     {
-                        promptTextMesh.text = $"✦ {shrineName} ✦\n<size=65%><color=#B0BEC5>(Ofrenda sagrada por encender)</color></size>";
-                        promptTextMesh.color = new Color(0.85f, 0.92f, 1.0f, 0.9f);
+                        promptTextMesh.text = $"✦ {shrineName} ✦";
+                        promptTextMesh.color = new Color(0.85f, 0.92f, 1.0f);
                     }
                 }
             }
@@ -115,7 +115,7 @@ public class ShrineNiche : MonoBehaviour
 
                 if (insideSanctuary && promptTextMesh != null)
                 {
-                    promptTextMesh.text = $"✓ {shrineName}\n<size=70%><color=#81C784>Santuario Consagrado (Zona Segura)</color></size>";
+                    promptTextMesh.text = $"✓ {shrineName}\nSantuario (Zona Segura)";
                     promptTextMesh.color = new Color(0.9f, 1.0f, 0.8f);
                 }
             }

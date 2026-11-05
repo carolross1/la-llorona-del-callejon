@@ -1,5 +1,4 @@
 // Assets/Scripts/Systems/CandleStand.cs
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +6,7 @@ using UnityEngine.InputSystem;
 /// Mesa o dispensador de veladoras benditas en el Atrio de Dolores.
 /// Permite al jugador reponer veladoras si se le terminan al distraer a La Llorona,
 /// evitando por completo que quede bloqueado (soft-lock) sin poder abrir la Parroquia.
+/// Utiliza TextMesh nativo de Unity para cero dependencias externas.
 /// </summary>
 public class CandleStand : MonoBehaviour
 {
@@ -16,7 +16,7 @@ public class CandleStand : MonoBehaviour
 
     [Header("Referencias Visuales")]
     [SerializeField] GameObject promptContainer;
-    [SerializeField] TextMeshPro promptTextMesh;
+    [SerializeField] TextMesh promptTextMesh;
 
     Transform playerTransform;
 
@@ -55,8 +55,8 @@ public class CandleStand : MonoBehaviour
                 }
                 else
                 {
-                    promptTextMesh.text = "Mesa de Cirios (Llevas suficientes)";
-                    promptTextMesh.color = new Color(0.8f, 0.8f, 0.8f, 0.8f);
+                    promptTextMesh.text = "Mesa de Cirios\n(Llevas suficientes)";
+                    promptTextMesh.color = new Color(0.8f, 0.8f, 0.8f);
                 }
             }
         }

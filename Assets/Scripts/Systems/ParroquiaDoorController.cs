@@ -7,6 +7,7 @@ using UnityEngine.Rendering.Universal;
 /// Las puertas permanecen cerradas y protegidas por una niebla espectral hasta que
 /// Carlos consagra los 3 nichos del atrio con veladoras.
 /// Al completarse las 3 ofrendas, tañen las campanas y el portal de victoria se activa.
+/// Utiliza TextMesh nativo de Unity para cero dependencias externas.
 /// </summary>
 public class ParroquiaDoorController : MonoBehaviour
 {
@@ -20,7 +21,6 @@ public class ParroquiaDoorController : MonoBehaviour
     [SerializeField] Light2D sanctuaryLight;
     [SerializeField] Collider2D goalCollider;
     [SerializeField] TextMesh statusLabel;
-    [SerializeField] TMPro.TextMeshPro statusLabelTMP;
 
     int litCount = 0;
     bool isOpen = false;
@@ -83,16 +83,10 @@ public class ParroquiaDoorController : MonoBehaviour
         if (sanctuaryLight != null) sanctuaryLight.enabled = false;
         if (goalCollider != null) goalCollider.enabled = false;
 
-        string txt = $"PUERTAS SELLADAS (Ofrendas: {litCount}/{requiredShrines})";
         if (statusLabel != null)
         {
-            statusLabel.text = txt;
+            statusLabel.text = $"PUERTAS SELLADAS\n(Ofrendas: {litCount}/{requiredShrines})";
             statusLabel.color = new Color(0.9f, 0.5f, 0.8f);
-        }
-        if (statusLabelTMP != null)
-        {
-            statusLabelTMP.text = txt;
-            statusLabelTMP.color = new Color(0.9f, 0.5f, 0.8f);
         }
     }
 
@@ -104,16 +98,10 @@ public class ParroquiaDoorController : MonoBehaviour
         if (sanctuaryLight != null) sanctuaryLight.enabled = true;
         if (goalCollider != null) goalCollider.enabled = true;
 
-        string txtOpen = "¡PUERTAS ABIERTAS! (SANTUARIO)";
         if (statusLabel != null)
         {
-            statusLabel.text = txtOpen;
+            statusLabel.text = "¡PUERTAS ABIERTAS!\n(SANTUARIO)";
             statusLabel.color = new Color(1.0f, 0.95f, 0.55f);
-        }
-        if (statusLabelTMP != null)
-        {
-            statusLabelTMP.text = txtOpen;
-            statusLabelTMP.color = new Color(1.0f, 0.95f, 0.55f);
         }
 
         // Tañido triunfal de las campanas de la iglesia

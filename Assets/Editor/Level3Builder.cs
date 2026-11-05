@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -248,8 +247,8 @@ public static class Level3Builder
         // Nicho 3: Cripta Sagrada (Ala Este)
         CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores);
 
-        // Mesa de Cirios Benditos (Dispensador en la Calzada Sur para evitar soft-lock)
-        CreateCandleStandOfficial(nichosGroup, 18.0f, 3.8f, sAltarN3, sCandelabro);
+        // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado para dejar libre el paso central)
+        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sAltarN3, sCandelabro);
 
         // 8. Trampas de Terreno (Decals espaciados sin bloquear caminos)
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
@@ -415,16 +414,19 @@ public static class Level3Builder
         l2dDome.pointLightOuterRadius = 3.6f;
         domeGo.SetActive(false);
 
-        // Prompt de interacción [F] con TextMeshPro ultra-nítido
+        // Prompt de interacción [F] con TextMesh nativo
         GameObject promptGo = new GameObject("PromptInteraccion");
         promptGo.transform.SetParent(go.transform, false);
         promptGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
-        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
-        tmp.text = $"✦ {displayName} ✦";
-        tmp.fontSize = 4.2f;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = new Color(1.0f, 0.95f, 0.50f);
-        tmp.sortingOrder = 15;
+        TextMesh tm = promptGo.AddComponent<TextMesh>();
+        tm.text = $"✦ {displayName} ✦";
+        tm.fontSize = 24;
+        tm.characterSize = 0.08f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.alignment = TextAlignment.Center;
+        tm.color = new Color(1.0f, 0.95f, 0.50f);
+        MeshRenderer mr = promptGo.GetComponent<MeshRenderer>();
+        mr.sortingOrder = 15;
         promptGo.SetActive(false);
 
         // Componente ShrineNiche
@@ -437,7 +439,7 @@ public static class Level3Builder
         so.FindProperty("beaconLight").objectReferenceValue = l2dBeacon;
         so.FindProperty("sanctuaryDome").objectReferenceValue = domeGo;
         so.FindProperty("promptObject").objectReferenceValue = promptGo;
-        so.FindProperty("promptTextMesh").objectReferenceValue = tmp;
+        so.FindProperty("promptTextMesh").objectReferenceValue = tm;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, goName);
@@ -482,12 +484,15 @@ public static class Level3Builder
         GameObject promptGo = new GameObject("PromptMesa");
         promptGo.transform.SetParent(go.transform, false);
         promptGo.transform.localPosition = new Vector3(0f, 1.7f, 0f);
-        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
-        tmp.text = "[E] Tomar Veladora Bendita";
-        tmp.fontSize = 4.0f;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = new Color(1.0f, 0.95f, 0.45f);
-        tmp.sortingOrder = 15;
+        TextMesh tm = promptGo.AddComponent<TextMesh>();
+        tm.text = "[E] Tomar Veladora Bendita";
+        tm.fontSize = 22;
+        tm.characterSize = 0.08f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.alignment = TextAlignment.Center;
+        tm.color = new Color(1.0f, 0.95f, 0.45f);
+        MeshRenderer mr = promptGo.GetComponent<MeshRenderer>();
+        mr.sortingOrder = 15;
         promptGo.SetActive(false);
 
         CandleStand cs = go.AddComponent<CandleStand>();
@@ -495,7 +500,7 @@ public static class Level3Builder
         so.FindProperty("interactionRadius").floatValue = 2.4f;
         so.FindProperty("maxCandlesAllowed").intValue = 2;
         so.FindProperty("promptContainer").objectReferenceValue = promptGo;
-        so.FindProperty("promptTextMesh").objectReferenceValue = tmp;
+        so.FindProperty("promptTextMesh").objectReferenceValue = tm;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, "Mesa_Cirios_Benditos");
@@ -538,16 +543,19 @@ public static class Level3Builder
         lightGo.AddComponent<LightFlicker>();
         l2d.enabled = false;
 
-        // Letrero de estado de la puerta con TextMeshPro ultra-nítido
+        // Letrero de estado de la puerta con TextMesh nativo
         GameObject labelGo = new GameObject("LabelPuerta");
         labelGo.transform.SetParent(go.transform, false);
         labelGo.transform.localPosition = new Vector3(0f, 1.8f, 0f);
-        TextMeshPro tmp = labelGo.AddComponent<TextMeshPro>();
-        tmp.text = "PUERTAS SELLADAS (Ofrendas: 0/3)";
-        tmp.fontSize = 5.0f;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = new Color(0.9f, 0.5f, 0.8f);
-        tmp.sortingOrder = 15;
+        TextMesh tm = labelGo.AddComponent<TextMesh>();
+        tm.text = "PUERTAS SELLADAS\n(Ofrendas: 0/3)";
+        tm.fontSize = 24;
+        tm.characterSize = 0.09f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.alignment = TextAlignment.Center;
+        tm.color = new Color(0.9f, 0.5f, 0.8f);
+        MeshRenderer mr = labelGo.GetComponent<MeshRenderer>();
+        mr.sortingOrder = 15;
 
         // Controlador de sellado y apertura
         ParroquiaDoorController pdc = go.AddComponent<ParroquiaDoorController>();
@@ -556,7 +564,7 @@ public static class Level3Builder
         so.FindProperty("doorSealVisual").objectReferenceValue = sealMistGo;
         so.FindProperty("sanctuaryLight").objectReferenceValue = l2d;
         so.FindProperty("goalCollider").objectReferenceValue = bc;
-        so.FindProperty("statusLabelTMP").objectReferenceValue = tmp;
+        so.FindProperty("statusLabel").objectReferenceValue = tm;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, "Puertas_Parroquia_Meta");

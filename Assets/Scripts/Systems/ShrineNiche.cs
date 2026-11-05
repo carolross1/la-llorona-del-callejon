@@ -29,6 +29,10 @@ public class ShrineNiche : MonoBehaviour
     [SerializeField] GameObject promptObject;
     [SerializeField] TextMesh promptTextMesh;
 
+    [Header("Efectos de Audio")]
+    [SerializeField] AudioClip lightSound;
+    [SerializeField] AudioClip blessingSound;
+
     bool isLit = false;
     public bool IsLit => isLit;
     public string ShrineName => shrineName;
@@ -130,6 +134,13 @@ public class ShrineNiche : MonoBehaviour
         isLit = true;
 
         UpdateVisuals();
+
+        // Reproducir sonido sagrado de encendido y consagración
+        if (AudioManager.Instance != null)
+        {
+            if (lightSound != null) AudioManager.Instance.PlaySFX(lightSound, 1.0f);
+            if (blessingSound != null) AudioManager.Instance.PlaySFX(blessingSound, 1.0f);
+        }
 
         // Notificar al controlador de puertas de la Parroquia
         if (ParroquiaDoorController.Instance != null)

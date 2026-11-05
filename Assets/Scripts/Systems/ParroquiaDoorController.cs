@@ -23,6 +23,10 @@ public class ParroquiaDoorController : MonoBehaviour
     [SerializeField] Collider2D goalCollider;
     [SerializeField] TextMesh statusLabel;
 
+    [Header("Efectos de Audio")]
+    [SerializeField] AudioClip openDoorsSound;
+    [SerializeField] AudioClip bellsSound;
+
     int litCount = 0;
     bool isOpen = false;
 
@@ -110,11 +114,17 @@ public class ParroquiaDoorController : MonoBehaviour
             statusLabel.gameObject.SetActive(false);
         }
 
-        // Tañido triunfal de las campanas de la iglesia
+        // Sonido de apertura mística y tañido triunfal de las campanas
         if (AudioManager.Instance != null)
         {
-            if (AudioManager.Instance.campanaLejana != null)
+            if (openDoorsSound != null)
+                AudioManager.Instance.PlaySFX(openDoorsSound, 1.0f);
+
+            if (bellsSound != null)
+                AudioManager.Instance.PlaySFX(bellsSound, 1.0f);
+            else if (AudioManager.Instance.campanaLejana != null)
                 AudioManager.Instance.PlaySFX(AudioManager.Instance.campanaLejana, 1.0f);
+
             AudioManager.Instance.DuckMusic(5.0f, 0.25f);
         }
 

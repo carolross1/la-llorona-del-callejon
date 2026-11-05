@@ -59,6 +59,20 @@ public static class Level3Builder
         Sprite sPuertasAbiertas = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/puertas_abiertas.png")
             .OfType<Sprite>().FirstOrDefault();
 
+        // Cargar clips de audio oficiales del Nivel 3
+        AudioClip sfxCampanas           = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_campanas_catedral.wav");
+        AudioClip sfxLloronaGrito       = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_llorona_grito_detect.wav");
+        AudioClip sfxLloronaLlanto      = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_llorona_lamento_loop.wav");
+        AudioClip sfxNichoConsagrado    = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_nicho_consagrado.wav");
+        AudioClip sfxPortalApertura     = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_portal_apertura.wav");
+        AudioClip sfxPrenderVela        = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_prender_vela.wav");
+        AudioClip sfxPuertaConfesionario = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_puerta_confesionario.wav");
+        AudioClip sfxRespiroAlivio      = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_respiro_alivio.wav");
+        AudioClip sfxSplashCharco       = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_splash_charco.wav");
+        AudioClip sfxTepalcatesCrunch   = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_tepalcates_crunch.wav");
+        AudioClip sfxTomarVela          = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_tomar_vela.wav");
+        AudioClip sfxUiClickStone       = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_ui_click_stone.wav");
+
         Sprite[] accSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/accesorios.png")
             .OfType<Sprite>().OrderBy(s => s.name).ToArray();
         Sprite[] fuenteSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/fuente.png")
@@ -256,16 +270,16 @@ public static class Level3Builder
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
 
         // Nicho 1: Altar Sagrado (Ala Oeste)
-        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer);
+        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
         // Nicho 2: Fuente Sagrada (Plaza Central)
-        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer);
+        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
         // Nicho 3: Cripta Sagrada (Ala Este)
-        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores, sCirculoSantuario, wallsLayer);
+        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
         // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado para dejar libre el paso central)
-        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro, wallsLayer);
+        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro, wallsLayer, sfxTomarVela);
 
         // 8. Trampas de Terreno (Decals espaciados sin bloquear caminos)
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
@@ -273,10 +287,10 @@ public static class Level3Builder
         Sprite sTepalcate   = ofrendaSprites.FirstOrDefault(s => s.name == "Vidrios_Jarron_Roto") ?? ofrendaSprites.ElementAtOrDefault(5);
         Sprite sVelaRoja    = ofrendaSprites.FirstOrDefault(s => s.name == "Vaso_Vela_Roja_1") ?? ofrendaSprites.ElementAtOrDefault(1);
 
-        CreateMudPuddleOfficial(hazards, sAguaBendita, 12.0f, 8.5f, 0.85f);
-        CreateMudPuddleOfficial(hazards, sAguaBendita, 24.0f, 16.5f, 0.85f);
-        CreateNoiseObstacleOfficial(hazards, sTepalcate, 24.0f, 8.5f);
-        CreateNoiseObstacleOfficial(hazards, sTepalcate, 12.0f, 16.5f);
+        CreateMudPuddleOfficial(hazards, sAguaBendita, 12.0f, 8.5f, 0.85f, sfxSplashCharco);
+        CreateMudPuddleOfficial(hazards, sAguaBendita, 24.0f, 16.5f, 0.85f, sfxSplashCharco);
+        CreateNoiseObstacleOfficial(hazards, sTepalcate, 24.0f, 8.5f, sfxTepalcatesCrunch);
+        CreateNoiseObstacleOfficial(hazards, sTepalcate, 12.0f, 16.5f, sfxTepalcatesCrunch);
 
         // 9 Veladoras Coleccionables repartidas en el atrio
         CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  2.5f));
@@ -303,16 +317,16 @@ public static class Level3Builder
 
         // 10. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 21.2f)
         Transform exitGroup = FreshRoot("Salida_Meta");
-        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, sSelloPuerta, sPuertasAbiertas);
+        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, sSelloPuerta, sPuertasAbiertas, sfxPortalApertura, sfxCampanas);
 
         // 11. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
         EnsureGlobalLight(0.50f);
 
         // 12. Player (Carlos inicia en la calzada sur en Y = 1.8f)
-        SetupPlayer(new Vector2(18.0f, 1.8f), playerLayer);
+        SetupPlayer(new Vector2(18.0f, 1.8f), playerLayer, sfxPuertaConfesionario, sfxRespiroAlivio);
 
         // 13. La Llorona (Inicia patrullando entre la fuente y el paseo superior)
-        SetupLloronaCircular(new Vector2(18.0f, 11.0f), wps, wallsLayer, lloronaLayer, 1.6f, 2.8f, 5.5f, 110.0f);
+        SetupLloronaCircular(new Vector2(18.0f, 11.0f), wps, wallsLayer, lloronaLayer, 1.6f, 2.8f, 5.5f, 110.0f, sfxLloronaGrito, sfxLloronaLlanto);
 
         // 14. Cámara y Confiner 2D (Zoom dinámico cinematográfico para revelar la catedral completa)
         Camera cam = Camera.main;
@@ -342,7 +356,7 @@ public static class Level3Builder
             showOnStart: true);
 
         // 16. GameManager y AudioManager
-        SetupGameManager(3);
+        SetupGameManager(3, sfxCampanas, sfxPrenderVela, sfxPuertaConfesionario, sfxLloronaGrito, sfxLloronaLlanto, sfxUiClickStone);
 
         Undo.CollapseUndoOperations(group);
         EditorSceneManager.SaveScene(scene, ScenePath);
@@ -350,7 +364,7 @@ public static class Level3Builder
         Debug.Log("[Level3Builder] ¡Nivel 3 monumental (El Atrio de Dolores - Opción A) reconstruido y guardado con éxito!");
     }
 
-    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite, int wallsLayer)
+    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite, int wallsLayer, AudioClip lightSfx = null, AudioClip blessSfx = null)
     {
         GameObject go = new GameObject(goName);
         go.transform.SetParent(parent, false);
@@ -473,12 +487,14 @@ public static class Level3Builder
         so.FindProperty("sanctuaryDome").objectReferenceValue = domeGo;
         so.FindProperty("promptObject").objectReferenceValue = promptGo;
         so.FindProperty("promptTextMesh").objectReferenceValue = tm;
+        if (lightSfx != null) so.FindProperty("lightSound").objectReferenceValue = lightSfx;
+        if (blessSfx != null) so.FindProperty("blessingSound").objectReferenceValue = blessSfx;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, goName);
     }
 
-    static void CreateCandleStandOfficial(Transform parent, float x, float y, Sprite altarSprite, Sprite candelabroSprite, int wallsLayer)
+    static void CreateCandleStandOfficial(Transform parent, float x, float y, Sprite altarSprite, Sprite candelabroSprite, int wallsLayer, AudioClip takeSfx = null)
     {
         GameObject go = new GameObject("Mesa_Cirios_Benditos");
         go.transform.SetParent(parent, false);
@@ -537,12 +553,13 @@ public static class Level3Builder
         so.FindProperty("maxCandlesAllowed").intValue = 3;
         so.FindProperty("promptContainer").objectReferenceValue = promptGo;
         so.FindProperty("promptTextMesh").objectReferenceValue = tm;
+        if (takeSfx != null) so.FindProperty("takeCandleSound").objectReferenceValue = takeSfx;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, "Mesa_Cirios_Benditos");
     }
 
-    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, Sprite selloSprite, Sprite openDoorsSprite)
+    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, Sprite selloSprite, Sprite openDoorsSprite, AudioClip openDoorsSfx = null, AudioClip bellsSfx = null)
     {
         GameObject go = new GameObject("Puertas_Parroquia_Meta");
         go.transform.SetParent(parent, false);
@@ -628,6 +645,8 @@ public static class Level3Builder
         so.FindProperty("sanctuaryLight").objectReferenceValue = l2d;
         so.FindProperty("goalCollider").objectReferenceValue = bc;
         so.FindProperty("statusLabel").objectReferenceValue = tm;
+        if (openDoorsSfx != null) so.FindProperty("openDoorsSound").objectReferenceValue = openDoorsSfx;
+        if (bellsSfx != null) so.FindProperty("bellsSound").objectReferenceValue = bellsSfx;
         so.ApplyModifiedProperties();
 
         Undo.RegisterCreatedObjectUndo(go, "Puertas_Parroquia_Meta");
@@ -775,7 +794,7 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-    static void CreateMudPuddleOfficial(Transform parent, Sprite sprite, float x, float y, float scale = 1.0f)
+    static void CreateMudPuddleOfficial(Transform parent, Sprite sprite, float x, float y, float scale = 1.0f, AudioClip splashSfx = null)
     {
         GameObject go = new GameObject("Charco_AguaBendita");
         go.transform.SetParent(parent, false);
@@ -793,11 +812,17 @@ public static class Level3Builder
         cc.size = new Vector2(1.1f, 0.55f);
         cc.offset = new Vector2(0f, -0.05f);
 
-        go.AddComponent<MudPuddle>();
+        MudPuddle mp = go.AddComponent<MudPuddle>();
+        if (splashSfx != null)
+        {
+            SerializedObject somp = new SerializedObject(mp);
+            somp.FindProperty("splashSound").objectReferenceValue = splashSfx;
+            somp.ApplyModifiedProperties();
+        }
         Undo.RegisterCreatedObjectUndo(go, "Charco_AguaBendita");
     }
 
-    static void CreateNoiseObstacleOfficial(Transform parent, Sprite sprite, float x, float y)
+    static void CreateNoiseObstacleOfficial(Transform parent, Sprite sprite, float x, float y, AudioClip crunchSfx = null)
     {
         GameObject go = new GameObject("Tepalcates_Ruido");
         go.transform.SetParent(parent, false);
@@ -813,7 +838,13 @@ public static class Level3Builder
         bc.size = new Vector2(2.2f, 1.1f);
         bc.offset = new Vector2(0f, -0.1f);
 
-        go.AddComponent<NoiseObstacle>();
+        NoiseObstacle no = go.AddComponent<NoiseObstacle>();
+        if (crunchSfx != null)
+        {
+            SerializedObject sono = new SerializedObject(no);
+            sono.FindProperty("glassBreakSound").objectReferenceValue = crunchSfx;
+            sono.ApplyModifiedProperties();
+        }
         Undo.RegisterCreatedObjectUndo(go, "Tepalcates_Ruido");
     }
 
@@ -866,7 +897,7 @@ public static class Level3Builder
         gl.intensity = intensity;
     }
 
-    static void SetupPlayer(Vector2 spawnPos, int layer)
+    static void SetupPlayer(Vector2 spawnPos, int layer, AudioClip hideInSfx = null, AudioClip reliefSfx = null)
     {
         GameObject playerGo = GameObject.FindGameObjectWithTag("Player");
         if (playerGo == null)
@@ -880,7 +911,14 @@ public static class Level3Builder
 
         PlayerMovement pm = playerGo.GetComponent<PlayerMovement>() ?? playerGo.AddComponent<PlayerMovement>();
         if (playerGo.GetComponent<PlayerAnimation>() == null) playerGo.AddComponent<PlayerAnimation>();
-        if (playerGo.GetComponent<HideSystem>() == null) playerGo.AddComponent<HideSystem>();
+        HideSystem hs = playerGo.GetComponent<HideSystem>() ?? playerGo.AddComponent<HideSystem>();
+        if (hideInSfx != null || reliefSfx != null)
+        {
+            SerializedObject soHs = new SerializedObject(hs);
+            if (hideInSfx != null) soHs.FindProperty("hideInSound").objectReferenceValue = hideInSfx;
+            if (reliefSfx != null) soHs.FindProperty("reliefBreathSound").objectReferenceValue = reliefSfx;
+            soHs.ApplyModifiedProperties();
+        }
 
         SpriteRenderer sr = playerGo.GetComponentInChildren<SpriteRenderer>();
         if (sr != null) sr.sortingOrder = 5;
@@ -898,7 +936,7 @@ public static class Level3Builder
         Candle.ResetInventory();
     }
 
-    static void SetupLloronaCircular(Vector2 spawnPos, Transform[] wps, int wallsLayer, int lloronaLayer, float patrolSpeed, float chaseSpeed, float visionDist, float fov)
+    static void SetupLloronaCircular(Vector2 spawnPos, Transform[] wps, int wallsLayer, int lloronaLayer, float patrolSpeed, float chaseSpeed, float visionDist, float fov, AudioClip screamClip = null, AudioClip cryClip = null)
     {
         GameObject lloronaGo = GameObject.Find("Llorona");
         if (lloronaGo == null)
@@ -924,6 +962,16 @@ public static class Level3Builder
         if (cSpeed != null) cSpeed.floatValue = chaseSpeed;
         var oMask = so.FindProperty("obstacleMask");
         if (oMask != null) oMask.intValue = 1 << wallsLayer;
+        if (screamClip != null)
+        {
+            var p = so.FindProperty("screamSfx");
+            if (p != null) p.objectReferenceValue = screamClip;
+        }
+        if (cryClip != null)
+        {
+            var p = so.FindProperty("cryLoopClip");
+            if (p != null) p.objectReferenceValue = cryClip;
+        }
         so.ApplyModifiedProperties();
     }
 
@@ -948,7 +996,7 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, name);
     }
 
-    static void SetupGameManager(int levelNumber)
+    static void SetupGameManager(int levelNumber, AudioClip sfxCampanas = null, AudioClip sfxPrenderVela = null, AudioClip sfxPuertaConfesionario = null, AudioClip sfxLloronaGrito = null, AudioClip sfxLloronaLlanto = null, AudioClip sfxUiClickStone = null)
     {
         GameManager gm = UnityEngine.Object.FindAnyObjectByType<GameManager>();
         if (gm == null)
@@ -961,6 +1009,19 @@ public static class Level3Builder
         var prop = so.FindProperty("currentLevelNumber");
         if (prop != null) prop.intValue = levelNumber;
         so.ApplyModifiedProperties();
+
+        AudioManager am = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
+        if (am == null)
+        {
+            GameObject amGo = new GameObject("AudioManager");
+            am = amGo.AddComponent<AudioManager>();
+        }
+        if (sfxCampanas != null) am.campanaLejana = sfxCampanas;
+        if (sfxPrenderVela != null) am.vela = sfxPrenderVela;
+        if (sfxPuertaConfesionario != null) am.escondite = sfxPuertaConfesionario;
+        if (sfxLloronaGrito != null) am.lloronaGrito = sfxLloronaGrito;
+        if (sfxLloronaLlanto != null) am.lloronaLlanto = sfxLloronaLlanto;
+        if (sfxUiClickStone != null) am.clicBoton = sfxUiClickStone;
     }
 
     static Transform CreateEmpty(Transform parent, string name, float x, float y)

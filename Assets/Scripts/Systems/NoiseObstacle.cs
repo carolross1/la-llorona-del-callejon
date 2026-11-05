@@ -44,7 +44,7 @@ public class NoiseObstacle : MonoBehaviour
         // Protección contra activación lejana: solo se activa si los pies de Carlos pisan directamente sobre las botellas (< 0.40 u)
         Vector2 feetPos = (Vector2)player.transform.position + new Vector2(0f, -0.35f);
         float distToFeet = Vector2.Distance((Vector2)transform.position, feetPos);
-        if (distToFeet > 0.40f) return;
+        if (distToFeet > 0.95f) return;
 
         lastTriggerTime = Time.time;
 

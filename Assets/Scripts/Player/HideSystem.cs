@@ -3,6 +3,10 @@ using UnityEngine.InputSystem;
 
 public class HideSystem : MonoBehaviour
 {
+    [Header("Efectos de Audio")]
+    [SerializeField] AudioClip hideInSound;
+    [SerializeField] AudioClip reliefBreathSound;
+
     PlayerMovement player;
     SpriteRenderer sr;
     Rigidbody2D rb;
@@ -71,6 +75,12 @@ public class HideSystem : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             Teleport(current.HidePosition);
             rb.constraints = RigidbodyConstraints2D.FreezeAll;   // quieto mientras esta escondido
+
+            if (AudioManager.Instance != null)
+            {
+                if (hideInSound != null) AudioManager.Instance.PlaySFX(hideInSound, 0.9f);
+                if (reliefBreathSound != null) AudioManager.Instance.PlaySFX(reliefBreathSound, 0.85f);
+            }
 
             if (HUD.Instance != null)
                 HUD.Instance.ShowEventNotice("[E] Salir del escondite", 3.0f);

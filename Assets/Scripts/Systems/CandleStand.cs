@@ -18,6 +18,9 @@ public class CandleStand : MonoBehaviour
     [SerializeField] GameObject promptContainer;
     [SerializeField] TextMesh promptTextMesh;
 
+    [Header("Efectos de Audio")]
+    [SerializeField] AudioClip takeCandleSound;
+
     Transform playerTransform;
 
     void Start()
@@ -83,6 +86,11 @@ public class CandleStand : MonoBehaviour
         }
 
         Candle.AddCandle(1);
+
+        if (takeCandleSound != null && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(takeCandleSound, 1.0f);
+        }
 
         if (HUD.Instance != null)
         {

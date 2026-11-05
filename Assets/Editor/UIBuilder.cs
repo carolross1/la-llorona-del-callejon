@@ -24,6 +24,10 @@ public static class UIBuilder
     const string InterfazPath = "Assets/Sprites/UI/interfaz.png";
     const string LogoPath     = "Assets/Sprites/UI/logo.png";
     const string SalidasPath  = "Assets/Sprites/Environment/Salidas.png";
+    const string MenuFondoPath   = "Assets/Sprites/UI/menu_fondo.png";
+    const string MarcoHudPath    = "Assets/Sprites/UI/marco_hud.png";
+    const string BannersMenuPath = "Assets/Sprites/UI/banners_menu.png";
+    const string IconosHudPath   = "Assets/Sprites/UI/iconos_hud.png";
 
     // ── Acceso a Sprites ─────────────────────────────────────────────────────
 
@@ -54,6 +58,10 @@ public static class UIBuilder
     public static Sprite PlacaResaltada  => GetSprite(InterfazPath, "Placa_resaltada", 6);
     public static Sprite PlacaPresionada => GetSprite(InterfazPath, "Placa_presionada", 7);
     public static Sprite LogoSprite      => AssetDatabase.LoadAssetAtPath<Sprite>(LogoPath);
+    public static Sprite MenuFondoSprite   => AssetDatabase.LoadAssetAtPath<Sprite>(MenuFondoPath);
+    public static Sprite MarcoHudSprite    => AssetDatabase.LoadAssetAtPath<Sprite>(MarcoHudPath);
+    public static Sprite BannersMenuSprite => AssetDatabase.LoadAssetAtPath<Sprite>(BannersMenuPath);
+    public static Sprite IconosHudSprite   => AssetDatabase.LoadAssetAtPath<Sprite>(IconosHudPath);
 
     public static Sprite SalidaThumb(int index) => GetSprite(SalidasPath, $"Salida_{index}", index);
 
@@ -130,16 +138,34 @@ public static class UIBuilder
 
         GameObject canvasGo = CreateCanvas("MainMenuCanvas");
 
-        // Fondo atmosférico
-        GameObject bgGo = CreateImage(canvasGo.transform, "FondoOscuro",
-            new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
+        // Fondo ilustrado: Plaza Gótica bajo la Luna Carmesí
+        if (MenuFondoSprite != null)
+        {
+            GameObject bgGo = CreateImageSprite(canvasGo.transform, "FondoMenuIlustrado", MenuFondoSprite,
+                Vector2.zero, Vector2.one);
+            Image bgImg = bgGo.GetComponent<Image>();
+            if (bgImg != null)
+            {
+                bgImg.preserveAspect = false;
+                bgImg.color = Color.white;
+            }
+        }
+        else
+        {
+            CreateImage(canvasGo.transform, "FondoOscuro",
+                new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
+        }
+
+        // Viñeta oscura suave para contrastar logo y botones
+        CreateImage(canvasGo.transform, "VinetaSombra",
+            new Color(0.02f, 0.01f, 0.04f, 0.40f), Vector2.zero, Vector2.one);
 
         // Logo del juego centrado en la parte superior
         GameObject logoGo = CreateImageSprite(canvasGo.transform, "LogoJuego", LogoSprite,
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(620f, 320f));
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(660f, 340f));
         RectTransform rtLogo = logoGo.GetComponent<RectTransform>();
         rtLogo.pivot = new Vector2(0.5f, 1f);
-        rtLogo.anchoredPosition = new Vector2(0f, -40f);
+        rtLogo.anchoredPosition = new Vector2(0f, -30f);
         Image logoImg = logoGo.GetComponent<Image>();
         if (logoImg != null) logoImg.preserveAspect = true;
 
@@ -149,24 +175,24 @@ public static class UIBuilder
         RectTransform rtBtns = btnContainer.AddComponent<RectTransform>();
         rtBtns.anchorMin = rtBtns.anchorMax = new Vector2(0.5f, 0f);
         rtBtns.pivot = new Vector2(0.5f, 0f);
-        rtBtns.anchoredPosition = new Vector2(0f, 60f);
-        rtBtns.sizeDelta = new Vector2(440f, 480f);
+        rtBtns.anchoredPosition = new Vector2(0f, 45f);
+        rtBtns.sizeDelta = new Vector2(460f, 490f);
 
-        // Botones principales con Placa_normal y SpriteSwap
+        // Botones principales con Banners góticos y SpriteSwap
         Button btnJugar = CreatePlacaButton(btnContainer.transform, "Btn_Jugar", "JUGAR",
-            new Vector2(0f, 360f), new Vector2(400f, 74f), 28);
+            new Vector2(0f, 360f), new Vector2(440f, 80f), 28, true);
 
         Button btnSelect = CreatePlacaButton(btnContainer.transform, "Btn_Niveles", "SELECCIONAR NIVEL",
-            new Vector2(0f, 275f), new Vector2(400f, 74f), 24);
+            new Vector2(0f, 275f), new Vector2(440f, 76f), 24);
 
         Button btnOpciones = CreatePlacaButton(btnContainer.transform, "Btn_Opciones", "OPCIONES",
-            new Vector2(0f, 190f), new Vector2(400f, 74f), 24);
+            new Vector2(0f, 190f), new Vector2(440f, 76f), 24);
 
         Button btnCredits = CreatePlacaButton(btnContainer.transform, "Btn_Creditos", "CRÉDITOS",
-            new Vector2(0f, 105f), new Vector2(400f, 74f), 24);
+            new Vector2(0f, 105f), new Vector2(440f, 76f), 24);
 
         Button btnSalir = CreatePlacaButton(btnContainer.transform, "Btn_Salir", "SALIR",
-            new Vector2(0f, 20f), new Vector2(400f, 74f), 26);
+            new Vector2(0f, 20f), new Vector2(440f, 76f), 26);
 
         // Subpanel de Opciones (inicialmente oculto)
         GameObject optPanel = CreateModalPanel(canvasGo.transform, "PanelOpciones", "OPCIONES", 580f, 420f);
@@ -205,13 +231,34 @@ public static class UIBuilder
 
         GameObject canvasGo = CreateCanvas("LevelSelectCanvas");
 
-        CreateImage(canvasGo.transform, "Fondo", new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
+        // Fondo ilustrado con tinte nocturno
+        if (MenuFondoSprite != null)
+        {
+            GameObject bgGo = CreateImageSprite(canvasGo.transform, "FondoIlustrado", MenuFondoSprite,
+                Vector2.zero, Vector2.one);
+            Image bgImg = bgGo.GetComponent<Image>();
+            if (bgImg != null)
+            {
+                bgImg.preserveAspect = false;
+                bgImg.color = new Color(0.35f, 0.32f, 0.42f, 1f);
+            }
+        }
+        else
+        {
+            CreateImage(canvasGo.transform, "Fondo", new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
+        }
 
-        // Título
-        CreateText(canvasGo.transform, "Titulo", "SELECCIONAR NIVEL",
-            38, TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.40f),
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(700, 70))
-            .GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -40f);
+        // Título estilizado sobre cartela ornamental
+        GameObject titleCard = CreateImageSprite(canvasGo.transform, "TitleBanner", BannersMenuSprite ?? PlacaNormal,
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(720f, 84f));
+        titleCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -40f);
+        Image titleImg = titleCard.GetComponent<Image>();
+        titleImg.type = Image.Type.Sliced;
+        titleImg.color = new Color(0.12f, 0.08f, 0.16f, 0.95f);
+
+        CreateText(titleCard.transform, "Titulo", "SELECCIONAR NIVEL",
+            36, TextAnchor.MiddleCenter, new Color(1f, 0.90f, 0.45f),
+            Vector2.zero, Vector2.one, Vector2.zero);
 
         // Cuadrícula 2x2 para las 4 tarjetas de nivel
         string[] nombres = { "Nivel 1\nEl Mercado", "Nivel 2\nEl Callejón", "Nivel 3\nEl Atrio", "Nivel 4\nEl Panteón" };
@@ -234,10 +281,22 @@ public static class UIBuilder
             cardRt.anchoredPosition = pos[i];
             cardRt.sizeDelta = new Vector2(480f, 190f);
 
-            // Fondo de la tarjeta con Placa_normal
+            // Fondo de la tarjeta con Banners góticos
             Image cardBg = cardGo.AddComponent<Image>();
-            cardBg.sprite = PlacaNormal;
+            cardBg.sprite = BannersMenuSprite ?? PlacaNormal;
             cardBg.type = Image.Type.Sliced;
+            cardBg.color = Color.white;
+
+            // Relleno interior oscuro para asegurar contraste de miniaturas y texto
+            GameObject cardIn = new GameObject("InnerDark");
+            cardIn.transform.SetParent(cardGo.transform, false);
+            RectTransform cardInRt = cardIn.AddComponent<RectTransform>();
+            cardInRt.anchorMin = Vector2.zero;
+            cardInRt.anchorMax = Vector2.one;
+            cardInRt.offsetMin = new Vector2(8f, 8f);
+            cardInRt.offsetMax = new Vector2(-8f, -8f);
+            Image cardInImg = cardIn.AddComponent<Image>();
+            cardInImg.color = new Color(0.06f, 0.04f, 0.09f, 0.90f);
 
             Button btn = cardGo.AddComponent<Button>();
             SpriteState ss = new SpriteState
@@ -329,16 +388,40 @@ public static class UIBuilder
         if (Camera.main != null) Camera.main.backgroundColor = new Color(0.04f, 0.02f, 0.08f);
 
         GameObject canvasGo = CreateCanvas("CreditsCanvas");
-        CreateImage(canvasGo.transform, "Fondo", new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
+        if (MenuFondoSprite != null)
+        {
+            GameObject bgGo = CreateImageSprite(canvasGo.transform, "FondoIlustrado", MenuFondoSprite,
+                Vector2.zero, Vector2.one);
+            Image bgImg = bgGo.GetComponent<Image>();
+            if (bgImg != null)
+            {
+                bgImg.preserveAspect = false;
+                bgImg.color = new Color(0.35f, 0.32f, 0.42f, 1f);
+            }
+        }
+        else
+        {
+            CreateImage(canvasGo.transform, "Fondo", new Color(0.05f, 0.03f, 0.08f, 1f), Vector2.zero, Vector2.one);
+        }
 
         CreateText(canvasGo.transform, "Titulo", "CRÉDITOS", 40,
             TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.40f),
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(600, 70))
             .GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -50f);
 
-        GameObject cardGo = CreateImageSprite(canvasGo.transform, "CardCreditos", PlacaNormal,
-            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(820f, 460f));
+        GameObject cardGo = CreateImageSprite(canvasGo.transform, "CardCreditos", MarcoHudSprite ?? PlacaNormal,
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(840f, 480f));
         cardGo.GetComponent<Image>().type = Image.Type.Sliced;
+
+        GameObject cardInner = new GameObject("InnerDark");
+        cardInner.transform.SetParent(cardGo.transform, false);
+        RectTransform rtCi = cardInner.AddComponent<RectTransform>();
+        rtCi.anchorMin = Vector2.zero;
+        rtCi.anchorMax = Vector2.one;
+        rtCi.offsetMin = new Vector2(12f, 12f);
+        rtCi.offsetMax = new Vector2(-12f, -12f);
+        Image ciImg = cardInner.AddComponent<Image>();
+        ciImg.color = new Color(0.06f, 0.04f, 0.09f, 0.94f);
 
         string credText =
             "LA LLORONA DEL CALLEJÓN\n" +
@@ -365,7 +448,7 @@ public static class UIBuilder
 
     public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity", "Cruza el mercado sin que La Llorona te vea");
     public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity", "Llega al final del callejón esquivando los obstáculos");
-    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Llega a las puertas de la Parroquia de Dolores", true);
+    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Consagra las 3 ofrendas y llega a la Parroquia", false);
     public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "¡Escapa hacia tu casa! Cuidado con las ánimas y el perro");
 
     public static void BuildLevelUICanvas(string path, string objetivoTexto = "", bool minimalHud = false)
@@ -408,8 +491,32 @@ public static class UIBuilder
         RectTransform rtLeft = leftRoot.AddComponent<RectTransform>();
         rtLeft.anchorMin = rtLeft.anchorMax = new Vector2(0f, 1f);
         rtLeft.pivot = new Vector2(0f, 1f);
-        rtLeft.anchoredPosition = new Vector2(36f, -36f); // Margen generoso dentro del marco visual
-        rtLeft.sizeDelta = new Vector2(330f, 160f);
+        rtLeft.anchoredPosition = new Vector2(28f, -22f);
+        rtLeft.sizeDelta = new Vector2(360f, 172f);
+
+        // Cartela ornamental gótica con fondo oscuro para máximo contraste sobre el suelo
+        GameObject leftBacking = new GameObject("FondoCartelaEstado");
+        leftBacking.transform.SetParent(leftRoot.transform, false);
+        RectTransform rtLb = leftBacking.AddComponent<RectTransform>();
+        rtLb.anchorMin = Vector2.zero;
+        rtLb.anchorMax = Vector2.one;
+        rtLb.offsetMin = new Vector2(-12f, -10f);
+        rtLb.offsetMax = new Vector2(12f, 10f);
+
+        Image lbBorder = leftBacking.AddComponent<Image>();
+        lbBorder.sprite = MarcoHudSprite ?? PlacaNormal;
+        lbBorder.type = Image.Type.Sliced;
+        lbBorder.color = Color.white;
+
+        GameObject lbInner = new GameObject("InnerDark");
+        lbInner.transform.SetParent(leftBacking.transform, false);
+        RectTransform rtLbi = lbInner.AddComponent<RectTransform>();
+        rtLbi.anchorMin = Vector2.zero;
+        rtLbi.anchorMax = Vector2.one;
+        rtLbi.offsetMin = new Vector2(6f, 6f);
+        rtLbi.offsetMax = new Vector2(-6f, -6f);
+        Image lbiImg = lbInner.AddComponent<Image>();
+        lbiImg.color = new Color(0.05f, 0.03f, 0.08f, 0.94f);
 
         // Fila 1: Tres corazones de 56 px con separación de 8 px (anclados en Top-Left)
         GameObject heartsRoot = new GameObject("Corazones_Vida");
@@ -443,7 +550,7 @@ public static class UIBuilder
         rtC.anchorMin = rtC.anchorMax = new Vector2(0f, 1f);
         rtC.pivot = new Vector2(0f, 1f);
         rtC.anchoredPosition = new Vector2(0f, -64f);
-        rtC.sizeDelta = new Vector2(240f, 36f);
+        rtC.sizeDelta = new Vector2(340f, 36f);
 
         GameObject velaIconGo = new GameObject("IconoVela");
         velaIconGo.transform.SetParent(candleRoot.transform, false);
@@ -458,7 +565,7 @@ public static class UIBuilder
 
         Text candleTxt = CreateText(candleRoot.transform, "CandleCountText", "×0  [F] Colocar", 22,
             TextAnchor.MiddleLeft, new Color(1f, 0.92f, 0.50f),
-            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(220f, 36f))
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(300f, 36f))
             .GetComponent<Text>();
         candleTxt.fontStyle = FontStyle.Bold;
         candleTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(44f, 0f);
@@ -470,7 +577,7 @@ public static class UIBuilder
         rtStam.anchorMin = rtStam.anchorMax = new Vector2(0f, 1f);
         rtStam.pivot = new Vector2(0f, 1f);
         rtStam.anchoredPosition = new Vector2(0f, -106f);
-        rtStam.sizeDelta = new Vector2(300f, 42f);
+        rtStam.sizeDelta = new Vector2(340f, 42f);
 
         Text stamLabel = CreateText(staminaRoot.transform, "StaminaLabel", "ESTAMINA [Shift]", 18,
             TextAnchor.UpperLeft, new Color(1f, 0.90f, 0.60f),
@@ -485,7 +592,7 @@ public static class UIBuilder
         barRt.anchorMin = barRt.anchorMax = new Vector2(0f, 0f);
         barRt.pivot = new Vector2(0f, 0f);
         barRt.anchoredPosition = Vector2.zero;
-        barRt.sizeDelta = new Vector2(300f, 18f);
+        barRt.sizeDelta = new Vector2(340f, 18f);
 
         Image stamBg = stamBarGo.AddComponent<Image>();
         stamBg.sprite = BarraMarco;
@@ -518,18 +625,19 @@ public static class UIBuilder
         rtCenter.sizeDelta = new Vector2(540f, 104f);
 
         Image centerImg = centerCard.AddComponent<Image>();
-        centerImg.sprite = PlacaNormal;
+        centerImg.sprite = MarcoHudSprite ?? BannersMenuSprite ?? PlacaNormal;
         centerImg.type = Image.Type.Sliced;
+        centerImg.color = Color.white;
 
         // Fondo interno plano oscuro para aislar los números del relieve de la madera
         GameObject centerBacking = new GameObject("InnerBacking");
         centerBacking.transform.SetParent(centerCard.transform, false);
         RectTransform rtCb = centerBacking.AddComponent<RectTransform>();
-        rtCb.anchorMin = new Vector2(0.04f, 0.10f);
-        rtCb.anchorMax = new Vector2(0.96f, 0.90f);
+        rtCb.anchorMin = new Vector2(0.03f, 0.08f);
+        rtCb.anchorMax = new Vector2(0.97f, 0.92f);
         rtCb.offsetMin = rtCb.offsetMax = Vector2.zero;
         Image cbImg = centerBacking.AddComponent<Image>();
-        cbImg.color = new Color(0.06f, 0.04f, 0.10f, 0.80f);
+        cbImg.color = new Color(0.05f, 0.03f, 0.08f, 0.94f);
 
         Text timerTxt = CreateText(centerCard.transform, "TimerText", "TIEMPO 00:00", 28,
             TextAnchor.MiddleCenter, new Color(1f, 0.97f, 0.90f),
@@ -557,18 +665,19 @@ public static class UIBuilder
         rtRight.sizeDelta = new Vector2(440f, 104f);
 
         Image rightImg = rightCard.AddComponent<Image>();
-        rightImg.sprite = PlacaNormal;
+        rightImg.sprite = MarcoHudSprite ?? BannersMenuSprite ?? PlacaNormal;
         rightImg.type = Image.Type.Sliced;
+        rightImg.color = Color.white;
 
         // Fondo interno plano oscuro para separar el objetivo
         GameObject rightBacking = new GameObject("InnerBacking");
         rightBacking.transform.SetParent(rightCard.transform, false);
         RectTransform rtRb = rightBacking.AddComponent<RectTransform>();
-        rtRb.anchorMin = new Vector2(0.04f, 0.10f);
-        rtRb.anchorMax = new Vector2(0.96f, 0.90f);
+        rtRb.anchorMin = new Vector2(0.03f, 0.08f);
+        rtRb.anchorMax = new Vector2(0.97f, 0.92f);
         rtRb.offsetMin = rtRb.offsetMax = Vector2.zero;
         Image rbImg = rightBacking.AddComponent<Image>();
-        rbImg.color = new Color(0.06f, 0.04f, 0.10f, 0.80f);
+        rbImg.color = new Color(0.05f, 0.03f, 0.08f, 0.94f);
 
         Text objTxt = CreateText(rightCard.transform, "ObjectiveText",
             $"OBJETIVO: {objetivoTexto}", 22, TextAnchor.MiddleLeft,
@@ -652,23 +761,12 @@ public static class UIBuilder
         tutTxt.fontStyle = FontStyle.Bold;
         tutGo.SetActive(false);
 
-                if (minimalHud)
+        if (minimalHud)
         {
-            // Solo veladoras y contador (tiempo) para que no se vea amontonado
-            heartsRoot.SetActive(false);
-            staminaRoot.SetActive(false);
+            // Reduce únicamente tarjetas accesorias si se pide HUD ultra-compacto
             scoreTxt.gameObject.SetActive(false);
             rightCard.SetActive(false);
             eyeGo.SetActive(false);
-
-            centerCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -24f);
-            centerCard.GetComponent<RectTransform>().sizeDelta = new Vector2(240f, 48f);
-            timerTxt.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-            timerTxt.fontSize = 24;
-
-            candleRoot.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
-            leftRoot.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 48f);
-            candleRoot.SetActive(true);
         }
 
         // Enlazar referencias de HUD.cs
@@ -849,8 +947,8 @@ public static class UIBuilder
         rt.offsetMax = Vector2.zero;
 
         Image img = overlay.AddComponent<Image>();
-        // Fondo negro al 75% (Dimmer): aísla de inmediato la ventana del suelo y de todo el juego
-        img.color = new Color(0f, 0f, 0f, 0.75f);
+        // Fondo carbón oscuro al 90% (Dimmer): aísla por completo y previene que se trasluzcan textos o luces del mundo
+        img.color = new Color(0.01f, 0.01f, 0.03f, 0.90f);
         img.raycastTarget = true;
         return overlay;
     }
@@ -864,12 +962,24 @@ public static class UIBuilder
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.sizeDelta = new Vector2(width, height);
 
+        // Marco gótico barroco
         Image img = panel.AddComponent<Image>();
-        img.sprite = PlacaNormal;
+        img.sprite = MarcoHudSprite ?? PlacaNormal;
         img.type = Image.Type.Sliced;
         img.color = Color.white;
 
-        CreateText(panel.transform, "TituloModal", title, 34,
+        // Relleno interior 100% opaco para asegurar cero sangrado visual del juego
+        GameObject innerBack = new GameObject("FondoOpacoModal");
+        innerBack.transform.SetParent(panel.transform, false);
+        RectTransform inRt = innerBack.AddComponent<RectTransform>();
+        inRt.anchorMin = Vector2.zero;
+        inRt.anchorMax = Vector2.one;
+        inRt.offsetMin = new Vector2(10f, 10f);
+        inRt.offsetMax = new Vector2(-10f, -10f);
+        Image inImg = innerBack.AddComponent<Image>();
+        inImg.color = new Color(0.06f, 0.04f, 0.09f, 0.98f);
+
+        CreateText(panel.transform, "TituloModal", title, 32,
             TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.40f),
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(width - 40f, 60f))
             .GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -24f);
@@ -884,17 +994,18 @@ public static class UIBuilder
         go.transform.SetParent(parent, false);
 
         Image img = go.AddComponent<Image>();
-        // Estado iluminado/dorado para el botón principal interactivo
-        Sprite baseSprite = (isPrimary && PlacaResaltada != null) ? PlacaResaltada : PlacaNormal;
+        // Estado visual con los nuevos banners góticos de calaveras y flores
+        Sprite baseSprite = BannersMenuSprite ?? ((isPrimary && PlacaResaltada != null) ? PlacaResaltada : PlacaNormal);
         img.sprite = baseSprite;
         img.type   = Image.Type.Sliced;
+        img.color  = isPrimary ? new Color(1f, 0.96f, 0.86f, 1f) : new Color(0.92f, 0.90f, 0.92f, 1f);
 
         Button btn = go.AddComponent<Button>();
         SpriteState ss = new SpriteState
         {
-            highlightedSprite = PlacaResaltada ?? PlacaNormal,
-            pressedSprite     = PlacaPresionada ?? PlacaNormal,
-            disabledSprite    = PlacaPresionada ?? PlacaNormal
+            highlightedSprite = (PlacaResaltada != null) ? PlacaResaltada : baseSprite,
+            pressedSprite     = (PlacaPresionada != null) ? PlacaPresionada : baseSprite,
+            disabledSprite    = (PlacaPresionada != null) ? PlacaPresionada : baseSprite
         };
         btn.spriteState = ss;
         btn.transition  = Selectable.Transition.SpriteSwap;

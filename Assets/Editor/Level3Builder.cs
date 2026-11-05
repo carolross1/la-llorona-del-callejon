@@ -233,8 +233,8 @@ public static class Level3Builder
 
         // 7. LOS 3 NICHOS SAGRADOS DEL RITUAL ([F] para ofrendar veladora)
         Transform nichosGroup = FreshRoot("Nichos_Sagrados");
-        Sprite sAltarN3 = accesoriosSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? ofrendaSprites.ElementAtOrDefault(3);
-        Sprite sCriptaN3 = accesoriosSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? ofrendaSprites.ElementAtOrDefault(6);
+        Sprite sAltarN3 = accSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? ofrendaSprites.ElementAtOrDefault(3);
+        Sprite sCriptaN3 = accSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? ofrendaSprites.ElementAtOrDefault(6);
         Sprite sCandelabro = ofrendaSprites.FirstOrDefault(s => s.name == "Candelabro_Vela") ?? ofrendaSprites.ElementAtOrDefault(3);
         Sprite sFlama = ofrendaSprites.FirstOrDefault(s => s.name == "Vela_Blanca_Grande") ?? ofrendaSprites.ElementAtOrDefault(4);
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);

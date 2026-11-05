@@ -54,6 +54,10 @@ public static class Level3Builder
             .OfType<Sprite>().FirstOrDefault();
         Sprite sSelloPuerta = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/sello_puerta.png")
             .OfType<Sprite>().FirstOrDefault();
+        Sprite sCirculoSantuario = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/circulo_santuario.png")
+            .OfType<Sprite>().FirstOrDefault();
+        Sprite sPuertasAbiertas = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/puertas_abiertas.png")
+            .OfType<Sprite>().FirstOrDefault();
 
         Sprite[] accSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/accesorios.png")
             .OfType<Sprite>().OrderBy(s => s.name).ToArray();
@@ -245,13 +249,13 @@ public static class Level3Builder
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
 
         // Nicho 1: Altar Sagrado (Ala Oeste)
-        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores);
+        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores, sCirculoSantuario);
 
         // Nicho 2: Fuente Sagrada (Plaza Central)
-        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores);
+        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores, sCirculoSantuario);
 
         // Nicho 3: Cripta Sagrada (Ala Este)
-        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores);
+        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores, sCirculoSantuario);
 
         // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado para dejar libre el paso central)
         CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro);
@@ -292,7 +296,7 @@ public static class Level3Builder
 
         // 10. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 21.2f)
         Transform exitGroup = FreshRoot("Salida_Meta");
-        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, sSelloPuerta);
+        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, sSelloPuerta, sPuertasAbiertas);
 
         // 11. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
         EnsureGlobalLight(0.50f);
@@ -339,7 +343,7 @@ public static class Level3Builder
         Debug.Log("[Level3Builder] ¡Nivel 3 monumental (El Atrio de Dolores - Opción A) reconstruido y guardado con éxito!");
     }
 
-    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite)
+    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite)
     {
         GameObject go = new GameObject(goName);
         go.transform.SetParent(parent, false);
@@ -411,10 +415,22 @@ public static class Level3Builder
         l2dBeacon.pointLightOuterRadius = 6.5f;
         beaconGo.AddComponent<LightFlicker>();
 
-        // Aura de domo santuario (visible al consagrarse)
+        // Aura de domo santuario (visible al consagrarse con el círculo ritual de cempasúchil en el suelo)
         GameObject domeGo = new GameObject("Aura_Santuario");
         domeGo.transform.SetParent(go.transform, false);
-        domeGo.transform.localPosition = Vector3.zero;
+        domeGo.transform.localPosition = new Vector3(0f, 0.4f, 0f);
+
+        if (circuloSprite != null)
+        {
+            SpriteRenderer srDome = domeGo.AddComponent<SpriteRenderer>();
+            srDome.sprite = circuloSprite;
+            srDome.sortingOrder = 1;
+            srDome.color = new Color(1.0f, 0.95f, 0.75f, 0.88f);
+            float spriteWidth = circuloSprite.bounds.size.x > 0.01f ? circuloSprite.bounds.size.x : 5.1f;
+            float targetDomeScale = (3.2f * 2.0f) / (spriteWidth * scaleFactor);
+            domeGo.transform.localScale = new Vector3(targetDomeScale, targetDomeScale, 1f);
+        }
+
         Light2D l2dDome = domeGo.AddComponent<Light2D>();
         l2dDome.lightType = Light2D.LightType.Point;
         l2dDome.color = new Color(1.0f, 0.88f, 0.35f);
@@ -515,7 +531,7 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, "Mesa_Cirios_Benditos");
     }
 
-    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, Sprite selloSprite)
+    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, Sprite selloSprite, Sprite openDoorsSprite)
     {
         GameObject go = new GameObject("Puertas_Parroquia_Meta");
         go.transform.SetParent(parent, false);
@@ -550,6 +566,21 @@ public static class Level3Builder
         l2dSeal.pointLightOuterRadius = 4.8f;
         sealMistGo.AddComponent<LightFlicker>();
 
+        // Visual de puertas abiertas e interior sagrado iluminado (inicia desactivado hasta consagrar 3/3 nichos)
+        GameObject openDoorsGo = new GameObject("Entrada_Puertas_Abiertas");
+        openDoorsGo.transform.SetParent(go.transform, false);
+        openDoorsGo.transform.localPosition = new Vector3(0f, 0.35f, 0f);
+
+        if (openDoorsSprite != null)
+        {
+            SpriteRenderer srOpen = openDoorsGo.AddComponent<SpriteRenderer>();
+            srOpen.sprite = openDoorsSprite;
+            srOpen.sortingOrder = 3;
+            // catedral.png tiene sortingOrder 2. El sprite de puertas abiertas en sortingOrder 3 cubre la entrada de madera cerrada.
+            openDoorsGo.transform.localScale = new Vector3(0.65f, 0.65f, 1f);
+        }
+        openDoorsGo.SetActive(false);
+
         // Luz divina del santuario (dorada/cálida, se enciende al abrir)
         GameObject lightGo = new GameObject("Luz_Entrada_Parroquia");
         lightGo.transform.SetParent(go.transform, false);
@@ -581,6 +612,7 @@ public static class Level3Builder
         SerializedObject so = new SerializedObject(pdc);
         so.FindProperty("requiredShrines").intValue = 3;
         so.FindProperty("doorSealVisual").objectReferenceValue = sealMistGo;
+        so.FindProperty("openDoorsVisual").objectReferenceValue = openDoorsGo;
         so.FindProperty("sanctuaryLight").objectReferenceValue = l2d;
         so.FindProperty("goalCollider").objectReferenceValue = bc;
         so.FindProperty("statusLabel").objectReferenceValue = tm;

@@ -3,6 +3,10 @@ using UnityEngine.InputSystem;
 
 public class HideSystem : MonoBehaviour
 {
+    [Header("Efectos de Audio")]
+    [SerializeField] AudioClip hideInSound;
+    [SerializeField] AudioClip reliefBreathSound;
+
     PlayerMovement player;
     SpriteRenderer sr;
     Rigidbody2D rb;
@@ -13,10 +17,13 @@ public class HideSystem : MonoBehaviour
     int savedOrder;
     RigidbodyConstraints2D savedConstraints;
 
+    public bool HasHideSpotNearby => current != null;
+
     void Awake()
     {
         player = GetComponent<PlayerMovement>();
         sr = GetComponent<SpriteRenderer>();
+        if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         if (rb != null)
         {
@@ -29,10 +36,23 @@ public class HideSystem : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current == null || !Keyboard.current.eKey.wasPressedThisFrame) return;
+        var kb = Keyboard.current;
+        if (kb == null) return;
 
-        if (player.IsHidden) SetHidden(false);
-        else if (current != null) SetHidden(true);
+        // Tecla [E] estándar para esconderse o salir del escondite en todos los niveles (también acepta [C])
+        bool hideTriggered = kb.eKey.wasPressedThisFrame || kb.cKey.wasPressedThisFrame;
+
+        if (hideTriggered)
+        {
+            if (player != null && player.IsHidden)
+            {
+                SetHidden(false);
+            }
+            else if (current != null)
+            {
+                SetHidden(true);
+            }
+        }
     }
 
     void SetHidden(bool hidden)
@@ -54,7 +74,16 @@ public class HideSystem : MonoBehaviour
             player.IsHidden = true;
             rb.linearVelocity = Vector2.zero;
             Teleport(current.HidePosition);
-            rb.constraints = RigidbodyConstraints2D.FreezeAll;   // quieto mientras está escondido
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;   // quieto mientras esta escondido
+
+            if (AudioManager.Instance != null)
+            {
+                if (hideInSound != null) AudioManager.Instance.PlaySFX(hideInSound, 0.9f);
+                if (reliefBreathSound != null) AudioManager.Instance.PlaySFX(reliefBreathSound, 0.85f);
+            }
+
+            if (HUD.Instance != null)
+                HUD.Instance.ShowEventNotice("[E] Salir del escondite", 3.0f);
         }
         else
         {
@@ -64,6 +93,9 @@ public class HideSystem : MonoBehaviour
             sr.sortingOrder = savedOrder;
             Teleport(savedPos);
             transform.rotation = Quaternion.identity;
+
+            if (HUD.Instance != null)
+                HUD.Instance.ShowEventNotice("Has salido del escondite", 1.8f);
         }
     }
 
@@ -77,12 +109,22 @@ public class HideSystem : MonoBehaviour
     void OnTriggerEnter2D(Collider2D c)
     {
         var h = c.GetComponentInParent<HideSpot>();
-        if (h != null) current = h;
+        if (h != null)
+        {
+            current = h;
+            if (player != null && !player.IsHidden && HUD.Instance != null)
+            {
+                HUD.Instance.ShowEventNotice("[E] Esconderse", 2.0f);
+            }
+        }
     }
 
     void OnTriggerExit2D(Collider2D c)
     {
-        if (player.IsHidden) return; // escondido: no salir por accidente
-        if (c.GetComponentInParent<HideSpot>() != null) current = null;
+        if (player != null && player.IsHidden) return; // escondido: no salir por accidente
+        if (c.GetComponentInParent<HideSpot>() != null)
+        {
+            current = null;
+        }
     }
 }

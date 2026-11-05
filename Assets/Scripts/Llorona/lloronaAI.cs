@@ -36,6 +36,13 @@ public class LloronaAI : MonoBehaviour
     [SerializeField] AudioSource audioSource;
     float lastScreamTime = -99f;
 
+    [Header("Audio y Llanto Continuo por Proximidad")]
+    [SerializeField] AudioClip cryLoopClip;
+    [SerializeField] AudioSource cryAudioSource;
+    [SerializeField] float maxCryDistance = 22.0f;
+    [SerializeField] float minCryDistance = 2.0f;
+    [Range(0f, 1f)] [SerializeField] float maxCryVolume = 0.85f;
+
     Rigidbody2D rb;
     PlayerMovement player;
     State state = State.Patrol;
@@ -114,16 +121,53 @@ public class LloronaAI : MonoBehaviour
 
     void EnsureAudioSource()
     {
+        AudioSource[] sources = GetComponents<AudioSource>();
+        if (sources.Length > 0)
+        {
+            audioSource = sources[0];
+            if (sources.Length > 1) cryAudioSource = sources[1];
+        }
+
         if (audioSource == null)
         {
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0.65f; // Audio 3D posicional para percibir la dirección del llanto/grito
+        audioSource.spatialBlend = 0.65f;
         audioSource.minDistance = 2.5f;
         audioSource.maxDistance = 28.0f;
         audioSource.rolloffMode = AudioRolloffMode.Linear;
+
+        if (cryAudioSource == null)
+        {
+            cryAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+        cryAudioSource.playOnAwake = false;
+        cryAudioSource.loop = true;
+        cryAudioSource.spatialBlend = 0.85f;
+        cryAudioSource.minDistance = minCryDistance;
+        cryAudioSource.maxDistance = maxCryDistance;
+        cryAudioSource.rolloffMode = AudioRolloffMode.Linear;
+
+        InitCryClip();
+    }
+
+    void InitCryClip()
+    {
+        if (cryLoopClip == null)
+        {
+            if (AudioManager.Instance != null && AudioManager.Instance.lloronaLlanto != null)
+                cryLoopClip = AudioManager.Instance.lloronaLlanto;
+            else
+                cryLoopClip = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg");
+        }
+
+        if (cryAudioSource != null && cryLoopClip != null)
+        {
+            cryAudioSource.clip = cryLoopClip;
+            cryAudioSource.volume = 0f;
+            if (!cryAudioSource.isPlaying) cryAudioSource.Play();
+        }
     }
 
     public void SetSettings(LloronaSettings newSettings)
@@ -143,6 +187,68 @@ public class LloronaAI : MonoBehaviour
         waitTime = settings.WaitTime;
         loseSightTime = settings.LoseSightTime;
         runNoiseMultiplier = settings.RunNoiseMultiplier;
+    }
+
+    void Update()
+    {
+        UpdateProximityCry();
+    }
+
+    void UpdateProximityCry()
+    {
+        if (cryAudioSource == null) return;
+
+        if (cryAudioSource.clip == null)
+        {
+            InitCryClip();
+        }
+
+        if (player == null)
+        {
+            player = FindAnyObjectByType<PlayerMovement>();
+            if (player == null)
+            {
+                cryAudioSource.volume = Mathf.MoveTowards(cryAudioSource.volume, 0f, Time.deltaTime * 0.8f);
+                return;
+            }
+        }
+
+        if (!cryAudioSource.isPlaying && cryAudioSource.clip != null)
+        {
+            cryAudioSource.Play();
+        }
+
+        float dist = Vector2.Distance(transform.position, player.transform.position);
+
+        float targetVol = 0f;
+        if (dist <= maxCryDistance)
+        {
+            // El llanto incrementa progresivamente conforme se acerca a Carlos
+            float t = 1.0f - Mathf.Clamp01((dist - minCryDistance) / (maxCryDistance - minCryDistance));
+            targetVol = Mathf.Pow(t, 1.25f) * maxCryVolume;
+
+            if (player.IsHidden)
+            {
+                // Amortiguar ligeramente si Carlos se oculta en un escondite
+                targetVol *= 0.6f;
+            }
+            else if (state == State.Chase)
+            {
+                // Mayor desesperación e intensidad sonora en persecución directa
+                targetVol = Mathf.Clamp01(targetVol * 1.25f);
+            }
+        }
+
+        // Suavizado dinámico del volumen
+        cryAudioSource.volume = Mathf.MoveTowards(cryAudioSource.volume, targetVol, Time.deltaTime * 0.85f);
+    }
+
+    void OnDisable()
+    {
+        if (cryAudioSource != null && cryAudioSource.isPlaying)
+        {
+            cryAudioSource.Stop();
+        }
     }
 
     void FixedUpdate()
@@ -239,17 +345,21 @@ public class LloronaAI : MonoBehaviour
     /// Distrae a La Llorona hacia una ofrenda o posición específica durante varios segundos.
     /// Durante la distracción no persigue a Carlos.
     /// </summary>
-    public void Distract(Vector2 targetPos, float duration = 3.0f)
+    public void Distract(Vector2 targetPos, float duration = 7.0f)
     {
         state = State.Distracted;
         timer = duration;
         distractionPos = targetPos;
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.SetEyeAlert(false);
+        }
     }
 
     /// <summary>
     /// Distrae a La Llorona deteniéndola en su posición actual durante varios segundos.
     /// </summary>
-    public void Distract(float duration = 3.0f)
+    public void Distract(float duration = 7.0f)
     {
         Distract(transform.position, duration);
     }
@@ -347,6 +457,7 @@ public class LloronaAI : MonoBehaviour
     {
         if (state == State.Distracted) return false;
         if (player == null || player.IsHidden) return false;
+        if (ShrineNiche.IsPositionSafe(player.transform.position)) return false;
 
         Vector2 to = player.transform.position - transform.position;
         float dist = to.magnitude;
@@ -368,6 +479,7 @@ public class LloronaAI : MonoBehaviour
     {
         if (caught) return;
         if (col == null || !col.CompareTag("Player")) return;
+        if (player != null && (player.IsHidden || ShrineNiche.IsPositionSafe(player.transform.position))) return;
         if (player != null && player.IsHidden) return;   // escondido: no lo atrapa
 
         caught = true;
@@ -391,4 +503,19 @@ public class LloronaAI : MonoBehaviour
         Gizmos.DrawRay(transform.position, l * viewDistance);
         Gizmos.DrawRay(transform.position, r * viewDistance);
     }
+
+    public static void OnShrineLitAggression()
+    {
+        var llorona = Object.FindAnyObjectByType<LloronaAI>();
+        if (llorona != null)
+        {
+            llorona.patrolSpeed = Mathf.Min(3.0f, llorona.patrolSpeed + 0.3f);
+            llorona.chaseSpeed = Mathf.Min(4.2f, llorona.chaseSpeed + 0.35f);
+            if (llorona.audioSource != null && AudioManager.Instance != null && AudioManager.Instance.lloronaLlanto != null)
+            {
+                llorona.audioSource.PlayOneShot(AudioManager.Instance.lloronaLlanto, 0.9f);
+            }
+        }
+    }
+
 }

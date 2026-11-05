@@ -114,8 +114,9 @@ public class AudioManager : MonoBehaviour
         if (pasosRapidos == null) pasosRapidos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_rapidos");
         if (sonidoPerro == null) sonidoPerro = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perro");
         if (sonidoVidrio == null) sonidoVidrio = Resources.Load<AudioClip>("Audio/SFX/Nivel1/vidrio");
+        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_grito");
         if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg");
-        if (lloronaGrito == null) lloronaGrito = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg.wav");
+        if (lloronaLlanto == null) lloronaLlanto = Resources.Load<AudioClip>("Audio/SFX/Nivel1/llorona_nivel1.mpeg");
     }
 
     void Start()

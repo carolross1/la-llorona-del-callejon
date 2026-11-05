@@ -12,6 +12,7 @@ public class MudPuddle : MonoBehaviour
 {
     [SerializeField] float slowFactor = 0.5f;
     [SerializeField] float slowDuration = 2.5f;
+    [SerializeField] AudioClip splashSound;
     float lastAlertTime = -99f;
 
     void OnTriggerEnter2D(Collider2D other)
@@ -44,6 +45,9 @@ public class MudPuddle : MonoBehaviour
         if (Time.time > lastAlertTime + 3.0f)
         {
             lastAlertTime = Time.time;
+            if (splashSound != null && AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(splashSound, 0.9f);
+
             if (HUD.Instance != null)
             {
                 HUD.Instance.ShowEventNotice("¡Pisaste lodo! Movimiento reducido", 2.5f);

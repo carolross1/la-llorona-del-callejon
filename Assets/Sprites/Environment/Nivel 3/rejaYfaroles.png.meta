@@ -1,0 +1,342 @@
+fileFormatVersion: 2
+guid: b9fcc4a0946692944b0b251ca8d10773
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5077093308069200863
+    second: rejaYfaroles_0
+  - first:
+      213: -2903356367933064567
+    second: rejaYfaroles_1
+  - first:
+      213: 2107232338822101395
+    second: rejaYfaroles_2
+  - first:
+      213: -650550016365164737
+    second: rejaYfaroles_3
+  - first:
+      213: -3677449181232813322
+    second: rejaYfaroles_4
+  - first:
+      213: -2446340793112200383
+    second: rejaYfaroles_5
+  - first:
+      213: -7370489206782766440
+    second: rejaYfaroles_6
+  - first:
+      213: 8657655640439286750
+    second: Reja_Superior
+  - first:
+      213: -1672713236703184734
+    second: Porton_Atrio_N3
+  - first:
+      213: 371232083733353028
+    second: Farol_Pared_N3
+  - first:
+      213: 3811362925658274979
+    second: Farol_Colgante_1
+  - first:
+      213: -3438616742591061680
+    second: Farol_Colgante_2
+  - first:
+      213: -2523531901097020317
+    second: Farola_Pie_N3
+  - first:
+      213: -750951196520514351
+    second: Reja_Inferior
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Reja_Superior
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 516
+        width: 780
+        height: 316
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edb6a0c4feb262870800000000000000
+      internalID: 8657655640439286750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Porton_Atrio_N3
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 472
+        width: 560
+        height: 528
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a876337c2459c8e0800000000000000
+      internalID: -1672713236703184734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Farol_Pared_N3
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 124
+        width: 168
+        height: 268
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44297200d91e62500800000000000000
+      internalID: 371232083733353028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Farol_Colgante_1
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 124
+        width: 100
+        height: 248
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ac74fd236ea4e430800000000000000
+      internalID: 3811362925658274979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Farol_Colgante_2
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 104
+        width: 104
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 051262b8a449740d0800000000000000
+      internalID: -3438616742591061680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Farola_Pie_N3
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 44
+        width: 88
+        height: 432
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 364febf2b1d9afcd0800000000000000
+      internalID: -2523531901097020317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Reja_Inferior
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 68
+        width: 656
+        height: 308
+      alignment: 9
+      pivot: {x: 0.5, y: 0.05}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dc7dbf8dd51495f0800000000000000
+      internalID: -750951196520514351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Farol_Colgante_1: 3811362925658274979
+      Farol_Colgante_2: -3438616742591061680
+      Farol_Pared_N3: 371232083733353028
+      Farola_Pie_N3: -2523531901097020317
+      Porton_Atrio_N3: -1672713236703184734
+      Reja_Inferior: -750951196520514351
+      Reja_Superior: 8657655640439286750
+      rejaYfaroles_0: -5077093308069200863
+      rejaYfaroles_1: -2903356367933064567
+      rejaYfaroles_2: 2107232338822101395
+      rejaYfaroles_3: -650550016365164737
+      rejaYfaroles_4: -3677449181232813322
+      rejaYfaroles_5: -2446340793112200383
+      rejaYfaroles_6: -7370489206782766440
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -39,7 +39,25 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.freezeRotation = true;
             rb.gravityScale = 0f;
+            rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+            // Material fisico sin friccion para permitir deslizamiento suave en paredes y esquinas
+            PhysicsMaterial2D frictionless = new PhysicsMaterial2D("PlayerFrictionless")
+            {
+                friction = 0f,
+                bounciness = 0f
+            };
+            rb.sharedMaterial = frictionless;
         }
+
+        // Colisionador ajustado a los pies para permitir movimiento libre en perspectiva 2D
+        if (playerCollider is CircleCollider2D circle)
+        {
+            circle.radius = 0.28f;
+            circle.offset = new Vector2(0f, -0.45f);
+        }
+
         transform.rotation = Quaternion.identity;
         currentStamina = maxStamina;
     }
@@ -68,6 +86,15 @@ public class PlayerMovement : MonoBehaviour
         {
             currentStamina = Mathf.Max(0f, currentStamina - jumpStaminaCost);
             StartJump();
+        }
+
+        // Ofrenda / Orar con [F] (Prioriza consagrar nicho sagrado si está cerca, o colocar ofrenda en el suelo)
+        if (kb.fKey.wasPressedThisFrame && Candle.PlayerCandlesCount > 0 && !IsHidden)
+        {
+            if (!ShrineNiche.TryLightNearestShrine(transform.position))
+            {
+                Candle.TryPlaceOffering(transform.position);
+            }
         }
 
         if (IsJumping)
@@ -102,7 +129,6 @@ public class PlayerMovement : MonoBehaviour
         jumpTimer = 0f;
         if (playerCollider != null)
         {
-            // Traspasa temporalmente colisiones de obstáculos bajos para brincar sobre ellos
             playerCollider.isTrigger = true;
         }
     }

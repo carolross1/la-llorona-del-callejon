@@ -380,6 +380,16 @@ public static class Level2ModularGenerator
         AudioClip ambient = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SFX/Nivel 3/sfx_llorona_lamento_loop.wav");
 
         ai.ConfigurePatrol(18.0f, 40.0f, 1.35f, scream, ambient);
+
+        // Obstáculo vertical para el modo Runner: si pasas por su piso sin subir a las azoteas, suma 1 golpe
+        if (specterObj.GetComponent<RunnerObstacle>() == null)
+        {
+            var ro = specterObj.AddComponent<RunnerObstacle>();
+            SerializedObject soRO = new SerializedObject(ro);
+            var propJump = soRO.FindProperty("canBeJumpedOver");
+            if (propJump != null) propJump.boolValue = false; // No se puede brincar a pie: obliga a subir a las azoteas
+            soRO.ApplyModifiedProperties();
+        }
     }
 
     // ========================================================
@@ -542,6 +552,7 @@ public static class Level2ModularGenerator
         col.size = new Vector2(0.6f, 0.6f);
         col.isTrigger = true;
         if (obj.GetComponent<HideSpot>() == null) obj.AddComponent<HideSpot>();
+        if (obj.GetComponent<RunnerObstacle>() == null) obj.AddComponent<RunnerObstacle>();
     }
 
     static void CreateSolidBackdrop(GameObject parent, string name, Vector3 pos, Vector3 scale)
@@ -591,6 +602,7 @@ public static class Level2ModularGenerator
         col.size = new Vector2(1.0f, 0.4f);
         col.isTrigger = true;
         if (obj.GetComponent<MudPuddle>() == null) obj.AddComponent<MudPuddle>();
+        if (obj.GetComponent<RunnerObstacle>() == null) obj.AddComponent<RunnerObstacle>();
     }
 
     static void CreateNoiseObstacle(GameObject parent, string name, Vector3 pos, Sprite spriteNormal, Sprite spriteBroken, AudioClip sfx)
@@ -610,6 +622,7 @@ public static class Level2ModularGenerator
             if (propSfx != null) propSfx.objectReferenceValue = sfx;
             so.ApplyModifiedProperties();
         }
+        if (obj.GetComponent<RunnerObstacle>() == null) obj.AddComponent<RunnerObstacle>();
     }
 
     static GameObject GetOrCreateChild(GameObject parent, string name)

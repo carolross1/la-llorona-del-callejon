@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     public bool IsRunning { get; private set; }
     public bool IsJumping { get; private set; }
     public bool IsHidden { get; set; }
+    public bool CanRun { get; set; } = true;
     public float SpeedMultiplier { get; set; } = 1.0f;
     public Vector2 MoveInput => input;
     public float CurrentStamina => currentStamina;
@@ -86,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0)
         ).normalized;
 
-        bool wantsToRun = (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed) && input != Vector2.zero;
+        bool wantsToRun = CanRun && (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed) && input != Vector2.zero;
 
         // Salto con Barra Espaciadora [Espacio]
         if (kb.spaceKey.wasPressedThisFrame && !IsJumping && !IsHidden && currentStamina >= jumpStaminaCost)

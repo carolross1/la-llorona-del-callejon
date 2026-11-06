@@ -252,13 +252,12 @@ public class Level2ChaseRunner : MonoBehaviour
             // Flotación vertical suave que sigue el piso/escalera en que esté Carlos
             float newY = Mathf.MoveTowards(llorona.transform.position.y, pPos.y, Time.deltaTime * 6.5f);
 
+            llorona.transform.position = new Vector3(newX, newY, 0f);
             var lloRb = llorona.GetComponent<Rigidbody2D>();
             if (lloRb != null)
             {
                 lloRb.linearVelocity = Vector2.zero;
-                lloRb.position = new Vector2(newX, newY);
             }
-            llorona.transform.position = new Vector3(newX, newY, 0f);
 
             // Verificación de distancia de captura
             float realDist = Vector2.Distance(llorona.transform.position, pPos);
@@ -309,25 +308,28 @@ public class Level2ChaseRunner : MonoBehaviour
         }
     }
 
-    public void OnSpecterHit(string specterName, int strikesToAdd = 1, float freezeTime = 0.35f, float slowTime = 1.75f)
+    public void OnSpecterHit(string specterName, int strikesToAdd = 1, float slowMultiplier = 0.55f, float slowDuration = 1.75f)
     {
         if (!isChaseActive || isCaught || isVictory) return;
 
         currentStrikes = Mathf.Min(maxStrikes, currentStrikes + strikesToAdd);
         timeSinceLastHit = 0f;
 
-        // La Llorona aprovecha el congelamiento de Carlos y gana terreno rápidamente
+        // La Llorona gana terreno gradualmente pero mantiene distancia justa (mínimo 3.2m de separación)
         if (llorona != null && player != null)
         {
-            float surgeX = Mathf.Min(player.transform.position.x - 1.0f, llorona.transform.position.x + 2.0f);
-            llorona.transform.position = new Vector3(surgeX, llorona.transform.position.y, 0f);
+            float surgeX = Mathf.Min(player.transform.position.x - 3.2f, llorona.transform.position.x + 1.0f);
+            if (surgeX > llorona.transform.position.x)
+            {
+                llorona.transform.position = new Vector3(surgeX, llorona.transform.position.y, 0f);
+            }
         }
 
-        // Aplicar la micro-parálisis de impacto + frío espectral severo
+        // Ralentizar a Carlos (camina más lento de forma fluida, NUNCA se paraliza)
         if (player != null)
         {
             StopCoroutine("SpectralChillCoroutine");
-            StartCoroutine(SpectralChillCoroutine(freezeTime, slowTime));
+            StartCoroutine(SpectralChillCoroutine(slowMultiplier, slowDuration));
         }
 
         if (currentStrikes >= maxStrikes)
@@ -338,62 +340,46 @@ public class Level2ChaseRunner : MonoBehaviour
 
         if (HUD.Instance != null)
         {
-            HUD.Instance.ShowEventNotice("¡PARÁLISIS ESPECTRAL! ¡EL ESPECTRO HELÓ TUS HUESOS!", 2.8f);
+            HUD.Instance.ShowEventNotice("¡FRÍO ESPECTRAL! Carlos camina más lento...", 2.2f);
         }
     }
 
-    IEnumerator SpectralChillCoroutine(float freezeDuration, float slowDuration)
+    IEnumerator SpectralChillCoroutine(float slowMultiplier, float duration)
     {
         if (player == null) yield break;
 
-        // ── FASE 1: MICRO-PARÁLISIS DE IMPACTO (0.35s) ──
-        // Sacudón de susto: Carlos se congela casi al 100%, estamina drenada, no puede correr
-        player.SpeedMultiplier = 0.05f;
-        player.CanRun = false;
-        player.DrainStamina(35f);
+        // Carlos camina a menor velocidad (ej. 55%), NUNCA se detiene ni se congela
+        player.SpeedMultiplier = slowMultiplier;
+        player.CanRun = true;
 
         if (dangerVignette != null)
         {
-            dangerVignette.color = new Color(0.2f, 0.75f, 1.0f, 0.70f);
-        }
-
-        if (playerSr != null)
-        {
-            playerSr.color = new Color(0.3f, 0.85f, 1.0f, 1f);
-        }
-
-        yield return new WaitForSeconds(freezeDuration);
-
-        // ── FASE 2: FRÍO ESPECTRAL SEVERO (1.75s) ──
-        // Movimiento pesado al 30% de velocidad con temblor de escarcha
-        if (player != null)
-        {
-            player.SpeedMultiplier = 0.30f;
-            player.CanRun = false;
+            dangerVignette.color = new Color(0.2f, 0.70f, 1.0f, 0.35f);
         }
 
         float elapsed = 0f;
-        while (elapsed < slowDuration)
+        while (elapsed < duration)
         {
             elapsed += 0.12f;
 
             if (playerSr != null)
             {
-                playerSr.color = (Mathf.FloorToInt(elapsed * 8f) % 2 == 0)
-                    ? new Color(0.35f, 0.85f, 1.0f, 1f)  // Cian espectral
-                    : new Color(0.85f, 0.95f, 1.0f, 1f);  // Blanco escarcha
+                // Parpadeo suave en azul/cian espectral para indicar el frío
+                playerSr.color = (Mathf.FloorToInt(elapsed * 7f) % 2 == 0)
+                    ? new Color(0.40f, 0.85f, 1.0f, 1f)
+                    : Color.white;
             }
 
             if (dangerVignette != null)
             {
-                float alpha = Mathf.Lerp(0.55f, 0.05f, elapsed / slowDuration);
+                float alpha = Mathf.Lerp(0.35f, 0.05f, elapsed / duration);
                 dangerVignette.color = new Color(0.2f, 0.65f, 0.95f, alpha);
             }
 
             yield return new WaitForSeconds(0.12f);
         }
 
-        // ── RESTABLECIMIENTO NORMAL ──
+        // Restablecimiento total de velocidad normal
         if (player != null)
         {
             player.SpeedMultiplier = 1.0f;

@@ -18,8 +18,8 @@ public class RunnerObstacle : MonoBehaviour
     [Tooltip("True si este obstáculo es un espectro (aplica parálisis y frío espectral severo)")]
     [SerializeField] bool isSpecter = false;
 
-    [Tooltip("Duración de la micro-parálisis de impacto (solo si es espectro)")]
-    [SerializeField] float freezeDuration = 0.35f;
+    [Tooltip("Multiplicador de velocidad al tocar el espectro (ej. 0.55 = 55% de velocidad)")]
+    [SerializeField] float slowMultiplier = 0.55f;
 
     [Tooltip("Duración de la ralentización del tropiezo o frío")]
     [SerializeField] float stumbleDuration = 0.45f;
@@ -87,7 +87,7 @@ public class RunnerObstacle : MonoBehaviour
         {
             if (isSpecter)
             {
-                Level2ChaseRunner.Instance.OnSpecterHit(gameObject.name, strikeCount, freezeDuration, stumbleDuration);
+                Level2ChaseRunner.Instance.OnSpecterHit(gameObject.name, strikeCount, slowMultiplier, stumbleDuration);
             }
             else
             {

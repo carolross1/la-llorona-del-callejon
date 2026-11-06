@@ -18,11 +18,11 @@ public class RunnerObstacle : MonoBehaviour
     [Tooltip("True si este obstáculo es un espectro (aplica frío espectral severo)")]
     [SerializeField] bool isSpecter = false;
 
-    [Tooltip("Multiplicador de velocidad al tocar el espectro (ej. 0.45 = 45% de velocidad)")]
-    [SerializeField] float slowMultiplier = 0.45f;
+    [Tooltip("Multiplicador de velocidad al tocar el espectro (ej. 0.60 = 60% de velocidad)")]
+    [SerializeField] float slowMultiplier = 0.60f;
 
     [Tooltip("Duración de la ralentización del tropiezo o frío")]
-    [SerializeField] float stumbleDuration = 2.0f;
+    [SerializeField] float stumbleDuration = 1.5f;
 
     [Header("Audio")]
     [SerializeField] AudioClip hitSound;
@@ -37,8 +37,8 @@ public class RunnerObstacle : MonoBehaviour
         {
             isSpecter = true;
             canBeJumpedOver = false;
-            slowMultiplier = 0.45f;
-            stumbleDuration = 2.0f;
+            slowMultiplier = 0.60f;
+            stumbleDuration = 1.5f;
 
             // BoxCollider amplio que abarca desde la altura del espectro hasta el suelo
             var bc = GetComponent<BoxCollider2D>();

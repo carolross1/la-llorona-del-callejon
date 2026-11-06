@@ -19,10 +19,10 @@ public class Level2ChaseRunner : MonoBehaviour
     public static Level2ChaseRunner Instance { get; private set; }
 
     [Header("Velocidades y Distancias")]
-    [SerializeField] float baseLloronaSpeed = 3.1f;
-    [SerializeField] float strikeSpeedBonus = 0.35f;
+    [SerializeField] float baseLloronaSpeed = 2.5f;
+    [SerializeField] float strikeSpeedBonus = 0.20f;
     [SerializeField] float catchDistance = 0.85f;
-    [SerializeField] float startDistance = 6.5f;
+    [SerializeField] float startDistance = 7.0f;
     [SerializeField] float recoveryInterval = 6.0f;
     [SerializeField] int maxStrikes = 3;
 
@@ -238,11 +238,11 @@ public class Level2ChaseRunner : MonoBehaviour
             // La velocidad de la Llorona escala si Carlos acumula golpes
             float currentLloronaSpeed = baseLloronaSpeed + (currentStrikes * strikeSpeedBonus);
 
-            // Si Carlos se aleja demasiado (> 8.5m), la Llorona acelera ligeramente para mantener la tensión
+            // Si Carlos se aleja bastante (> 10.0m), la Llorona acelera suavemente para no perder la tensión
             float currentDist = pPos.x - llorona.transform.position.x;
-            if (currentDist > 8.5f)
+            if (currentDist > 10.0f)
             {
-                currentLloronaSpeed *= 1.35f;
+                currentLloronaSpeed *= 1.15f;
             }
 
             // Movimiento horizontal continuo hacia Carlos
@@ -278,13 +278,6 @@ public class Level2ChaseRunner : MonoBehaviour
         currentStrikes = Mathf.Min(maxStrikes, currentStrikes + strikesToAdd);
         timeSinceLastHit = 0f;
 
-        // La Llorona aprovecha el tropiezo y avanza 1.5 metros hacia Carlos
-        if (llorona != null && player != null)
-        {
-            float surgeX = Mathf.Min(player.transform.position.x - 1.2f, llorona.transform.position.x + 1.5f);
-            llorona.transform.position = new Vector3(surgeX, llorona.transform.position.y, 0f);
-        }
-
         // Ralentización momentánea de Carlos (tropiezo)
         if (player != null)
         {
@@ -308,24 +301,14 @@ public class Level2ChaseRunner : MonoBehaviour
         }
     }
 
-    public void OnSpecterHit(string specterName, int strikesToAdd = 1, float slowMultiplier = 0.55f, float slowDuration = 1.75f)
+    public void OnSpecterHit(string specterName, int strikesToAdd = 1, float slowMultiplier = 0.60f, float slowDuration = 1.5f)
     {
         if (!isChaseActive || isCaught || isVictory) return;
 
         currentStrikes = Mathf.Min(maxStrikes, currentStrikes + strikesToAdd);
         timeSinceLastHit = 0f;
 
-        // La Llorona gana terreno gradualmente pero mantiene distancia justa (mínimo 3.2m de separación)
-        if (llorona != null && player != null)
-        {
-            float surgeX = Mathf.Min(player.transform.position.x - 3.2f, llorona.transform.position.x + 1.0f);
-            if (surgeX > llorona.transform.position.x)
-            {
-                llorona.transform.position = new Vector3(surgeX, llorona.transform.position.y, 0f);
-            }
-        }
-
-        // Ralentizar a Carlos (camina más lento de forma fluida, NUNCA se paraliza)
+        // Ralentizar a Carlos suavemente
         if (player != null)
         {
             StopCoroutine("SpectralChillCoroutine");
@@ -340,7 +323,7 @@ public class Level2ChaseRunner : MonoBehaviour
 
         if (HUD.Instance != null)
         {
-            HUD.Instance.ShowEventNotice("¡FRÍO ESPECTRAL! Carlos camina más lento...", 2.2f);
+            HUD.Instance.ShowEventNotice("¡FRÍO ESPECTRAL! Carlos camina más lento...", 2.0f);
         }
     }
 

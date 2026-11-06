@@ -440,6 +440,7 @@ public class LloronaAI : MonoBehaviour
     /// </summary>
     public void AlertBalcony(Vector2 specterPos)
     {
+        if (Level2ChaseRunner.Instance != null && Level2ChaseRunner.Instance.IsActive) return;
         if (state == State.Distracted) return;
         if (state == State.Chase && player != null && Vector2.Distance(transform.position, player.transform.position) < 4.0f) return;
 
@@ -572,6 +573,12 @@ public class LloronaAI : MonoBehaviour
         if (col == null || !col.CompareTag("Player")) return;
         if (player != null && (player.IsHidden || ShrineNiche.IsPositionSafe(player.transform.position))) return;
         if (player != null && player.IsHidden) return;   // escondido: no lo atrapa
+
+        if (Level2ChaseRunner.Instance != null && Level2ChaseRunner.Instance.IsActive)
+        {
+            // En Nivel 2 Runner, Level2ChaseRunner gestiona la captura y el contador de golpes
+            return;
+        }
 
         caught = true;
         PlayScream();

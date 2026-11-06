@@ -348,38 +348,39 @@ public class Level2ChaseRunner : MonoBehaviour
     {
         if (player == null) yield break;
 
-        // Carlos camina a menor velocidad (ej. 55%), NUNCA se detiene ni se congela
+        // Carlos camina mucho más lento (45% de velocidad) y se bloquea el sprint con Shift para que el frío sea real
         player.SpeedMultiplier = slowMultiplier;
-        player.CanRun = true;
+        player.CanRun = false;
+        player.DrainStamina(25f);
 
         if (dangerVignette != null)
         {
-            dangerVignette.color = new Color(0.2f, 0.70f, 1.0f, 0.35f);
+            dangerVignette.color = new Color(0.2f, 0.70f, 1.0f, 0.50f);
         }
 
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            elapsed += 0.12f;
+            elapsed += 0.10f;
 
             if (playerSr != null)
             {
-                // Parpadeo suave en azul/cian espectral para indicar el frío
-                playerSr.color = (Mathf.FloorToInt(elapsed * 7f) % 2 == 0)
-                    ? new Color(0.40f, 0.85f, 1.0f, 1f)
+                // Parpadeo evidente en azul glacial / cian espectral
+                playerSr.color = (Mathf.FloorToInt(elapsed * 8f) % 2 == 0)
+                    ? new Color(0.30f, 0.80f, 1.0f, 1f)
                     : Color.white;
             }
 
             if (dangerVignette != null)
             {
-                float alpha = Mathf.Lerp(0.35f, 0.05f, elapsed / duration);
+                float alpha = Mathf.Lerp(0.50f, 0.05f, elapsed / duration);
                 dangerVignette.color = new Color(0.2f, 0.65f, 0.95f, alpha);
             }
 
-            yield return new WaitForSeconds(0.12f);
+            yield return new WaitForSeconds(0.10f);
         }
 
-        // Restablecimiento total de velocidad normal
+        // Restablecimiento total de velocidad normal y sprint
         if (player != null)
         {
             player.SpeedMultiplier = 1.0f;

@@ -67,6 +67,11 @@ public static class Level2MasterController
             // 4. Configuración de Carlos (Player) y Cámara suave
             ConfigurePlayerAndCamera();
 
+            // 5. Configurar el Gestor de Persecución Vertical / Subway Surfers
+            GameObject runnerMgr = GameObject.Find("Level2_ChaseRunner_Manager");
+            if (runnerMgr == null) runnerMgr = new GameObject("Level2_ChaseRunner_Manager");
+            if (runnerMgr.GetComponent<Level2ChaseRunner>() == null) runnerMgr.AddComponent<Level2ChaseRunner>();
+
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Debug.Log("[Level2MasterController] ¡Nivel 2 Callejón Vertical Modular de 5 Niveles construido y guardado con éxito!");
@@ -164,7 +169,8 @@ public static class Level2MasterController
         HashSet<string> preserveNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Main Camera", "Player", "Canvas", "UICanvas", "EventSystem",
-            "GameManager", "AudioManager", "Global Light 2D", "Llorona"
+            "GameManager", "AudioManager", "Global Light 2D", "Llorona",
+            "Level2_ChaseRunner_Manager"
         };
 
         foreach (var root in roots)
@@ -267,9 +273,9 @@ public static class Level2MasterController
                 var propTarget = soFollow.FindProperty("target");
                 if (propTarget != null) propTarget.objectReferenceValue = player.transform;
                 var propOffset = soFollow.FindProperty("offset");
-                if (propOffset != null) propOffset.vector3Value = new Vector3(0f, 1.25f, -10f);
+                if (propOffset != null) propOffset.vector3Value = new Vector3(1.2f, 1.25f, -10f); // Encuadre suave centrado con ligera anticipación
                 var propSmooth = soFollow.FindProperty("smoothTime");
-                if (propSmooth != null) propSmooth.floatValue = 0.25f;
+                if (propSmooth != null) propSmooth.floatValue = 0.22f;
                 var propOrtho = soFollow.FindProperty("orthoSize");
                 if (propOrtho != null) propOrtho.floatValue = 2.85f;
                 soFollow.ApplyModifiedProperties();

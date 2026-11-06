@@ -22,6 +22,8 @@ public class PlayerMovement : MonoBehaviour
     float currentStamina;
     float jumpTimer;
 
+    public static bool IsAutoRunnerMode = false;
+
     public bool IsRunning { get; private set; }
     public bool IsJumping { get; private set; }
     public bool IsHidden { get; set; }
@@ -62,6 +64,11 @@ public class PlayerMovement : MonoBehaviour
         currentStamina = maxStamina;
     }
 
+    void OnDisable()
+    {
+        IsAutoRunnerMode = false;
+    }
+
     void Update()
     {
         if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
@@ -79,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
             (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0)
         ).normalized;
 
-        bool wantsToRun = kb.leftShiftKey.isPressed && input != Vector2.zero;
+        bool wantsToRun = (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed) && input != Vector2.zero;
 
         // Salto con Barra Espaciadora [Espacio]
         if (kb.spaceKey.wasPressedThisFrame && !IsJumping && !IsHidden && currentStamina >= jumpStaminaCost)

@@ -253,28 +253,20 @@ public static class Level2ModularGenerator
         }
 
         // ----------------------------------------------------
-        // 8. ESCONDITES DE SIGILO Y OBSTÁCULOS
+        // 8. OBSTÁCULOS CLARAMENTE VISIBLES Y SALTABLES
         // ----------------------------------------------------
         GameObject stealthRoot = GetOrCreateChild(rootEnv, "Escondites_Sigilo");
-        GameObject obsRoot     = GetOrCreateChild(rootEnv, "Obstaculos_Callejon");
 
-        // Cajas y barriles de sigilo distribuidos estratégicamente
-        CreateCrateProp(stealthRoot, "Huacales_Inicio",      new Vector3(-2.8f, 0.25f, 0f), crateSprite);
-        CreateCrateProp(stealthRoot, "Sacos_Tier2",         new Vector3( 7.0f, 3.50f, 0f), sackSprite);
-        CreateCrateProp(stealthRoot, "Huacales_Tier2_East", new Vector3(37.0f, 3.50f, 0f), crateSprite);
-        CreateCrateProp(stealthRoot, "Huacales_Tier3",      new Vector3(27.0f, 6.75f, 0f), crateSprite);
-        CreateCrateProp(stealthRoot, "Sacos_Tier3_East",    new Vector3(40.0f, 6.75f, 0f), sackSprite);
-        CreateCrateProp(stealthRoot, "Sacos_Tier4",         new Vector3(31.0f, 10.00f, 0f), sackSprite);
-        CreateCrateProp(stealthRoot, "Cajas_Calle1",        new Vector3(24.5f, 0.25f, 0f), crateSprite);
-        CreateCrateProp(stealthRoot, "Barril_Calle2",       new Vector3(38.0f, 0.25f, 0f), barrelSprite);
-        CreateCrateProp(stealthRoot, "Huacales_PreMeta",    new Vector3(47.0f, 0.25f, 0f), crateSprite);
+        // Solo se colocan obstáculos con silueta clara y gran visibilidad (cajas, barril, sacos y espectro)
+        // 1. Calle Baja (Piso 1):
+        CreateCrateProp(stealthRoot, "Cajas_Calle1",     new Vector3(24.5f, 0.25f, 0f), crateSprite);
+        CreateCrateProp(stealthRoot, "Barril_Calle2",    new Vector3(38.0f, 0.25f, 0f), barrelSprite);
+        CreateCrateProp(stealthRoot, "Huacales_PreMeta", new Vector3(47.0f, 0.25f, 0f), crateSprite);
 
-        // Charcos y botellas en la calle baja
-        CreateMudPuddle(obsRoot, "Charco_1",   new Vector3(11.5f, 0.10f, 0f), mudSprite);
-        CreateNoiseObstacle(obsRoot, "Botellas_1", new Vector3(16.5f, 0.10f, 0f), botSprite, brokenSprite, glassSound);
-        CreateMudPuddle(obsRoot, "Charco_2",   new Vector3(29.0f, 0.10f, 0f), mudSprite);
-        CreateNoiseObstacle(obsRoot, "Botellas_2", new Vector3(41.0f, 0.10f, 0f), botSprite, brokenSprite, glassSound);
-        CreateMudPuddle(obsRoot, "Charco_3",   new Vector3(48.0f, 0.10f, 0f), mudSprite);
+        // 2. Pisos Superiores (Pisos 2, 3 y 4):
+        CreateCrateProp(stealthRoot, "Sacos_Tier2",      new Vector3( 7.0f, 3.50f, 0f), sackSprite);
+        CreateCrateProp(stealthRoot, "Huacales_Tier3",   new Vector3(27.0f, 6.75f, 0f), crateSprite);
+        CreateCrateProp(stealthRoot, "Sacos_Tier4",      new Vector3(31.0f, 10.00f, 0f), sackSprite);
 
         // Macetas decorativas con flores (colocadas en fachadas y esquinas, NUNCA en el pasillo de Carlos)
         if (macetaFlores != null)

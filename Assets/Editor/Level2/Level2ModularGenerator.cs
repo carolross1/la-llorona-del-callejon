@@ -178,7 +178,7 @@ public static class Level2ModularGenerator
         BuildStaircase(stairsGroup, "Escalera_Tier2Este_a_CalleMeta", 51.5f, 3.25f, 54.5f, 0.05f, false, stairsSprite);
 
         // ── BARRERAS LATERALES DEL NIVEL ──
-        CreateSolidBarrier(boundsRoot, "Tope_Izquierdo", new Vector2(-11.5f, 6.0f), new Vector2(0.8f, 16.0f));
+        CreateSolidBarrier(boundsRoot, "Tope_Izquierdo", new Vector2(-22.0f, 6.0f), new Vector2(0.8f, 16.0f));
         CreateSolidBarrier(boundsRoot, "Tope_Derecho",   new Vector2( 62.0f, 6.0f), new Vector2(0.8f, 16.0f));
 
         // ----------------------------------------------------
@@ -291,8 +291,15 @@ public static class Level2ModularGenerator
         GameObject llorona = GameObject.Find("Llorona");
         if (llorona != null)
         {
-            llorona.transform.position = new Vector3(15.0f, 0.40f, 0f);
+            // La Llorona inicia detrás de Carlos (Carlos está en X = -6.0) para la persecución continua
+            llorona.transform.position = new Vector3(-12.5f, 0.40f, 0f);
             llorona.transform.localScale = new Vector3(0.6f, 0.6f, 1f);
+
+            var lloCol = llorona.GetComponent<Collider2D>();
+            if (lloCol != null) lloCol.isTrigger = true;
+            var lloRb = llorona.GetComponent<Rigidbody2D>();
+            if (lloRb != null) lloRb.bodyType = RigidbodyType2D.Kinematic;
+
             SpriteRenderer lloSr = llorona.GetComponent<SpriteRenderer>();
             if (lloSr != null)
             {

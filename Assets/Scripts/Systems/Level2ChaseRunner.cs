@@ -35,6 +35,7 @@ public class Level2ChaseRunner : MonoBehaviour
     int currentStrikes = 0;
     float timeSinceLastHit = 0f;
     bool isChaseActive = false;
+    bool hasPlayerStartedMoving = false;
     bool isCaught = false;
     bool isVictory = false;
 
@@ -87,15 +88,27 @@ public class Level2ChaseRunner : MonoBehaviour
             }
         }
 
-        // Posicionar a la Llorona detrás de Carlos
+        // Configurar a la Llorona como ente espectral cinemático (atraviesa muros y vuela fluida)
         if (llorona != null && player != null)
         {
-            llorona.transform.position = new Vector3(player.transform.position.x - startDistance, player.transform.position.y, 0f);
+            var lloCol = llorona.GetComponent<Collider2D>();
+            if (lloCol != null) lloCol.isTrigger = true;
+
+            var lloRb = llorona.GetComponent<Rigidbody2D>();
+            if (lloRb != null)
+            {
+                lloRb.bodyType = RigidbodyType2D.Kinematic;
+                lloRb.linearVelocity = Vector2.zero;
+            }
+
+            Vector3 startPos = new Vector3(player.transform.position.x - startDistance, player.transform.position.y + 0.25f, 0f);
+            llorona.transform.position = startPos;
         }
 
         currentStrikes = 0;
         timeSinceLastHit = 0f;
         isChaseActive = true;
+        hasPlayerStartedMoving = false;
         isCaught = false;
         isVictory = false;
 
@@ -103,9 +116,7 @@ public class Level2ChaseRunner : MonoBehaviour
 
         if (HUD.Instance != null)
         {
-            HUD.Instance.ShowEventNotice("¡LA LLORONA ESTÁ EN EL CALLEJÓN! ¡HUYE HACIA EL TÚNEL!", 3.5f);
-            HUD.Instance.ShowTutorial("[Flechas / WASD] Caminar | [Shift] Correr con Estamina | [Espacio] Saltar | [W/S] Escaleras", 7.0f);
-            HUD.Instance.SetEyeAlert(true);
+            HUD.Instance.ShowTutorial("[Flechas / WASD] Avanzar | [Shift] Correr con Estamina | [W/S] Escaleras | [Espacio] Saltar", 7.0f);
         }
     }
 
@@ -168,6 +179,37 @@ public class Level2ChaseRunner : MonoBehaviour
             if (player == null) return;
         }
 
+        // Mientras Carlos no empiece a avanzar, la Llorona no avanza
+        if (!hasPlayerStartedMoving)
+        {
+            Vector2 pVel = (player.GetComponent<Rigidbody2D>() != null)
+                ? player.GetComponent<Rigidbody2D>().linearVelocity
+                : Vector2.zero;
+
+            bool hasInput = player.MoveInput.sqrMagnitude > 0.05f;
+            bool hasMoved = player.transform.position.x > -5.85f;
+
+            if (hasInput || hasMoved || pVel.sqrMagnitude > 0.05f)
+            {
+                hasPlayerStartedMoving = true;
+                if (HUD.Instance != null)
+                {
+                    HUD.Instance.ShowEventNotice("¡LA LLORONA TE PERSIGUE! ¡HUYE HACIA EL TÚNEL!", 3.0f);
+                    HUD.Instance.SetEyeAlert(true);
+                }
+            }
+            else
+            {
+                // La Llorona espera inmóvil detrás de Carlos hasta que empiece a caminar
+                if (statusText != null)
+                {
+                    statusText.text = "LLORONA: 6.5m  |  ¡AVANZA PARA INICIAR LA HUIDA!";
+                    statusText.color = new Color(1.0f, 0.85f, 0.2f);
+                }
+                return;
+            }
+        }
+
         // Meta alcanzada: llegada a la Bóveda Colonial segura (X >= 54.5)
         if (player.transform.position.x >= 54.5f)
         {
@@ -210,6 +252,12 @@ public class Level2ChaseRunner : MonoBehaviour
             // Flotación vertical suave que sigue el piso/escalera en que esté Carlos
             float newY = Mathf.MoveTowards(llorona.transform.position.y, pPos.y, Time.deltaTime * 6.5f);
 
+            var lloRb = llorona.GetComponent<Rigidbody2D>();
+            if (lloRb != null)
+            {
+                lloRb.linearVelocity = Vector2.zero;
+                lloRb.position = new Vector2(newX, newY);
+            }
             llorona.transform.position = new Vector3(newX, newY, 0f);
 
             // Verificación de distancia de captura

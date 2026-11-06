@@ -309,6 +309,108 @@ public class Level2ChaseRunner : MonoBehaviour
         }
     }
 
+    public void OnSpecterHit(string specterName, int strikesToAdd = 1, float freezeTime = 0.35f, float slowTime = 1.75f)
+    {
+        if (!isChaseActive || isCaught || isVictory) return;
+
+        currentStrikes = Mathf.Min(maxStrikes, currentStrikes + strikesToAdd);
+        timeSinceLastHit = 0f;
+
+        // La Llorona aprovecha el congelamiento de Carlos y gana terreno rápidamente
+        if (llorona != null && player != null)
+        {
+            float surgeX = Mathf.Min(player.transform.position.x - 1.0f, llorona.transform.position.x + 2.0f);
+            llorona.transform.position = new Vector3(surgeX, llorona.transform.position.y, 0f);
+        }
+
+        // Aplicar la micro-parálisis de impacto + frío espectral severo
+        if (player != null)
+        {
+            StopCoroutine("SpectralChillCoroutine");
+            StartCoroutine(SpectralChillCoroutine(freezeTime, slowTime));
+        }
+
+        if (currentStrikes >= maxStrikes)
+        {
+            CatchPlayer();
+            return;
+        }
+
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.ShowEventNotice("¡PARÁLISIS ESPECTRAL! ¡EL ESPECTRO HELÓ TUS HUESOS!", 2.8f);
+        }
+    }
+
+    IEnumerator SpectralChillCoroutine(float freezeDuration, float slowDuration)
+    {
+        if (player == null) yield break;
+
+        // ── FASE 1: MICRO-PARÁLISIS DE IMPACTO (0.35s) ──
+        // Sacudón de susto: Carlos se congela casi al 100%, estamina drenada, no puede correr
+        player.SpeedMultiplier = 0.05f;
+        player.CanRun = false;
+        player.DrainStamina(35f);
+
+        if (dangerVignette != null)
+        {
+            dangerVignette.color = new Color(0.2f, 0.75f, 1.0f, 0.70f);
+        }
+
+        if (playerSr != null)
+        {
+            playerSr.color = new Color(0.3f, 0.85f, 1.0f, 1f);
+        }
+
+        yield return new WaitForSeconds(freezeDuration);
+
+        // ── FASE 2: FRÍO ESPECTRAL SEVERO (1.75s) ──
+        // Movimiento pesado al 30% de velocidad con temblor de escarcha
+        if (player != null)
+        {
+            player.SpeedMultiplier = 0.30f;
+            player.CanRun = false;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < slowDuration)
+        {
+            elapsed += 0.12f;
+
+            if (playerSr != null)
+            {
+                playerSr.color = (Mathf.FloorToInt(elapsed * 8f) % 2 == 0)
+                    ? new Color(0.35f, 0.85f, 1.0f, 1f)  // Cian espectral
+                    : new Color(0.85f, 0.95f, 1.0f, 1f);  // Blanco escarcha
+            }
+
+            if (dangerVignette != null)
+            {
+                float alpha = Mathf.Lerp(0.55f, 0.05f, elapsed / slowDuration);
+                dangerVignette.color = new Color(0.2f, 0.65f, 0.95f, alpha);
+            }
+
+            yield return new WaitForSeconds(0.12f);
+        }
+
+        // ── RESTABLECIMIENTO NORMAL ──
+        if (player != null)
+        {
+            player.SpeedMultiplier = 1.0f;
+            player.CanRun = true;
+        }
+
+        if (playerSr != null)
+        {
+            playerSr.color = Color.white;
+        }
+
+        if (dangerVignette != null)
+        {
+            dangerVignette.color = currentStrikes >= 2 ? new Color(0.8f, 0f, 0f, 0.35f) : new Color(0.8f, 0f, 0f, 0f);
+        }
+    }
+
     IEnumerator StumbleCoroutine(float duration)
     {
         if (player == null) yield break;

@@ -378,6 +378,12 @@ public static class Level2ModularGenerator
         l2d.pointLightInnerRadius = 0.4f;
         l2d.intensity = 0.85f;
 
+        // Collider trigger para detección y obstáculos
+        CircleCollider2D specterCol = specterObj.GetComponent<CircleCollider2D>();
+        if (specterCol == null) specterCol = specterObj.AddComponent<CircleCollider2D>();
+        specterCol.radius = 0.75f;
+        specterCol.isTrigger = true;
+
         // Componente SpecterAI
         SpecterAI ai = specterObj.GetComponent<SpecterAI>();
         if (ai == null) ai = specterObj.AddComponent<SpecterAI>();

@@ -15,7 +15,13 @@ public class RunnerObstacle : MonoBehaviour
     [Tooltip("Cantidad de fallos que suma al chocar (1 a 3)")]
     [SerializeField] int strikeCount = 1;
 
-    [Tooltip("Duración de la ralentización del tropiezo")]
+    [Tooltip("True si este obstáculo es un espectro (aplica parálisis y frío espectral severo)")]
+    [SerializeField] bool isSpecter = false;
+
+    [Tooltip("Duración de la micro-parálisis de impacto (solo si es espectro)")]
+    [SerializeField] float freezeDuration = 0.35f;
+
+    [Tooltip("Duración de la ralentización del tropiezo o frío")]
     [SerializeField] float stumbleDuration = 0.45f;
 
     [Header("Audio")]
@@ -27,9 +33,22 @@ public class RunnerObstacle : MonoBehaviour
     void Awake()
     {
         var col = GetComponent<Collider2D>();
-        if (col != null)
+        if (col == null)
+        {
+            var cc = gameObject.AddComponent<CircleCollider2D>();
+            cc.radius = 0.6f;
+            cc.isTrigger = true;
+        }
+        else
         {
             col.isTrigger = true;
+        }
+
+        if (gameObject.name.ToLower().Contains("espectro"))
+        {
+            isSpecter = true;
+            canBeJumpedOver = false;
+            stumbleDuration = 1.75f;
         }
     }
 
@@ -66,7 +85,14 @@ public class RunnerObstacle : MonoBehaviour
 
         if (Level2ChaseRunner.Instance != null)
         {
-            Level2ChaseRunner.Instance.OnObstacleHit(gameObject.name, strikeCount, stumbleDuration);
+            if (isSpecter)
+            {
+                Level2ChaseRunner.Instance.OnSpecterHit(gameObject.name, strikeCount, freezeDuration, stumbleDuration);
+            }
+            else
+            {
+                Level2ChaseRunner.Instance.OnObstacleHit(gameObject.name, strikeCount, stumbleDuration);
+            }
         }
     }
 }

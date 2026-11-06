@@ -220,6 +220,12 @@ public class SpecterAI : MonoBehaviour
             HUD.Instance.SetEyeAlert(true);
         }
 
+        // Si estamos en persecución Runner, aplicar la parálisis y frío espectral
+        if (Level2ChaseRunner.Instance != null && Level2ChaseRunner.Instance.IsActive)
+        {
+            Level2ChaseRunner.Instance.OnSpecterHit("Espectro_Piso3", 1, 0.35f, 1.75f);
+        }
+
         // 5. ALERTAR A LA LLORONA PARA QUE SUBA AL BALCÓN:
         // Sube por las escaleras hacia la pasarela del Piso 3 para cazar a Carlos
         if (llorona != null)

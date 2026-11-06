@@ -14,6 +14,12 @@ public class Level2TriggerWatcher : AssetPostprocessor
                 Level2MasterController.BuildFullVerticalLevel2();
                 break;
             }
+            if (str.Contains("TriggerBuildWebGL"))
+            {
+                Debug.Log("[Level2TriggerWatcher] >>> TRIGGER WEBGL DETECTADO: Compilando WebGL para itch.io... <<<");
+                WebGLAutoBuilder.BuildForItch(autoTriggered: true);
+                break;
+            }
         }
     }
 }

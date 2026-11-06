@@ -15,40 +15,73 @@ public class RunnerObstacle : MonoBehaviour
     [Tooltip("Cantidad de fallos que suma al chocar (1 a 3)")]
     [SerializeField] int strikeCount = 1;
 
-    [Tooltip("True si este obstáculo es un espectro (aplica parálisis y frío espectral severo)")]
+    [Tooltip("True si este obstáculo es un espectro (aplica frío espectral severo)")]
     [SerializeField] bool isSpecter = false;
 
-    [Tooltip("Multiplicador de velocidad al tocar el espectro (ej. 0.55 = 55% de velocidad)")]
-    [SerializeField] float slowMultiplier = 0.55f;
+    [Tooltip("Multiplicador de velocidad al tocar el espectro (ej. 0.45 = 45% de velocidad)")]
+    [SerializeField] float slowMultiplier = 0.45f;
 
     [Tooltip("Duración de la ralentización del tropiezo o frío")]
-    [SerializeField] float stumbleDuration = 0.45f;
+    [SerializeField] float stumbleDuration = 2.0f;
 
     [Header("Audio")]
     [SerializeField] AudioClip hitSound;
     [Range(0f, 1f)] [SerializeField] float soundVolume = 0.9f;
 
     bool hasTriggered = false;
+    PlayerMovement cachedPlayer;
 
     void Awake()
     {
-        var col = GetComponent<Collider2D>();
-        if (col == null)
-        {
-            var cc = gameObject.AddComponent<CircleCollider2D>();
-            cc.radius = 0.6f;
-            cc.isTrigger = true;
-        }
-        else
-        {
-            col.isTrigger = true;
-        }
-
         if (gameObject.name.ToLower().Contains("espectro"))
         {
             isSpecter = true;
             canBeJumpedOver = false;
-            stumbleDuration = 1.75f;
+            slowMultiplier = 0.45f;
+            stumbleDuration = 2.0f;
+
+            // BoxCollider amplio que abarca desde la altura del espectro hasta el suelo
+            var bc = GetComponent<BoxCollider2D>();
+            if (bc == null) bc = gameObject.AddComponent<BoxCollider2D>();
+            bc.size = new Vector2(3.5f, 4.5f);
+            bc.offset = new Vector2(0f, -1.0f);
+            bc.isTrigger = true;
+        }
+        else
+        {
+            var col = GetComponent<Collider2D>();
+            if (col == null)
+            {
+                var cc = gameObject.AddComponent<CircleCollider2D>();
+                cc.radius = 0.6f;
+                cc.isTrigger = true;
+            }
+            else
+            {
+                col.isTrigger = true;
+            }
+        }
+    }
+
+    void Update()
+    {
+        if (hasTriggered) return;
+
+        if (cachedPlayer == null)
+        {
+            cachedPlayer = FindAnyObjectByType<PlayerMovement>();
+            if (cachedPlayer == null) return;
+        }
+
+        // Verificación directa por distancia para garantizar activación aunque fallen capas físicas
+        float dx = Mathf.Abs(cachedPlayer.transform.position.x - transform.position.x);
+        float dy = Mathf.Abs(cachedPlayer.transform.position.y - transform.position.y);
+
+        // Si Carlos cruza a menos de 1.4m horizontalmente y a menos de 2.0m verticalmente (mismo piso)
+        if (dx <= 1.4f && dy <= 2.0f)
+        {
+            if (canBeJumpedOver && cachedPlayer.IsJumping) return;
+            TriggerHit(cachedPlayer);
         }
     }
 
@@ -70,12 +103,14 @@ public class RunnerObstacle : MonoBehaviour
         var player = other.GetComponent<PlayerMovement>() ?? other.GetComponentInParent<PlayerMovement>();
         if (player == null) return;
 
-        // Si Carlos está saltando en el aire y el obstáculo es bajo, pasa limpio
-        if (canBeJumpedOver && player.IsJumping)
-        {
-            return;
-        }
+        if (canBeJumpedOver && player.IsJumping) return;
 
+        TriggerHit(player);
+    }
+
+    void TriggerHit(PlayerMovement player)
+    {
+        if (hasTriggered) return;
         hasTriggered = true;
 
         if (hitSound != null && AudioManager.Instance != null)

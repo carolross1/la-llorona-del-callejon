@@ -266,6 +266,14 @@ public class LloronaAI : MonoBehaviour
         }
         if (caught) return;
 
+        if (Level2ChaseRunner.Instance != null && Level2ChaseRunner.Instance.IsActive)
+        {
+            state = State.Chase;
+            facing = Vector2.right;
+            if (rb != null) rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         bool sees = CanSeePlayer();
 
         switch (state)

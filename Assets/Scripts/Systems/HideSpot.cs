@@ -19,5 +19,11 @@ public class HideSpot : MonoBehaviour
     {
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        if (hidePoint == null)
+        {
+            var hp = transform.Find("HidePoint");
+            if (hp != null) hidePoint = hp;
+        }
     }
 }

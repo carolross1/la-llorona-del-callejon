@@ -34,6 +34,7 @@ public class Level2ChaseRunner : MonoBehaviour
     // Estado interno
     int currentStrikes = 0;
     float timeSinceLastHit = 0f;
+    float hiddenTimer = 0f;
     bool isChaseActive = false;
     bool hasPlayerStartedMoving = false;
     bool isCaught = false;
@@ -228,6 +229,71 @@ public class Level2ChaseRunner : MonoBehaviour
             {
                 HUD.Instance.ShowEventNotice("¡Has ganado distancia con la Llorona!", 2.0f);
             }
+        }
+
+        // -----------------------------------------------------------------
+        // MECÁNICA DE SIGILO: CARLOS ESTÁ OCULTO EN UN ZAGUÁN / ESCONDITE
+        // -----------------------------------------------------------------
+        if (player.IsHidden)
+        {
+            hiddenTimer += Time.deltaTime;
+            currentStrikes = 0; // Se resetean los golpes acumulados
+
+            // Desvanecer la viñeta roja de peligro
+            if (dangerVignette != null)
+            {
+                dangerVignette.color = Color.Lerp(dangerVignette.color, Color.clear, Time.deltaTime * 4f);
+            }
+
+            // Comportamiento de la Llorona ante la desaparición de Carlos
+            if (llorona != null)
+            {
+                Vector3 pPos = player.transform.position;
+                float dist = pPos.x - llorona.transform.position.x;
+
+                if (hiddenTimer < 2.5f)
+                {
+                    // Fase 1: La Llorona llega a la zona o se detiene desconcertada buscando
+                    if (dist > 2.0f)
+                    {
+                        float stepX = (baseLloronaSpeed * 0.4f) * Time.deltaTime;
+                        float newX = Mathf.MoveTowards(llorona.transform.position.x, pPos.x - 2.0f, stepX);
+                        float newY = Mathf.MoveTowards(llorona.transform.position.y, pPos.y, Time.deltaTime * 3f);
+                        llorona.transform.position = new Vector3(newX, newY, 0f);
+                    }
+
+                    if (statusText != null)
+                    {
+                        statusText.text = "¡ESTÁS OCULTO EN EL ZAGUÁN!  |  LA LLORONA BUSCA CONFUNDIDA...";
+                        statusText.color = new Color(0.4f, 0.85f, 1.0f); // Celeste sigilo
+                    }
+                }
+                else
+                {
+                    // Fase 2: Al no encontrarlo, retrocede frustrada dándole ventaja a Carlos
+                    float targetX = pPos.x - 8.0f;
+                    float retreatStep = 3.5f * Time.deltaTime;
+                    float newX = Mathf.MoveTowards(llorona.transform.position.x, targetX, retreatStep);
+                    llorona.transform.position = new Vector3(newX, llorona.transform.position.y, 0f);
+
+                    float retreatDist = Mathf.Abs(pPos.x - llorona.transform.position.x);
+                    if (statusText != null)
+                    {
+                        statusText.text = $"¡LA LLORONA SE HA ALEJADO! ({retreatDist:F1}m)  |  [E] SALIR Y HUIR AL TÚNEL";
+                        statusText.color = new Color(0.35f, 1.0f, 0.5f); // Verde escape
+                    }
+                }
+
+                var lloRb = llorona.GetComponent<Rigidbody2D>();
+                if (lloRb != null) lloRb.linearVelocity = Vector2.zero;
+            }
+
+            // ¡IMPORTANTE! Inmunidad total a ser atrapado mientras esté oculto
+            return;
+        }
+        else
+        {
+            hiddenTimer = 0f;
         }
 
         // Avance de la Llorona en persecución continua

@@ -587,14 +587,29 @@ public static class Level2ModularGenerator
         GameObject obj = CreatePiece(parent, name, pos, sprite, "Props", 4, scale);
         BoxCollider2D col = obj.GetComponent<BoxCollider2D>();
         if (col == null) col = obj.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(1.2f, 2.0f);
-        col.offset = Vector2.zero;
+
+        // Área de interacción generosa: cubre de lado a lado y se extiende ampliamente hacia el suelo
+        // Para que Carlos al correr NUNCA pase por debajo y siempre detecte el trigger
+        col.size = new Vector2(7.0f, 7.5f);
+        col.offset = new Vector2(0f, -1.2f);
         col.isTrigger = true;
+
+        // Punto de anclaje a nivel de suelo para ocultar a Carlos dentro de la penumbra
+        GameObject hidePt = GetOrCreateChild(obj, "HidePoint");
+        hidePt.transform.localPosition = new Vector3(0f, -2.4f, 0f);
 
         HideSpot hs = obj.GetComponent<HideSpot>();
         if (hs == null) hs = obj.AddComponent<HideSpot>();
         hs.spotType = HideSpot.SpotType.Porton;
         hs.canExitAnytime = true;
+
+        SerializedObject soHs = new SerializedObject(hs);
+        var hpProp = soHs.FindProperty("hidePoint");
+        if (hpProp != null)
+        {
+            hpProp.objectReferenceValue = hidePt.transform;
+            soHs.ApplyModifiedProperties();
+        }
 
         // Limpiar cualquier RunnerObstacle para que NUNCA haga tropezar a Carlos
         RunnerObstacle ro = obj.GetComponent<RunnerObstacle>();

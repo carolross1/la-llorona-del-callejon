@@ -46,24 +46,6 @@ public static class SliceTriggerRunner
             }
         }
 
-        string cleanTrigger = "Temp/clean_obstacles_trigger.txt";
-        if (File.Exists(cleanTrigger))
-        {
-            try
-            {
-                File.Delete(cleanTrigger);
-                Debug.Log("[SliceTriggerRunner] Ejecutando Level2ObstacleCleaner...");
-                Level2ObstacleCleaner.CleanInvisibleObstacles();
-                File.WriteAllText("Temp/clean_obstacles_done.txt", "DONE");
-                Debug.Log("[SliceTriggerRunner] Level2ObstacleCleaner finalizado con éxito.");
-            }
-            catch (System.Exception ex)
-            {
-                File.WriteAllText("Temp/clean_obstacles_error.txt", ex.ToString());
-                Debug.LogError($"[SliceTriggerRunner] Error en Level2ObstacleCleaner: {ex}");
-            }
-        }
-
         string sliceTrigger = "Temp/slice_trigger.txt";
         string l1Trigger = "Temp/build_level1_trigger.txt";
         string l2Trigger = "Temp/build_level2_trigger.txt";

@@ -75,6 +75,7 @@ public class HideSystem : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             Teleport(current.HidePosition);
             rb.constraints = RigidbodyConstraints2D.FreezeAll;   // quieto mientras esta escondido
+            if (sr != null) sr.color = new Color(0.45f, 0.45f, 0.55f, 0.85f); // Penumbra dentro del escondite
 
             if (AudioManager.Instance != null)
             {
@@ -91,6 +92,7 @@ public class HideSystem : MonoBehaviour
             player.IsHidden = false;
             sr.sortingLayerID = savedLayerId;
             sr.sortingOrder = savedOrder;
+            if (sr != null) sr.color = Color.white;
             Teleport(savedPos);
             transform.rotation = Quaternion.identity;
 
@@ -115,6 +117,22 @@ public class HideSystem : MonoBehaviour
             if (player != null && !player.IsHidden && HUD.Instance != null)
             {
                 HUD.Instance.ShowEventNotice("[E] Esconderse", 2.0f);
+            }
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D c)
+    {
+        if (current == null)
+        {
+            var h = c.GetComponentInParent<HideSpot>();
+            if (h != null)
+            {
+                current = h;
+                if (player != null && !player.IsHidden && HUD.Instance != null)
+                {
+                    HUD.Instance.ShowEventNotice("[E] Esconderse", 1.5f);
+                }
             }
         }
     }

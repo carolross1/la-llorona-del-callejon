@@ -44,6 +44,10 @@ public static class Level2ModularGenerator
         // Salida: Túnel Colonial de cantera con arco profundo
         Sprite tunelSalida      = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Fachada_Alta_Este.png");
 
+        // Escondites de Sigilo: Portones y Puertas Coloniales (Entradas a zaguanes)
+        Sprite portonColonial   = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Porton_Colonial.png");
+        Sprite puertaColonial   = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Puertas_nvl2.png").OfType<Sprite>().FirstOrDefault();
+
         // Accesorios de Hierro y Decoración
         Sprite barandalSprite   = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Balcon_Hierro_Barandal.png");
         Sprite farolPared       = AssetDatabase.LoadAssetAtPath<Sprite>(Nvl2Dir + "Farol_Pared_Muro.png");
@@ -253,20 +257,31 @@ public static class Level2ModularGenerator
         }
 
         // ----------------------------------------------------
-        // 8. OBSTÁCULOS CLARAMENTE VISIBLES Y SALTABLES
+        // 8. ESCONDITES DE SIGILO (PORTONES Y ZAGUANES COLONIALES - [E] PARA OCULTARSE)
         // ----------------------------------------------------
         GameObject stealthRoot = GetOrCreateChild(rootEnv, "Escondites_Sigilo");
 
-        // Solo se colocan obstáculos con silueta clara y gran visibilidad (cajas, barril, sacos y espectro)
+        // Portones coloniales en las paredes donde Carlos se oculta en la penumbra (CERO tropiezos)
+        CreateDoorHideSpot(stealthRoot, "Zaguan_Escondite_Calle1", new Vector3( 5.0f, 1.05f, 0f), portonColonial, new Vector3(0.38f, 0.38f, 1f));
+        CreateDoorHideSpot(stealthRoot, "Zaguan_Escondite_Calle2", new Vector3(32.0f, 1.05f, 0f), portonColonial, new Vector3(0.38f, 0.38f, 1f));
+        CreateDoorHideSpot(stealthRoot, "Puerta_Escondite_Tier2",  new Vector3( 9.0f, 4.35f, 0f), puertaColonial ?? portonColonial, new Vector3(0.35f, 0.35f, 1f));
+        CreateDoorHideSpot(stealthRoot, "Zaguan_Escondite_Tier3",  new Vector3(21.5f, 7.55f, 0f), portonColonial, new Vector3(0.38f, 0.38f, 1f));
+        CreateDoorHideSpot(stealthRoot, "Puerta_Escondite_Tier4",  new Vector3(34.5f, 10.85f, 0f), puertaColonial ?? portonColonial, new Vector3(0.35f, 0.35f, 1f));
+
+        // ----------------------------------------------------
+        // 9. OBSTÁCULOS DE CARRERA (CAJAS, HUACALES, BARRIL - SALTAR CON [ESPACIO])
+        // ----------------------------------------------------
+        GameObject obsRoot = GetOrCreateChild(rootEnv, "Obstaculos_Carrera");
+
         // 1. Calle Baja (Piso 1):
-        CreateCrateProp(stealthRoot, "Cajas_Calle1",     new Vector3(24.5f, 0.25f, 0f), crateSprite);
-        CreateCrateProp(stealthRoot, "Barril_Calle2",    new Vector3(38.0f, 0.25f, 0f), barrelSprite);
-        CreateCrateProp(stealthRoot, "Huacales_PreMeta", new Vector3(47.0f, 0.25f, 0f), crateSprite);
+        CreateCrateProp(obsRoot, "Cajas_Calle1",     new Vector3(24.5f, 0.25f, 0f), crateSprite);
+        CreateCrateProp(obsRoot, "Barril_Calle2",    new Vector3(38.0f, 0.25f, 0f), barrelSprite);
+        CreateCrateProp(obsRoot, "Huacales_PreMeta", new Vector3(47.0f, 0.25f, 0f), crateSprite);
 
         // 2. Pisos Superiores (Pisos 2, 3 y 4):
-        CreateCrateProp(stealthRoot, "Sacos_Tier2",      new Vector3( 7.0f, 3.50f, 0f), sackSprite);
-        CreateCrateProp(stealthRoot, "Huacales_Tier3",   new Vector3(27.0f, 6.75f, 0f), crateSprite);
-        CreateCrateProp(stealthRoot, "Sacos_Tier4",      new Vector3(31.0f, 10.00f, 0f), sackSprite);
+        CreateCrateProp(obsRoot, "Sacos_Tier2",      new Vector3( 7.0f, 3.50f, 0f), sackSprite);
+        CreateCrateProp(obsRoot, "Huacales_Tier3",   new Vector3(27.0f, 6.75f, 0f), crateSprite);
+        CreateCrateProp(obsRoot, "Sacos_Tier4",      new Vector3(31.0f, 10.00f, 0f), sackSprite);
 
         // Macetas decorativas con flores (colocadas en fachadas y esquinas, NUNCA en el pasillo de Carlos)
         if (macetaFlores != null)
@@ -552,13 +567,38 @@ public static class Level2ModularGenerator
 
     static void CreateCrateProp(GameObject parent, string name, Vector3 pos, Sprite sprite)
     {
-        GameObject obj = CreatePiece(parent, name, pos, sprite, "Props", 12, new Vector3(0.35f, 0.35f, 1f));
+        // Se renderiza en Characters (orden 9) para que destaque sobre el suelo
+        GameObject obj = CreatePiece(parent, name, pos, sprite, "Characters", 9, new Vector3(0.35f, 0.35f, 1f));
         BoxCollider2D col = obj.GetComponent<BoxCollider2D>();
         if (col == null) col = obj.AddComponent<BoxCollider2D>();
         col.size = new Vector2(0.6f, 0.6f);
         col.isTrigger = true;
-        if (obj.GetComponent<HideSpot>() == null) obj.AddComponent<HideSpot>();
+
+        // Limpiar cualquier HideSpot previo para que sea obstáculo puro de salto con [Espacio]
+        HideSpot hs = obj.GetComponent<HideSpot>();
+        if (hs != null) UnityEngine.Object.DestroyImmediate(hs);
+
         if (obj.GetComponent<RunnerObstacle>() == null) obj.AddComponent<RunnerObstacle>();
+    }
+
+    static void CreateDoorHideSpot(GameObject parent, string name, Vector3 pos, Sprite sprite, Vector3 scale)
+    {
+        // Se renderiza en Props (orden 4), montado en la fachada de fondo
+        GameObject obj = CreatePiece(parent, name, pos, sprite, "Props", 4, scale);
+        BoxCollider2D col = obj.GetComponent<BoxCollider2D>();
+        if (col == null) col = obj.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(1.2f, 2.0f);
+        col.offset = Vector2.zero;
+        col.isTrigger = true;
+
+        HideSpot hs = obj.GetComponent<HideSpot>();
+        if (hs == null) hs = obj.AddComponent<HideSpot>();
+        hs.spotType = HideSpot.SpotType.Porton;
+        hs.canExitAnytime = true;
+
+        // Limpiar cualquier RunnerObstacle para que NUNCA haga tropezar a Carlos
+        RunnerObstacle ro = obj.GetComponent<RunnerObstacle>();
+        if (ro != null) UnityEngine.Object.DestroyImmediate(ro);
     }
 
     static void CreateSolidBackdrop(GameObject parent, string name, Vector3 pos, Vector3 scale)

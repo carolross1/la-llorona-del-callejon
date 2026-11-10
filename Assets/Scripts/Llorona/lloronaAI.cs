@@ -616,4 +616,25 @@ public class LloronaAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Modo Frenesí Clímax (Nivel 4): La Llorona enfurece al romperse el sello sagrado,
+    /// acelera al máximo y persigue directamente a Carlos hasta la salida.
+    /// </summary>
+    public void EnterFrenzyMode(float boostSpeed = 4.0f)
+    {
+        chaseSpeed = boostSpeed;
+        patrolSpeed = Mathf.Max(patrolSpeed, 2.6f);
+        viewDistance = Mathf.Max(viewDistance, 14.0f);
+        runNoiseMultiplier = 2.0f;
+        state = State.Chase;
+        if (player == null) player = FindAnyObjectByType<PlayerMovement>();
+        if (player != null) lastSeenPos = player.transform.position;
+        timer = 999f;
+        PlayScream();
+        if (HUD.Instance != null)
+        {
+            HUD.Instance.SetEyeAlert(true);
+        }
+        Debug.Log("[LloronaAI] ¡¡¡MODO FRENESÍ ACTIVADO EN EL PANTEÓN!!!");
+    }
 }

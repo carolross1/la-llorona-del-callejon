@@ -16,7 +16,8 @@ using UnityEngine.Rendering.Universal;
 /// </summary>
 public class SpecterAI : MonoBehaviour
 {
-    [Header("Patrulla Horizontal")]
+    [Header("Tipo de Espectro")]
+    [SerializeField] bool isBalconySpecter = false;
     [SerializeField] float minX = 18.0f;
     [SerializeField] float maxX = 39.0f;
     [SerializeField] float patrolSpeed = 1.35f;
@@ -223,18 +224,32 @@ public class SpecterAI : MonoBehaviour
         // 5. Alertar a La Llorona (solo en modo sigilo, no en modo persecución runner)
         if (llorona != null && (Level2ChaseRunner.Instance == null || !Level2ChaseRunner.Instance.IsActive))
         {
-            llorona.AlertBalcony(transform.position);
-            Debug.Log($"[SpecterAI] ¡Espectro alertado en X={transform.position.x:F1}! La Llorona sube al balcón del Piso 3.");
+            if (isBalconySpecter)
+            {
+                llorona.AlertBalcony(transform.position);
+                Debug.Log($"[SpecterAI] ¡Espectro alertado en X={transform.position.x:F1}! La Llorona sube al balcón del Piso 3.");
+            }
+            else
+            {
+                llorona.AlertNoise(transform.position, 6.0f);
+                if (HUD.Instance != null)
+                {
+                    HUD.Instance.ShowEventNotice("¡Un alma en pena te ha delatado! ¡La Llorona va hacia ti!", 3.5f);
+                }
+                Debug.Log($"[SpecterAI] ¡Ánima en pena alertada en {transform.position}! Alerta a La Llorona.");
+            }
         }
     }
 
-    public void ConfigurePatrol(float min, float max, float speed, AudioClip scream, AudioClip ambient)
+    public void ConfigurePatrol(float min, float max, float speed, AudioClip scream, AudioClip ambient, float vRange = 1.6f, bool balcony = false)
     {
         minX = min;
         maxX = max;
         patrolSpeed = speed;
         screamSfx = scream;
         ambientSfx = ambient;
+        verticalRange = vRange;
+        isBalconySpecter = balcony;
         baseY = transform.position.y;
     }
 }

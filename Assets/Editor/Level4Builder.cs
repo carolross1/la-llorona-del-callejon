@@ -229,21 +229,37 @@ public static class Level4Builder
         // 7. PILAS DE AGUA BENDITA (ESTACIONES DE RECARGA PARA EL BOSS FIGHT)
         // ----------------------------------------------------
         GameObject holySupplyGroup = GetOrCreateChild(rootEnv, "Pilas_Agua_Bendita");
-        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Oeste", new Vector3( 6.5f, 14.0f, 0f), pilarCantera, refillSfx, wallsLayer);
-        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Norte", new Vector3(21.0f, 22.0f, 0f), pilarCantera, refillSfx, wallsLayer);
-        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Sur",   new Vector3(21.0f,  5.5f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Oeste", new Vector3( 7.5f, 14.0f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Norte", new Vector3(21.0f, 21.0f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Sur",   new Vector3(20.5f,  6.8f, 0f), pilarCantera, refillSfx, wallsLayer);
 
         // ----------------------------------------------------
-        // 8. ALTARES Y OFRENDAS SAGRADAS DE CEMPASÚCHIL
+        // 8. ALTARES Y LA GRAN TUMBA SAGRADA DE LA LLORONA
         // ----------------------------------------------------
         GameObject shrinesGroup = GetOrCreateChild(rootEnv, "Altares_Cempasuchil");
         CreateShrineAltar(shrinesGroup, "Altar_Arco_Oeste", new Vector3(6.5f, 20.0f, 0f), altarArco, "Altar de la Piedad", new Vector3(0.85f, 0.85f, 1f), wallsLayer);
         CreateShrineAltar(shrinesGroup, "Altar_Mesa_Sur", new Vector3(22.5f, 3.5f, 0f), ofrendaMesa, "Ofrenda de las Ánimas", new Vector3(0.90f, 0.90f, 1f), wallsLayer);
-        CreateShrineAltar(shrinesGroup, "Altar_Magno_Panteon", new Vector3(28.0f, 14.0f, 0f), altarMagno, "El Gran Altar de las Ánimas", new Vector3(0.95f, 0.95f, 1f), wallsLayer);
+
+        // Gran Tumba Olvidada de La Llorona (Ofrenda final del ritual para abrir la Gran Reja)
+        CreateLloronaGrave(
+            shrinesGroup,
+            new Vector3(28.0f, 14.0f, 0f),
+            altarMagno,
+            angelDoliente,
+            tapeteFlores,
+            velaSprite,
+            holySfx,
+            campanaSfx,
+            portalSfx,
+            wallsLayer);
+
+        // Ítem interactivo para buscar en el panteón: Ofrenda Sagrada de Cempasúchil y Veladoras
+        CreateSacredOfferingPickupItem(shrinesGroup, new Vector3(22.5f, 4.3f, 0f), velaSprite, refillSfx);
+
         if (ofrendaColumna != null)
         {
-            CreatePiece(shrinesGroup, "Columna_Flores_Izq", new Vector3(26.0f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
-            CreatePiece(shrinesGroup, "Columna_Flores_Der", new Vector3(30.0f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
+            CreatePiece(shrinesGroup, "Columna_Flores_Izq", new Vector3(25.5f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
+            CreatePiece(shrinesGroup, "Columna_Flores_Der", new Vector3(30.5f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
         }
 
         // ----------------------------------------------------
@@ -419,8 +435,9 @@ public static class Level4Builder
         camFollow.SetBounds(new Vector2(1.5f, 2.0f), new Vector2(44.5f, 26.0f));
         camFollow.SetOrthoSize(5.2f);
 
-        // GameManager nivel 4
+        // GameManager y AudioManager nivel 4
         SetupGameManager(4);
+        SetupAudioManager();
 
         // Guardar escena
         EditorSceneManager.MarkSceneDirty(scene);
@@ -617,6 +634,125 @@ public static class Level4Builder
         so.ApplyModifiedProperties();
     }
 
+    static GameObject CreateLloronaGrave(
+        GameObject parent,
+        Vector3 pos,
+        Sprite graveSprite,
+        Sprite angelSprite,
+        Sprite flowerCarpet,
+        Sprite candlesSprite,
+        AudioClip offeringClip,
+        AudioClip bellClip,
+        AudioClip gateClip,
+        int wallsLayer)
+    {
+        GameObject graveObj = CreatePiece(parent, "Tumba_De_La_Llorona", pos, graveSprite, "Props", 5, new Vector3(0.95f, 0.95f, 1f));
+        if (wallsLayer >= 0) graveObj.layer = wallsLayer;
+
+        BoxCollider2D bc = GetOrAddComponent<BoxCollider2D>(graveObj);
+        bc.size = new Vector2(2.2f, 1.2f);
+        bc.offset = new Vector2(0f, -0.3f);
+        bc.isTrigger = false;
+
+        // Ángel Doliente sobre la tumba
+        if (angelSprite != null)
+        {
+            CreatePiece(graveObj, "Estatua_Angel", new Vector3(0f, 1.3f, 0f), angelSprite, "Props", 6, new Vector3(0.65f, 0.65f, 1f));
+        }
+
+        // Decoraciones de Ofrenda (Alfombra de cempasúchil y veladoras)
+        GameObject decoRoot = GetOrCreateChild(graveObj, "Ofrenda_Consagrada_Decoraciones");
+        decoRoot.transform.localPosition = Vector3.zero;
+
+        if (flowerCarpet != null)
+        {
+            CreatePiece(decoRoot, "Alfombra_Flores", new Vector3(0f, -0.6f, 0f), flowerCarpet, "Props", 3, new Vector3(1.1f, 1.1f, 1f));
+        }
+        if (candlesSprite != null)
+        {
+            CreatePiece(decoRoot, "Veladoras_Izq", new Vector3(-1.1f, -0.4f, 0f), candlesSprite, "Props", 7, new Vector3(0.85f, 0.85f, 1f));
+            CreatePiece(decoRoot, "Veladoras_Der", new Vector3( 1.1f, -0.4f, 0f), candlesSprite, "Props", 7, new Vector3(0.85f, 0.85f, 1f));
+        }
+
+        // Luz de la tumba
+        GameObject lightObj = GetOrCreateChild(graveObj, "LuzTumbaLlorona");
+        lightObj.transform.localPosition = new Vector3(0f, 0.4f, 0f);
+        Light2D l2d = GetOrAddComponent<Light2D>(lightObj);
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(0.65f, 0.35f, 0.95f); // Violeta místico inicial
+        l2d.intensity = 2.2f;
+        l2d.pointLightOuterRadius = 4.8f;
+        if (lightObj.GetComponent<LightFlicker>() == null) lightObj.AddComponent<LightFlicker>();
+
+        // Prompt de interacción
+        GameObject promptObj = GetOrCreateChild(graveObj, "Prompt_E");
+        promptObj.transform.localPosition = new Vector3(0f, 2.5f, 0f);
+        TextMesh tm = GetOrAddComponent<TextMesh>(promptObj);
+        tm.text = "✦ Tumba Olvidada de La Llorona ✦\n[Sellada]";
+        tm.fontSize = 24;
+        tm.characterSize = 0.12f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.alignment = TextAlignment.Center;
+        tm.color = new Color(0.8f, 0.5f, 1.0f);
+        MeshRenderer mr = promptObj.GetComponent<MeshRenderer>();
+        if (mr != null) mr.sortingOrder = 20;
+
+        LloronaGraveOffering offering = GetOrAddComponent<LloronaGraveOffering>(graveObj);
+        SerializedObject so = new SerializedObject(offering);
+        so.FindProperty("offeringDecorations").objectReferenceValue = decoRoot;
+        so.FindProperty("graveLight").objectReferenceValue = l2d;
+        so.FindProperty("promptObject").objectReferenceValue = promptObj;
+        so.FindProperty("promptTextMesh").objectReferenceValue = tm;
+        so.FindProperty("offeringSfx").objectReferenceValue = offeringClip;
+        so.FindProperty("bellTollSfx").objectReferenceValue = bellClip;
+        so.FindProperty("gateOpenSfx").objectReferenceValue = gateClip;
+        so.FindProperty("interactRadius").floatValue = 3.5f;
+        so.ApplyModifiedProperties();
+
+        return graveObj;
+    }
+
+    static GameObject CreateSacredOfferingPickupItem(
+        GameObject parent,
+        Vector3 pos,
+        Sprite candleSprite,
+        AudioClip pickupSfx)
+    {
+        GameObject itemObj = CreatePiece(parent, "Ofrenda_Sagrada_Pickup", pos, candleSprite, "Props", 8, new Vector3(0.95f, 0.95f, 1f));
+
+        GameObject lightObj = GetOrCreateChild(itemObj, "LuzDoradaOfrenda");
+        lightObj.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+        Light2D l2d = GetOrAddComponent<Light2D>(lightObj);
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.85f, 0.25f);
+        l2d.intensity = 3.2f;
+        l2d.pointLightOuterRadius = 4.8f;
+        if (lightObj.GetComponent<LightFlicker>() == null) lightObj.AddComponent<LightFlicker>();
+
+        GameObject promptObj = GetOrCreateChild(itemObj, "Prompt_E");
+        promptObj.transform.localPosition = new Vector3(0f, 1.8f, 0f);
+        TextMesh tm = GetOrAddComponent<TextMesh>(promptObj);
+        tm.text = "✦ Ofrenda Sagrada de Cempasúchil ✦\n[E] Tomar Flores y Veladoras";
+        tm.fontSize = 24;
+        tm.characterSize = 0.12f;
+        tm.anchor = TextAnchor.MiddleCenter;
+        tm.alignment = TextAlignment.Center;
+        tm.color = new Color(1.0f, 0.90f, 0.35f);
+        MeshRenderer mr = promptObj.GetComponent<MeshRenderer>();
+        if (mr != null) mr.sortingOrder = 20;
+
+        SacredOfferingPickup pickup = GetOrAddComponent<SacredOfferingPickup>(itemObj);
+        SerializedObject so = new SerializedObject(pickup);
+        so.FindProperty("interactRadius").floatValue = 2.8f;
+        so.FindProperty("pickupSfx").objectReferenceValue = pickupSfx;
+        so.FindProperty("promptObject").objectReferenceValue = promptObj;
+        so.FindProperty("promptTextMesh").objectReferenceValue = tm;
+        so.FindProperty("itemLight").objectReferenceValue = l2d;
+        so.ApplyModifiedProperties();
+
+        return itemObj;
+    }
+
     static void CreateHolyWaterSupplyStation(GameObject parent, string name, Vector3 pos, Sprite sprite, AudioClip refillSfx, int wallsLayer)
     {
         GameObject fontObj = CreatePiece(parent, name, pos, sprite, "Props", 3, new Vector3(0.85f, 0.85f, 1f));
@@ -650,7 +786,7 @@ public static class Level4Builder
         HolyWaterSupply supply = GetOrAddComponent<HolyWaterSupply>(fontObj);
         SerializedObject so = new SerializedObject(supply);
         so.FindProperty("fontName").stringValue = "Pila de Agua Bendita";
-        so.FindProperty("interactRadius").floatValue = 2.4f;
+        so.FindProperty("interactRadius").floatValue = 3.2f;
         so.FindProperty("refillSfx").objectReferenceValue = refillSfx;
         so.FindProperty("promptObject").objectReferenceValue = promptObj;
         so.FindProperty("promptTextMesh").objectReferenceValue = tm;
@@ -989,6 +1125,10 @@ public static class Level4Builder
         l2d.pointLightOuterRadius = 4.8f;
 
         SerializedObject so = new SerializedObject(boss);
+        so.FindProperty("phase1Speed").floatValue = 2.35f;
+        so.FindProperty("phase2Speed").floatValue = 2.75f;
+        so.FindProperty("phase3Speed").floatValue = 3.15f;
+        so.FindProperty("lungeSpeed").floatValue = 5.2f;
         so.FindProperty("specter1").objectReferenceValue = sp1;
         so.FindProperty("specter2").objectReferenceValue = sp2;
         so.FindProperty("screamSfx").objectReferenceValue = scream;
@@ -1010,6 +1150,23 @@ public static class Level4Builder
         }
         gm.SetLevelNumber(levelNum);
         EditorUtility.SetDirty(gm);
+    }
+
+    static void SetupAudioManager()
+    {
+        AudioManager am = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
+        if (am == null)
+        {
+            GameObject amGo = new GameObject("AudioManager");
+            am = amGo.AddComponent<AudioManager>();
+        }
+        AudioClip clip4 = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Music/Nivel4/cementerio.mp3")
+            ?? Resources.Load<AudioClip>("Audio/Music/Nivel4/cementerio");
+        if (clip4 != null)
+        {
+            am.musicaNivel4 = clip4;
+        }
+        EditorUtility.SetDirty(am);
     }
 
     static GameObject GetOrCreateChild(GameObject parent, string name)

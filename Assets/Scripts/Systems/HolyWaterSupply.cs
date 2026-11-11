@@ -11,7 +11,7 @@ using UnityEngine.Rendering.Universal;
 public class HolyWaterSupply : MonoBehaviour
 {
     [SerializeField] string fontName = "Pila de Agua Bendita";
-    [SerializeField] float interactRadius = 2.2f;
+    [SerializeField] float interactRadius = 3.2f;
     [SerializeField] AudioClip refillSfx;
     [SerializeField] GameObject promptObject;
     [SerializeField] TextMesh promptTextMesh;
@@ -96,7 +96,7 @@ public class HolyWaterSupply : MonoBehaviour
         }
 
         launcher.RefillJars();
-        cooldownTimer = 1.0f;
+        cooldownTimer = 0.3f;
 
         if (refillSfx != null)
         {

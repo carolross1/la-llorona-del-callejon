@@ -113,9 +113,14 @@ public class HUD : MonoBehaviour
         if (candleCountText != null)
         {
             if (TotalShrines > 0)
-                candleCountText.text = $"Ofrendas: {ActiveShrinesLit}/{TotalShrines}   Velas: {count}  [F]";
+            {
+                string statusVelas = count > 0 ? $"Velas: {count}  [F]" : "Velas: 0 (Vacío)";
+                candleCountText.text = $"Ofrendas: {ActiveShrinesLit}/{TotalShrines}   {statusVelas}";
+            }
             else
-                candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0";
+            {
+                candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0 (Vacío)";
+            }
         }
     }
 

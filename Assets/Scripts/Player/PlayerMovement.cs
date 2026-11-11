@@ -97,11 +97,21 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Ofrenda / Orar con [F] (Prioriza consagrar nicho sagrado si está cerca, o colocar ofrenda en el suelo)
-        if (kb.fKey.wasPressedThisFrame && Candle.PlayerCandlesCount > 0 && !IsHidden)
+        if (kb.fKey.wasPressedThisFrame && !IsHidden)
         {
-            if (!ShrineNiche.TryLightNearestShrine(transform.position))
+            if (Candle.PlayerCandlesCount > 0)
             {
-                Candle.TryPlaceOffering(transform.position);
+                if (!ShrineNiche.TryLightNearestShrine(transform.position))
+                {
+                    Candle.TryPlaceOffering(transform.position);
+                }
+            }
+            else
+            {
+                if (HUD.Instance != null)
+                {
+                    HUD.Instance.ShowEventNotice("¡No tienes veladoras!\nRecoge una en el suelo o acude a la Mesa de Cirios.", 3.0f);
+                }
             }
         }
 

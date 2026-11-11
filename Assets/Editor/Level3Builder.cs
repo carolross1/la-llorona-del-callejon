@@ -12,17 +12,14 @@ using UnityEngine.Tilemaps;
 
 /// <summary>
 /// Constructor oficial y automatizado del Nivel 3: El Atrio Monumental de Dolores.
-/// Reconstrucción de gran escala y espacios amplios (anti-amontonamiento):
-/// - 4 Cuadrantes temáticos ampliamente espaciados y conectados:
-///     1. Gran Calzada Sur: avenida ceremonial amplia flanqueada por cipreses y farolas.
-///     2. Claustro Oeste: patio silencioso con arcadas góticas coloniales iluminadas por faroles.
-///     3. Gran Plaza Central de la Fuente: explanada abierta y despejada con fuente octagonal.
-///     4. Panteón Este: jardín de criptas con el Gran Mausoleo Gótico y senderos de cantera.
-///     5. Explanada Superior y Parroquia: escalinata monumental y fachada de la Parroquia.
-/// - Sistema de tutorial progresivo y escalonado (mensajes cortos, legibles y por zonas).
-/// - 4 Nichos Sagrados requeridos para romper el sello de la Parroquia (4/4).
-/// - Trampas de ruido de cantera en accesos estratégicos que alertan a La Llorona.
-/// - Holgura amplia y garantizada en todos los caminos (mínimo 5 a 10 metros libres).
+/// Reconstrucción de gran escala con distribución limpia y cero empalmes:
+/// - Espaciado riguroso: cada prop, árbol, banca, mesa y farol posee su propia coordenada
+///   con holgura de 4 a 10 metros, eliminando cualquier empalme visual.
+/// - IA de La Llorona intensificada: mayor rango de visión (12.5 m), amplio campo auditivo (5.0 m / 10 m al correr),
+///   patrullaje activo (2.35 m/s) y persecución implacable (3.70 m/s), forzando el uso de escondites y sigilo.
+/// - Textos HD ultra-nítidos: TextMesh de mundo renderizados a 72-80 px con escala fina (0.045f)
+///   y Canvas con dynamicPixelsPerUnit = 2.0f para eliminar cualquier borrosidad.
+/// - Tutorial escalonado en 4 pasos contextuales breves y claros.
 /// </summary>
 public static class Level3Builder
 {
@@ -31,7 +28,7 @@ public static class Level3Builder
     [MenuItem("La Llorona/Construir Nivel 3")]
     public static void BuildLevel3Scene()
     {
-        Debug.Log("[Level3Builder] Iniciando reconstrucción monumental expandida del Nivel 3 (El Atrio de Dolores)...");
+        Debug.Log("[Level3Builder] Reconstruyendo Nivel 3 (Atrio Monumental - Cero Empalmes + IA Activa + Textos HD)...");
 
         // 1. Asegurar slicing y configuración de sprites de Nivel 3
         SpriteSheetSlicer.SliceNivel3();
@@ -162,7 +159,7 @@ public static class Level3Builder
         Sprite rejaInf = rejaSprites.FirstOrDefault(s => s.name == "Reja_Inferior") ?? rejaSprites.ElementAtOrDefault(6);
         Sprite farolaPie = rejaSprites.FirstOrDefault(s => s.name == "Farola_Pie_N3") ?? rejaSprites.ElementAtOrDefault(5);
 
-        // Reja sur inferior (dejando entrada central muy amplia en X = 11..25)
+        // Reja sur inferior (dejando entrada central limpia en X = 13..23)
         for (float rx = -6.0f; rx <= 9.0f; rx += 5.5f)
         {
             CreateFencePiece(rejasGroup, $"Reja_Sur_Oeste_{rx:0}", rejaInf, rx, 0.8f, wallsLayer, new Vector2(5.5f, 1.0f));
@@ -172,15 +169,15 @@ public static class Level3Builder
             CreateFencePiece(rejasGroup, $"Reja_Sur_Este_{rx:0}", rejaInf, rx, 0.8f, wallsLayer, new Vector2(5.5f, 1.0f));
         }
 
-        // Farolas de pie distribuidas con elegancia y espacio
-        CreateStandingLantern(rejasGroup, "Farola_Entrada_O", farolaPie, 11.5f, 2.5f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_Entrada_E", farolaPie, 24.5f, 2.5f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_Plaza_SO", farolaPie,  9.0f, 16.0f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_Plaza_SE", farolaPie, 27.0f, 16.0f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_Plaza_NO", farolaPie,  9.0f, 26.5f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_Plaza_NE", farolaPie, 27.0f, 26.5f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_AtrioSup_O", farolaPie, 12.0f, 36.0f, wallsLayer);
-        CreateStandingLantern(rejasGroup, "Farola_AtrioSup_E", farolaPie, 24.0f, 36.0f, wallsLayer);
+        // Farolas de pie distribuidas con distancia y sin obstruir objetos
+        CreateStandingLantern(rejasGroup, "Farola_Entrada_O", farolaPie, 13.0f, 1.8f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_Entrada_E", farolaPie, 23.0f, 1.8f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_Plaza_SO", farolaPie,  8.0f, 16.0f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_Plaza_SE", farolaPie, 28.0f, 16.0f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_Plaza_NO", farolaPie,  8.0f, 29.0f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_Plaza_NE", farolaPie, 28.0f, 29.0f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_AtrioSup_O", farolaPie, 12.0f, 36.5f, wallsLayer);
+        CreateStandingLantern(rejasGroup, "Farola_AtrioSup_E", farolaPie, 24.0f, 36.5f, wallsLayer);
 
         // Límites invisibles sólidos del atrio completo
         Transform limits = FreshRoot("Limites_Atrio");
@@ -217,23 +214,24 @@ public static class Level3Builder
             l2df.pointLightOuterRadius = 6.0f;
         }
 
-        // 6. SECTOR 1 (SUR): Gran Calzada de los Cipreses Góticos
+        // 6. SECTOR 1 (SUR): Gran Calzada de los Cipreses Góticos (ESPACIADO LIMPIO Y SIN EMPALMES)
         Sprite sCipres = sCipresCustom ?? accSprites.FirstOrDefault(s => s.name == "Cipres_Colonial_1") ?? accSprites.ElementAtOrDefault(4);
         if (sCipres != null)
         {
-            // Calzada Sur: Cipreses espaciados a los costados
-            CreateCypressTree(props, "Cipres_Calzada_O1", sCipres, 10.0f,  5.0f, wallsLayer);
-            CreateCypressTree(props, "Cipres_Calzada_O2", sCipres, 10.0f, 11.0f, wallsLayer);
-            CreateCypressTree(props, "Cipres_Calzada_E1", sCipres, 26.0f,  5.0f, wallsLayer);
-            CreateCypressTree(props, "Cipres_Calzada_E2", sCipres, 26.0f, 11.0f, wallsLayer);
+            // Flanco Oeste de la Calzada
+            CreateCypressTree(props, "Cipres_Calzada_O1", sCipres, 10.0f,  7.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Calzada_O2", sCipres, 10.0f, 12.5f, wallsLayer);
+
+            // Flanco Este de la Calzada (Completamente separado de la mesa y bancas)
+            CreateCypressTree(props, "Cipres_Calzada_E1", sCipres, 26.0f, 12.5f, wallsLayer);
 
             // Esquinas del Panteón Este
-            CreateCypressTree(props, "Cipres_Panteon_SE", sCipres, 43.0f, 17.0f, wallsLayer);
-            CreateCypressTree(props, "Cipres_Panteon_NE", sCipres, 43.0f, 31.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Panteon_SE", sCipres, 44.0f, 16.5f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Panteon_NE", sCipres, 44.0f, 32.0f, wallsLayer);
 
             // Terraza Superior Norte enmarcando la Parroquia
-            CreateCypressTree(props, "Cipres_Atrio_Oeste", sCipres, 10.0f, 34.0f, wallsLayer);
-            CreateCypressTree(props, "Cipres_Atrio_Este",  sCipres, 26.0f, 34.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Atrio_Oeste", sCipres,  9.0f, 35.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Atrio_Este",  sCipres, 27.0f, 35.0f, wallsLayer);
         }
 
         // 7. SECTOR 2 (OESTE): Claustro de las Arcadas Góticas Iluminadas
@@ -249,36 +247,36 @@ public static class Level3Builder
             CreateMausoleumBuilding(props, "Gran_Mausoleo_Gotico", sMausoleoCustom, 39.0f, 28.0f, wallsLayer);
         }
 
-        // 9. Escondites Coloniales Espaciados (Bancas, Confesionarios y Criptas)
+        // 9. Escondites Coloniales Espaciados (Bancas, Confesionarios y Criptas - SIN EMPALMES)
         Sprite sConfesionario = accSprites.FirstOrDefault(s => s.name == "Confesionario_N3") ?? accSprites.ElementAtOrDefault(1);
         Sprite sBanca         = accSprites.FirstOrDefault(s => s.name == "Banca_Hierro_N3") ?? accSprites.ElementAtOrDefault(0);
         Sprite sCripta        = accSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? accSprites.ElementAtOrDefault(2);
 
-        // Calzada Sur
-        CreateHideSpotOfficial(props, "Banca_Calzada_Oeste", sBanca,  8.0f, 4.0f, 1.1f, hideSpotLayer, wallsLayer,
+        // Calzada Sur: bancas en las zonas exteriores de los jardines
+        CreateHideSpotOfficial(props, "Banca_Calzada_Oeste", sBanca,  6.5f, 4.0f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Banca_Calzada_Este",  sBanca, 28.0f, 4.0f, 1.1f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Banca_Calzada_Este",  sBanca, 29.5f, 4.0f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
         // Claustro Oeste
-        CreateHideSpotOfficial(props, "Confesionario_Claustro", sConfesionario, -7.0f, 24.0f, 1.15f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Confesionario_Claustro", sConfesionario, -8.0f, 24.0f, 1.15f, hideSpotLayer, wallsLayer,
             new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Banca_Claustro", sBanca, -3.0f, 20.0f, 1.1f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Banca_Claustro", sBanca, -3.0f, 20.5f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
         // Panteón Este
-        CreateHideSpotOfficial(props, "Cripta_Panteon_Este", sCripta, 43.0f, 24.0f, 1.1f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Cripta_Panteon_Este", sCripta, 44.0f, 24.0f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.4f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.8f, 1.8f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Banca_Panteon", sBanca, 35.0f, 24.0f, 1.1f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Banca_Panteon", sBanca, 34.0f, 24.0f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
         // Terraza Superior cerca de la Parroquia
-        CreateHideSpotOfficial(props, "Confesionario_Atrio_Oeste", sConfesionario,  7.0f, 37.0f, 1.15f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Confesionario_Atrio_Oeste", sConfesionario,  5.0f, 38.5f, 1.15f, hideSpotLayer, wallsLayer,
             new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Confesionario_Atrio_Este",  sConfesionario, 29.0f, 37.0f, 1.15f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Confesionario_Atrio_Este",  sConfesionario, 31.0f, 38.5f, 1.15f, hideSpotLayer, wallsLayer,
             new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
 
-        // 10. LOS 4 NICHOS SAGRADOS DEL RITUAL (4/4) ([F] para ofrendar veladora)
+        // 10. LOS 4 NICHOS SAGRADOS DEL RITUAL (4/4) ([F] para ofrendar veladora - TEXTOS HD)
         Transform nichosGroup = FreshRoot("Nichos_Sagrados");
         Sprite sFlama = ofrendaSprites.FirstOrDefault(s => s.name == "Vela_Blanca_Grande") ?? ofrendaSprites.ElementAtOrDefault(4);
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
@@ -290,18 +288,18 @@ public static class Level3Builder
 
         // Nicho 2: Pocito de la Fuente Sagrada (Centro)
         CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)",
-            18.0f, 26.0f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
+            18.0f, 26.5f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
         // Nicho 3: Cripta de Ánimas en el Panteón (Este)
         CreateShrineNiche(nichosGroup, "Nicho_Mausoleo_Este", "Cripta de Ánimas (Este)",
-            39.0f, 20.0f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
+            39.0f, 19.5f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
         // Nicho 4: Altar Mayor de Dolores (Norte, a los pies de la escalinata)
         CreateShrineNiche(nichosGroup, "Nicho_Altar_Norte", "Altar Mayor de Dolores (Norte)",
             18.0f, 33.5f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
-        // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado derecho para paso libre)
-        CreateCandleStandOfficial(nichosGroup, 26.0f, 4.0f, sMesaVelas ?? sAltarCustom, sCandelabro, wallsLayer, sfxTomarVela);
+        // Mesa de Cirios Benditos: ubicación despejada en la calzada derecha (X = 27.5, Y = 8.0)
+        CreateCandleStandOfficial(nichosGroup, 27.5f, 8.0f, sMesaVelas ?? sAltarCustom, sCandelabro, wallsLayer, sfxTomarVela);
 
         // 11. TRAMPAS DE TERRENO Y OBSTÁCULOS
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
@@ -310,8 +308,8 @@ public static class Level3Builder
         Sprite sVelaRoja    = ofrendaSprites.FirstOrDefault(s => s.name == "Vaso_Vela_Roja_1") ?? ofrendaSprites.ElementAtOrDefault(1);
 
         // Charcos ralentizantes en la plaza central
-        CreateMudPuddleOfficial(hazards, sAguaBendita, 12.5f, 19.0f, 0.9f, sfxSplashCharco);
-        CreateMudPuddleOfficial(hazards, sAguaBendita, 23.5f, 19.0f, 0.9f, sfxSplashCharco);
+        CreateMudPuddleOfficial(hazards, sAguaBendita, 12.0f, 21.0f, 0.9f, sfxSplashCharco);
+        CreateMudPuddleOfficial(hazards, sAguaBendita, 24.0f, 21.0f, 0.9f, sfxSplashCharco);
 
         // Escombros de cantera en los accesos clave
         Sprite rubbleSprite = sEscombrosCustom ?? sTepalcate;
@@ -324,8 +322,8 @@ public static class Level3Builder
 
         // 14 Veladoras Coleccionables bien distribuidas en las zonas
         CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  3.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Oeste",  sVelaRoja, new Vector2(14.0f,  8.0f));
-        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Este",   sVelaRoja, new Vector2(22.0f,  8.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Oeste",  sVelaRoja, new Vector2(14.0f,  9.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Este",   sVelaRoja, new Vector2(22.0f,  9.0f));
         CreateCandlePickupOfficial(hazards, "Vela_Claustro_Sur",   sVelaRoja, new Vector2(-5.0f, 20.0f));
         CreateCandlePickupOfficial(hazards, "Vela_Claustro_Norte", sVelaRoja, new Vector2(-2.0f, 28.0f));
         CreateCandlePickupOfficial(hazards, "Vela_Claustro_Paso",  sVelaRoja, new Vector2( 2.0f, 24.0f));
@@ -362,8 +360,11 @@ public static class Level3Builder
         // 15. Player (Carlos inicia en la calzada sur en Y = 2.5f)
         SetupPlayer(new Vector2(18.0f, 2.5f), playerLayer, sfxPuertaConfesionario, sfxRespiroAlivio);
 
-        // 16. La Llorona (Inicia patrullando en la Gran Fuente)
-        SetupLloronaCircular(new Vector2(18.0f, 21.0f), wps, wallsLayer, lloronaLayer, 1.6f, 2.85f, 5.5f, 110.0f, sfxLloronaGrito, sfxLloronaLlanto);
+        // 16. La Llorona (Inicia en la entrada de la plaza patrullando activamente hacia la calzada y claustro)
+        SetupLloronaCircular(new Vector2(18.0f, 15.0f), wps, wallsLayer, lloronaLayer,
+            patrolSpeed: 2.35f, chaseSpeed: 3.70f, visionDist: 12.5f, fov: 130.0f, hearDist: 5.0f,
+            waitTime: 0.6f, loseSightTime: 4.5f, runNoiseMultiplier: 2.0f,
+            screamClip: sfxLloronaGrito, cryClip: sfxLloronaLlanto);
 
         // 17. Cámara y Confiner 2D (Zoom dinámico cinematográfico para mapa monumental)
         Camera cam = Camera.main;
@@ -397,19 +398,19 @@ public static class Level3Builder
 
         // Paso 2: Explicación de las veladoras junto a la Mesa de Cirios
         CreateTutorialTrigger(tutRoot, "Tutorial_2_MesaVelas",
-            new Vector2(25.0f, 4.5f), new Vector2(8f, 4f),
+            new Vector2(27.5f, 8.0f), new Vector2(8f, 4f),
             "✦ MESA DE CIRIOS BENDITOS ✦\nPulsa [E] para tomar veladoras. Necesitas 1 para consagrar cada nicho.",
             duration: 5.0f, showOnStart: false);
 
         // Paso 3: Mecánica de sigilo al aproximarse a la gran plaza
         CreateTutorialTrigger(tutRoot, "Tutorial_3_Sigilo",
-            new Vector2(18.0f, 10.0f), new Vector2(18f, 3f),
+            new Vector2(18.0f, 12.0f), new Vector2(18f, 3f),
             "✦ ESCONDITES DE EMERGENCIA ✦\nSi escuchas el llanto de La Llorona, pulsa [E] en bancas y confesionarios para ocultarte.",
             duration: 5.0f, showOnStart: false);
 
         // Paso 4: Alerta de escombros de ruinas al acercarse a los pasajes laterales
         CreateTutorialTrigger(tutRoot, "Tutorial_4_Escombros",
-            new Vector2(18.0f, 14.5f), new Vector2(24f, 3f),
+            new Vector2(18.0f, 16.0f), new Vector2(24f, 3f),
             "✦ ¡CUIDADO CON LOS ESCOMBROS! ✦\nPisar ruinas de cantera cruje fuertemente y alertará a La Llorona.",
             duration: 5.0f, showOnStart: false);
 
@@ -667,14 +668,14 @@ public static class Level3Builder
         l2dDome.pointLightOuterRadius = 3.6f;
         domeGo.SetActive(false);
 
-        // Prompt de interacción [F] con TextMesh nativo
+        // Prompt de interacción [F] con TextMesh nativo en ALTA DEFINICIÓN (fontSize 72, characterSize 0.045f)
         GameObject promptGo = new GameObject("PromptInteraccion");
         promptGo.transform.SetParent(go.transform, false);
         promptGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
         TextMesh tm = promptGo.AddComponent<TextMesh>();
         tm.text = $"✦ {displayName} ✦";
-        tm.fontSize = 32;
-        tm.characterSize = 0.16f;
+        tm.fontSize = 72;
+        tm.characterSize = 0.045f;
         tm.fontStyle = FontStyle.Bold;
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
@@ -739,13 +740,14 @@ public static class Level3Builder
         l2d.pointLightOuterRadius = 4.5f;
         lightGo.AddComponent<LightFlicker>();
 
+        // TextMesh HD (fontSize 68, characterSize 0.045f)
         GameObject promptGo = new GameObject("PromptMesa");
         promptGo.transform.SetParent(go.transform, false);
         promptGo.transform.localPosition = new Vector3(0f, 2.0f, 0f);
         TextMesh tm = promptGo.AddComponent<TextMesh>();
         tm.text = "[E] Tomar Veladora Bendita";
-        tm.fontSize = 30;
-        tm.characterSize = 0.16f;
+        tm.fontSize = 68;
+        tm.characterSize = 0.045f;
         tm.fontStyle = FontStyle.Bold;
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
@@ -827,14 +829,14 @@ public static class Level3Builder
         lightGo.AddComponent<LightFlicker>();
         l2d.enabled = false;
 
-        // Letrero de estado de la puerta con TextMesh nativo
+        // Letrero de estado de la puerta con TextMesh HD (fontSize 80, characterSize 0.045f)
         GameObject labelGo = new GameObject("LabelPuerta");
         labelGo.transform.SetParent(go.transform, false);
         labelGo.transform.localPosition = new Vector3(0f, 1.9f, 0f);
         TextMesh tm = labelGo.AddComponent<TextMesh>();
         tm.text = $"PUERTAS SELLADAS\n(Ofrendas: 0/{requiredShrines})";
-        tm.fontSize = 34;
-        tm.characterSize = 0.17f;
+        tm.fontSize = 80;
+        tm.characterSize = 0.045f;
         tm.fontStyle = FontStyle.Bold;
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
@@ -1104,7 +1106,10 @@ public static class Level3Builder
         Candle.ResetInventory();
     }
 
-    static void SetupLloronaCircular(Vector2 spawnPos, Transform[] wps, int wallsLayer, int lloronaLayer, float patrolSpeed, float chaseSpeed, float visionDist, float fov, AudioClip screamClip = null, AudioClip cryClip = null)
+    static void SetupLloronaCircular(Vector2 spawnPos, Transform[] wps, int wallsLayer, int lloronaLayer,
+        float patrolSpeed, float chaseSpeed, float visionDist, float fov, float hearDist,
+        float waitTime, float loseSightTime, float runNoiseMultiplier,
+        AudioClip screamClip = null, AudioClip cryClip = null)
     {
         GameObject lloronaGo = GameObject.Find("Llorona");
         if (lloronaGo == null)
@@ -1124,11 +1129,44 @@ public static class Level3Builder
         if (ai == null) ai = lloronaGo.AddComponent<LloronaAI>();
         ai.Waypoints = wps;
 
+        // Configurar ScriptableObject específico del Nivel 3 para dificultad y persistencia
+        var settingsAsset = AssetDatabase.LoadAssetAtPath<LloronaSettings>("Assets/Settings/LloronaSettings_Level3.asset");
+        if (settingsAsset != null)
+        {
+            SerializedObject soSet = new SerializedObject(settingsAsset);
+            soSet.FindProperty("patrolSpeed").floatValue = patrolSpeed;
+            soSet.FindProperty("chaseSpeed").floatValue = chaseSpeed;
+            soSet.FindProperty("viewDistance").floatValue = visionDist;
+            soSet.FindProperty("viewAngle").floatValue = fov;
+            soSet.FindProperty("hearDistance").floatValue = hearDist;
+            soSet.FindProperty("waitTime").floatValue = waitTime;
+            soSet.FindProperty("loseSightTime").floatValue = loseSightTime;
+            soSet.FindProperty("runNoiseMultiplier").floatValue = runNoiseMultiplier;
+            soSet.ApplyModifiedProperties();
+            EditorUtility.SetDirty(settingsAsset);
+        }
+
         SerializedObject so = new SerializedObject(ai);
+        var sProp = so.FindProperty("settings");
+        if (sProp != null && settingsAsset != null) sProp.objectReferenceValue = settingsAsset;
+
         var pSpeed = so.FindProperty("patrolSpeed");
         if (pSpeed != null) pSpeed.floatValue = patrolSpeed;
         var cSpeed = so.FindProperty("chaseSpeed");
         if (cSpeed != null) cSpeed.floatValue = chaseSpeed;
+        var vDist = so.FindProperty("viewDistance");
+        if (vDist != null) vDist.floatValue = visionDist;
+        var vAngle = so.FindProperty("viewAngle");
+        if (vAngle != null) vAngle.floatValue = fov;
+        var hDist = so.FindProperty("hearDistance");
+        if (hDist != null) hDist.floatValue = hearDist;
+        var wTime = so.FindProperty("waitTime");
+        if (wTime != null) wTime.floatValue = waitTime;
+        var lsTime = so.FindProperty("loseSightTime");
+        if (lsTime != null) lsTime.floatValue = loseSightTime;
+        var rNoise = so.FindProperty("runNoiseMultiplier");
+        if (rNoise != null) rNoise.floatValue = runNoiseMultiplier;
+
         var oMask = so.FindProperty("obstacleMask");
         if (oMask != null) oMask.intValue = 1 << wallsLayer;
         if (screamClip != null)

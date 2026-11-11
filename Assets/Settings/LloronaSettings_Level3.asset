@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 352a8761739090e4d97e6955c23dd426, type: 3}
   m_Name: LloronaSettings_Level3
   m_EditorClassIdentifier: Assembly-CSharp::LloronaSettings
-  patrolSpeed: 1.6
-  waitTime: 1.5
-  chaseSpeed: 2.8
-  loseSightTime: 3.5
-  viewDistance: 5.5
-  viewAngle: 110
-  hearDistance: 2
-  runNoiseMultiplier: 1.5
+  patrolSpeed: 2.35
+  waitTime: 0.6
+  chaseSpeed: 3.7
+  loseSightTime: 4.5
+  viewDistance: 12.5
+  viewAngle: 130
+  hearDistance: 5
+  runNoiseMultiplier: 2

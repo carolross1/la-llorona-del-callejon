@@ -1058,6 +1058,7 @@ public static class UIBuilder
         cs.referenceResolution = new Vector2(1920, 1080);
         cs.screenMatchMode    = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         cs.matchWidthOrHeight = 0.5f;
+        cs.dynamicPixelsPerUnit = 2.0f; // Renderizado HD / Retina de fuentes para nitidez máxima sin bordes borrosos
 
         go.AddComponent<GraphicRaycaster>();
         return go;

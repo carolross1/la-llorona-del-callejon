@@ -22,6 +22,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip musicaNivel1;
     public AudioClip musicaNivel2;
     public AudioClip musicaNivel3;
+    public AudioClip musicaNivel4;
 
     [Header("Clips de Efectos (SFX)")]
     public AudioClip lloronaLlanto;
@@ -112,6 +113,7 @@ public class AudioManager : MonoBehaviour
         if (musicaNivel1 == null) musicaNivel1 = musicaNivel;
         if (musicaNivel2 == null) musicaNivel2 = Resources.Load<AudioClip>("Audio/Music/Nivel2/Nivel 2");
         if (musicaNivel3 == null) musicaNivel3 = Resources.Load<AudioClip>("Audio/Music/Nivel3/Nivel 3");
+        if (musicaNivel4 == null) musicaNivel4 = Resources.Load<AudioClip>("Audio/Music/Nivel4/cementerio");
         if (pasosLentos == null) pasosLentos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_lentos");
         if (pasosRapidos == null) pasosRapidos = Resources.Load<AudioClip>("Audio/SFX/Nivel1/pasos_rapidos");
         if (sonidoPerro == null) sonidoPerro = Resources.Load<AudioClip>("Audio/SFX/Nivel1/perro");
@@ -336,6 +338,10 @@ public class AudioManager : MonoBehaviour
         else if (levelNumber == 3)
         {
             clipToPlay = musicaNivel3 ?? Resources.Load<AudioClip>("Audio/Music/Nivel3/Nivel 3");
+        }
+        else if (levelNumber == 4)
+        {
+            clipToPlay = musicaNivel4 ?? Resources.Load<AudioClip>("Audio/Music/Nivel4/cementerio");
         }
 
         if (clipToPlay == null)

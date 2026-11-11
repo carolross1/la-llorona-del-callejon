@@ -15,9 +15,9 @@ public class PlayerHolyWaterLauncher : MonoBehaviour
     public static event Action<int, int> OnJarsChanged;
 
     [Header("Munición")]
-    [SerializeField] int maxJars = 3;
-    [SerializeField] int currentJars = 3;
-    [SerializeField] float fireCooldown = 0.5f;
+    [SerializeField] int maxJars = 5;
+    [SerializeField] int currentJars = 5;
+    [SerializeField] float fireCooldown = 0.45f;
 
     [Header("Referencias Visuales y Audio")]
     [SerializeField] Sprite jarSprite;

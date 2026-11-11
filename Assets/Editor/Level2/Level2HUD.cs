@@ -56,45 +56,37 @@ public static class Level2HUD
         hudLeftRect.anchoredPosition = new Vector2(32f, -28f);
         hudLeftRect.sizeDelta = new Vector2(340f, 120f);
 
-        // Contenedor de corazones discretos (con medios corazones)
-        GameObject heartsRoot = GetOrCreateUIRect(hudLeft.transform, "Corazones_Vida_Contenedor");
+        // Limpiar TODOS los elementos viejos o duplicados bajo hudLeft (velas, corazones viejos, etc.)
+        for (int c = hudLeft.transform.childCount - 1; c >= 0; c--)
+        {
+            UnityEngine.Object.DestroyImmediate(hudLeft.transform.GetChild(c).gameObject);
+        }
+
+        // Contenedor de 3 corazones discretos (sin duplicados ni empalmes)
+        GameObject heartsRoot = GetOrCreateUIRect(hudLeft.transform, "Corazones_Vida");
         RectTransform heartsRootRect = heartsRoot.GetComponent<RectTransform>();
         heartsRootRect.anchorMin = new Vector2(0f, 1f);
         heartsRootRect.anchorMax = new Vector2(0f, 1f);
         heartsRootRect.pivot     = new Vector2(0f, 1f);
         heartsRootRect.anchoredPosition = new Vector2(0f, 0f);
-        heartsRootRect.sizeDelta = new Vector2(280f, 38f);
+        heartsRootRect.sizeDelta = new Vector2(160f, 38f);
 
-        Image[] heartImgs = new Image[5];
-        for (int i = 0; i < 5; i++)
+        Image[] heartImgs = new Image[3];
+        for (int i = 0; i < 3; i++)
         {
-            GameObject hObj = GetOrCreateUIRect(heartsRoot.transform, $"Corazon_{i}");
+            GameObject hObj = GetOrCreateUIRect(heartsRoot.transform, $"Corazon_{i + 1}");
             RectTransform hRect = hObj.GetComponent<RectTransform>();
             hRect.anchorMin = new Vector2(0f, 0.5f);
             hRect.anchorMax = new Vector2(0f, 0.5f);
             hRect.pivot     = new Vector2(0f, 0.5f);
-            hRect.anchoredPosition = new Vector2(i * 38f, 0f);
+            hRect.anchoredPosition = new Vector2(i * 40f, 0f);
             hRect.sizeDelta = new Vector2(34f, 34f);
 
             Image img = GetOrAddComponent<Image>(hObj);
-            img.sprite = (i < 3) ? (heartFull ?? heartEmpty) : (heartEmpty ?? heartFull);
-            img.color = (i < 3) ? Color.white : new Color(0.35f, 0.35f, 0.35f, 0.55f);
+            img.sprite = heartFull ?? heartEmpty;
+            img.color = Color.white;
             heartImgs[i] = img;
         }
-
-        // Fila de medio corazón / estamina
-        GameObject halfHeartObj = GetOrCreateUIRect(heartsRoot.transform, "Corazon_Medio_Status");
-        RectTransform halfRect = halfHeartObj.GetComponent<RectTransform>();
-        halfRect.anchorMin = new Vector2(0f, 1f);
-        halfRect.anchorMax = new Vector2(0f, 1f);
-        halfRect.pivot     = new Vector2(0f, 1f);
-        halfRect.anchoredPosition = new Vector2(0f, -38f);
-        halfRect.sizeDelta = new Vector2(24f, 24f);
-        Image halfImg = GetOrAddComponent<Image>(halfHeartObj);
-        halfImg.sprite = heartFull ?? heartEmpty;
-        halfImg.type = Image.Type.Filled;
-        halfImg.fillMethod = Image.FillMethod.Horizontal;
-        halfImg.fillAmount = 0.5f;
 
         // Etiqueta "ESTAMINA [Shift]"
         GameObject staminaTextObj = GetOrCreateUIRect(hudLeft.transform, "Texto_Estamina_Label");
@@ -102,8 +94,8 @@ public static class Level2HUD
         stTxtRect.anchorMin = new Vector2(0f, 1f);
         stTxtRect.anchorMax = new Vector2(0f, 1f);
         stTxtRect.pivot     = new Vector2(0f, 1f);
-        stTxtRect.anchoredPosition = new Vector2(30f, -42f);
-        stTxtRect.sizeDelta = new Vector2(220f, 24f);
+        stTxtRect.anchoredPosition = new Vector2(0f, -44f);
+        stTxtRect.sizeDelta = new Vector2(220f, 20f);
 
         Text stText = GetOrAddComponent<Text>(staminaTextObj);
         stText.text = "ESTAMINA [Shift]";
@@ -143,6 +135,12 @@ public static class Level2HUD
         // ========================================================
         GameObject centerTimerObj = GetOrCreateUIRect(hud.transform, "HUD_Centro_TiempoPuntos");
         centerTimerObj.SetActive(true);
+
+        // Limpiar TODOS los hijos viejos para evitar textos empalmados de tiempo y puntos
+        for (int c = centerTimerObj.transform.childCount - 1; c >= 0; c--)
+        {
+            UnityEngine.Object.DestroyImmediate(centerTimerObj.transform.GetChild(c).gameObject);
+        }
 
         RectTransform centerRect = centerTimerObj.GetComponent<RectTransform>();
         centerRect.anchorMin = new Vector2(0.5f, 1f);
@@ -194,6 +192,12 @@ public static class Level2HUD
         // ========================================================
         GameObject objPanel = GetOrCreateUIRect(hud.transform, "HUD_Derecha_Objetivo");
         objPanel.SetActive(true);
+
+        // Limpiar TODOS los hijos viejos para evitar textos empalmados de objetivo ("Cruza el mercado...")
+        for (int c = objPanel.transform.childCount - 1; c >= 0; c--)
+        {
+            UnityEngine.Object.DestroyImmediate(objPanel.transform.GetChild(c).gameObject);
+        }
 
         RectTransform objPanelRect = objPanel.GetComponent<RectTransform>();
         objPanelRect.anchorMin = new Vector2(1f, 1f);
@@ -277,6 +281,16 @@ public static class Level2HUD
         if (propActiveH != null && heartFull != null) propActiveH.objectReferenceValue = heartFull;
         var propLostH = soHUD.FindProperty("lostHeartSprite");
         if (propLostH != null && heartEmpty != null) propLostH.objectReferenceValue = heartEmpty;
+        var propActiveCol = soHUD.FindProperty("activeHeartColor");
+        if (propActiveCol != null) propActiveCol.colorValue = Color.white;
+        var propLostCol = soHUD.FindProperty("lostHeartColor");
+        if (propLostCol != null) propLostCol.colorValue = new Color(0.25f, 0.25f, 0.25f, 0.45f);
+
+        // Limpiar inventario de velas en Nivel 2 (no se usan velas en la persecución)
+        var propCandleRoot = soHUD.FindProperty("candleInventoryRoot");
+        if (propCandleRoot != null) propCandleRoot.objectReferenceValue = null;
+        var propCandleCount = soHUD.FindProperty("candleCountText");
+        if (propCandleCount != null) propCandleCount.objectReferenceValue = null;
 
         soHUD.ApplyModifiedProperties();
 

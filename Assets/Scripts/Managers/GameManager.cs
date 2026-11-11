@@ -222,12 +222,23 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Carga el siguiente nivel en la progresión.
+    /// Carga el siguiente nivel en la progresión o la pantalla de créditos si es el nivel final.
     /// </summary>
     public void NextLevel()
     {
         Time.timeScale = 1f;
         int nextIndex = currentLevelNumber + 1;
+
+        if (currentLevelNumber >= 4 || nextIndex > 4)
+        {
+            Debug.Log("[GameManager] ¡Juego Completado! Cargando escena de Créditos...");
+            if (SceneLoader.Instance != null)
+                SceneLoader.Instance.LoadScene("Credits");
+            else
+                SceneManager.LoadScene("Credits");
+            return;
+        }
+
         string nextSceneName = $"Level{nextIndex}_" + (nextIndex == 2 ? "Callejon" : nextIndex == 3 ? "Atrio" : "Cementerio");
 
         if (SceneLoader.Instance != null)

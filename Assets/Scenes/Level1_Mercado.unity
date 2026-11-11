@@ -3967,6 +3967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompletedUI
   panel: {fileID: 1000027011}
+  titleText: {fileID: 0}
   timeResultText: {fileID: 527233938}
   scoreResultText: {fileID: 464232685}
   highScoreText: {fileID: 977231831}
@@ -17322,6 +17323,7 @@ MonoBehaviour:
   musicaNivel1: {fileID: 8300000, guid: 3023f4bd1d9611a47a716a6bc054539d, type: 3}
   musicaNivel2: {fileID: 8300000, guid: 18c4af49f69c58146a41ff53fedfea2c, type: 3}
   musicaNivel3: {fileID: 0}
+  musicaNivel4: {fileID: 0}
   lloronaLlanto: {fileID: 0}
   pasos1: {fileID: 0}
   escondite: {fileID: 0}

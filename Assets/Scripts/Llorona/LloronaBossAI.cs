@@ -28,10 +28,10 @@ public class LloronaBossAI : MonoBehaviour
     [SerializeField] int currentPhase = 1;
 
     [Header("Velocidades por Fase")]
-    [SerializeField] float phase1Speed = 2.85f;
-    [SerializeField] float phase2Speed = 3.40f;
-    [SerializeField] float phase3Speed = 3.85f;
-    [SerializeField] float lungeSpeed = 6.5f;
+    [SerializeField] float phase1Speed = 2.35f;
+    [SerializeField] float phase2Speed = 2.75f;
+    [SerializeField] float phase3Speed = 3.15f;
+    [SerializeField] float lungeSpeed = 5.2f;
 
     [Header("Audio SFX")]
     [SerializeField] AudioClip screamSfx;
@@ -54,6 +54,8 @@ public class LloronaBossAI : MonoBehaviour
 
     float lungeTimer = 5.0f;
     float invulnerableTimer = 0f;
+    float stunTimer = 0f;
+    float shockwaveTimer = 7.0f;
     Vector2 lungeTargetDir;
     Vector2 facing = Vector2.down;
     Color normalColor = Color.white;
@@ -93,6 +95,13 @@ public class LloronaBossAI : MonoBehaviour
         if (player == null) player = FindAnyObjectByType<PlayerMovement>();
         if (state == BossState.Purified) return;
 
+        // Si está aturdida por impacto de agua bendita:
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+            if (rb != null) rb.linearVelocity = Vector2.zero;
+        }
+
         // Temporizador de invulnerabilidad tras ser impactada
         if (invulnerableTimer > 0f)
         {
@@ -108,6 +117,8 @@ public class LloronaBossAI : MonoBehaviour
                 spriteRenderer.color = normalColor;
             }
         }
+
+        if (stunTimer > 0f) return;
 
         switch (state)
         {
@@ -134,6 +145,18 @@ public class LloronaBossAI : MonoBehaviour
         float speed = (currentPhase == 1) ? phase1Speed : (currentPhase == 2 ? phase2Speed : phase3Speed);
         Vector2 toPlayer = (Vector2)player.transform.position - (Vector2)transform.position;
         Vector2 dir = toPlayer.normalized;
+
+        // Alarido en Onda Expansiva periódico (Fase 2 y 3 si Carlos está cerca)
+        if (currentPhase >= 2 && state == BossState.NormalChase)
+        {
+            shockwaveTimer -= Time.deltaTime;
+            if (shockwaveTimer <= 0f && toPlayer.magnitude < 4.8f)
+            {
+                shockwaveTimer = (currentPhase == 2) ? 10.5f : 8.0f;
+                StartCoroutine(PerformShockwaveScream(shockwaveRadius: 5.2f, knockbackForce: 3.8f));
+                return;
+            }
+        }
 
         if (rb != null) rb.linearVelocity = dir * speed;
         if (dir.sqrMagnitude > 0.01f)
@@ -193,7 +216,8 @@ public class LloronaBossAI : MonoBehaviour
         if (invulnerableTimer > 0f || state == BossState.Purified) return;
 
         currentHealth -= damage;
-        invulnerableTimer = 0.85f;
+        invulnerableTimer = 1.0f;
+        stunTimer = 1.2f;
 
         PlaySound(hurtSfx ?? screamSfx, 1.0f);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -207,11 +231,13 @@ public class LloronaBossAI : MonoBehaviour
         // Efecto visual de destello de daño
         StartCoroutine(HitFlashEffect());
 
-        // Retroceso por el impacto sagrado (Knockback)
+        // Retroceso contundente por el impacto sagrado (Knockback de 3.2m)
         if (player != null && rb != null)
         {
             Vector2 awayDir = ((Vector2)transform.position - (Vector2)player.transform.position).normalized;
-            transform.position += (Vector3)(awayDir * 1.5f);
+            if (awayDir.sqrMagnitude < 0.01f) awayDir = Vector2.up;
+            transform.position += (Vector3)(awayDir * 3.2f);
+            rb.linearVelocity = Vector2.zero;
         }
 
         // Revisar cambio de fase o derrota
@@ -226,11 +252,6 @@ public class LloronaBossAI : MonoBehaviour
         else if (currentHealth == 3 && currentPhase == 2)
         {
             StartCoroutine(TransitionToPhase(3));
-        }
-        else if (currentPhase >= 2)
-        {
-            // En fase 2 y 3, tiene chance de teletransportarse tras ser golpeada
-            StartCoroutine(TeleportReposition());
         }
     }
 
@@ -287,8 +308,94 @@ public class LloronaBossAI : MonoBehaviour
         }
 
         UpdateBossLightColor();
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.4f);
+
+        // Alarido con onda de choque masiva al estallar la nueva fase
+        yield return StartCoroutine(PerformShockwaveScream(shockwaveRadius: 6.2f, knockbackForce: 4.5f));
+
+        yield return new WaitForSeconds(0.4f);
         state = BossState.NormalChase;
+    }
+
+    public IEnumerator PerformShockwaveScream(float shockwaveRadius = 5.2f, float knockbackForce = 4.0f)
+    {
+        if (state == BossState.Purified) yield break;
+
+        // Breve pausa para telegrafiar el alarido (0.4s)
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+
+        Color origColor = normalColor;
+        if (bossLight != null)
+        {
+            bossLight.color = (currentPhase == 3) ? new Color(1.0f, 0.15f, 0.2f) : new Color(0.85f, 0.25f, 1.0f);
+            bossLight.intensity = 3.8f;
+        }
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = new Color(1.0f, 0.4f, 0.4f);
+        }
+
+        yield return new WaitForSeconds(0.40f);
+
+        // 1. Chillido ensordecedor
+        PlaySound(screamSfx, 1.0f);
+
+        // 2. Destello visual de onda expansiva
+        StartCoroutine(SpawnShockwaveVisualRing(transform.position, shockwaveRadius));
+
+        // 3. Empuje y susto a Carlos si está dentro del radio
+        if (player != null && !player.IsHidden)
+        {
+            float dist = Vector2.Distance(transform.position, player.transform.position);
+            if (dist <= shockwaveRadius)
+            {
+                Vector2 pushDir = ((Vector2)player.transform.position - (Vector2)transform.position).normalized;
+                if (pushDir.sqrMagnitude < 0.01f) pushDir = (transform.localScale.x < 0) ? Vector2.left : Vector2.right;
+
+                // Empuje físico
+                player.transform.position += (Vector3)(pushDir * knockbackForce);
+
+                // Drenado de estamina por el impacto del grito (25 puntos)
+                player.DrainStamina(25f);
+
+                if (HUD.Instance != null)
+                {
+                    HUD.Instance.ShowEventNotice("¡¡EL ALARIDO DE LA LLORONA TE EMPUJA HACIA ATRÁS!!", 1.8f);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(0.45f);
+
+        if (spriteRenderer != null) spriteRenderer.color = origColor;
+        UpdateBossLightColor();
+    }
+
+    IEnumerator SpawnShockwaveVisualRing(Vector3 center, float maxRadius)
+    {
+        GameObject shockObj = new GameObject("Shockwave_FX");
+        shockObj.transform.position = center;
+
+        Light2D l2d = shockObj.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = (currentPhase == 3) ? new Color(1.0f, 0.25f, 0.25f) : new Color(0.85f, 0.35f, 1.0f);
+        l2d.intensity = 4.5f;
+        l2d.pointLightInnerRadius = 0.5f;
+        l2d.pointLightOuterRadius = 1.0f;
+
+        float dur = 0.5f;
+        for (float t = 0; t < dur; t += Time.deltaTime)
+        {
+            float p = t / dur;
+            if (l2d != null)
+            {
+                l2d.pointLightOuterRadius = Mathf.Lerp(1.0f, maxRadius * 1.35f, p);
+                l2d.intensity = Mathf.Lerp(4.5f, 0f, p);
+            }
+            yield return null;
+        }
+
+        Destroy(shockObj);
     }
 
     IEnumerator TeleportReposition()
@@ -320,59 +427,127 @@ public class LloronaBossAI : MonoBehaviour
         // 1. Sonido celestial de purificación
         PlaySound(purifiedSfx, 1.0f);
 
-        // 2. Destello dorado sagrado
+        // 2. Luz celeste y pacífica
         if (bossLight != null)
         {
-            bossLight.color = new Color(1.0f, 0.90f, 0.40f);
-            bossLight.intensity = 4.0f;
-            bossLight.pointLightOuterRadius = 8.0f;
+            bossLight.color = new Color(0.4f, 0.85f, 1.0f);
+            bossLight.intensity = 3.0f;
+            bossLight.pointLightOuterRadius = 6.0f;
         }
 
-        // 3. Notificación triunfal en el HUD
-        if (HUD.Instance != null)
+        if (globalLight != null)
         {
-            HUD.Instance.ShowEventNotice("¡¡¡EL ESPÍRITU DE LA LLORONA HA SIDO PURIFICADO!!!\n¡¡El tormento terminó! Cruza la Gran Reja hacia tu hogar!!", 8.0f);
+            globalLight.color = new Color(0.35f, 0.45f, 0.65f); // Luz pacífica de luna
+            globalLight.intensity = 1.0f;
         }
 
-        // 4. Abrir la Gran Reja Gótica y activar LevelGoal
-        var ritualCtrl = FindAnyObjectByType<Level4RitualController>();
-        var goal = FindAnyObjectByType<LevelGoal>(FindObjectsInactive.Include);
-        if (goal != null)
+        // 3. Purificar y desvanecer a todos los espectros menores invocados
+        PurifyAllSpecters();
+
+        // 4. Conectar con la Tumba de La Llorona para la ofrenda final
+        if (LloronaGraveOffering.Instance != null)
         {
-            goal.gameObject.SetActive(true);
-            var col = goal.GetComponent<Collider2D>();
-            if (col != null) col.enabled = true;
-        }
-        var barrier = GameObject.Find("Barrera_Solida_Sello");
-        if (barrier != null) barrier.SetActive(false);
+            LloronaGraveOffering.Instance.EnableOffering();
 
-        var gateLight = GameObject.Find("LuzSalvacion")?.GetComponent<Light2D>();
-        if (gateLight != null)
+            // Flotar suavemente hacia su tumba y posarse en vigilia en paz
+            Vector3 targetGravePos = LloronaGraveOffering.Instance.transform.position + new Vector3(1.1f, 0.4f, 0f);
+            Vector3 startPos = transform.position;
+            float travelTime = 2.4f;
+
+            for (float t = 0; t < travelTime; t += Time.deltaTime)
+            {
+                transform.position = Vector3.Lerp(startPos, targetGravePos, t / travelTime);
+                if (spriteRenderer != null)
+                {
+                    spriteRenderer.color = new Color(0.7f, 0.95f, 1.0f, 0.85f);
+                }
+                yield return null;
+            }
+            transform.position = targetGravePos;
+        }
+        else
         {
-            gateLight.color = new Color(0.15f, 1.0f, 0.45f);
-            gateLight.intensity = 3.5f;
+            // Respaldo por si no estuviera la tumba
+            AscendToHeaven();
         }
+    }
 
-        var label = GameObject.Find("LabelMeta")?.GetComponent<TextMesh>();
-        if (label != null)
+    public void AscendToHeaven()
+    {
+        StartCoroutine(AscensionSequence());
+    }
+
+    IEnumerator AscensionSequence()
+    {
+        if (bossLight != null)
         {
-            label.text = "¡¡¡LIBERTAD (A TU HOGAR)!!! ➔";
-            label.color = new Color(0.2f, 1.0f, 0.5f);
+            bossLight.color = new Color(1.0f, 0.95f, 0.45f);
+            bossLight.intensity = 4.5f;
+            bossLight.pointLightOuterRadius = 8.5f;
         }
 
-        // 5. Desvanecimiento suave del espíritu
+        PlaySound(purifiedSfx, 1.0f);
+
+        // Desvanecimiento suave y ascenso al cielo
         for (float t = 0; t < 2.5f; t += Time.deltaTime)
         {
-            float alpha = Mathf.Lerp(1.0f, 0f, t / 2.5f);
+            float alpha = Mathf.Lerp(0.85f, 0f, t / 2.5f);
             if (spriteRenderer != null)
             {
-                spriteRenderer.color = new Color(1.0f, 1.0f, 0.8f, alpha);
-                transform.position += Vector3.up * (Time.deltaTime * 0.4f); // Ascenso celestial
+                spriteRenderer.color = new Color(1.0f, 1.0f, 0.85f, alpha);
+                transform.position += Vector3.up * (Time.deltaTime * 0.55f);
             }
             yield return null;
         }
 
         gameObject.SetActive(false);
+    }
+
+    void PurifyAllSpecters()
+    {
+        if (specter1 != null) StartCoroutine(PurifyMinorSpecter(specter1));
+        if (specter2 != null) StartCoroutine(PurifyMinorSpecter(specter2));
+
+        // Por seguridad, purificar cualquier otro espectro activo en el cementerio
+        SpecterAI[] allSpecters = FindObjectsByType<SpecterAI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var sp in allSpecters)
+        {
+            if (sp != null && sp.gameObject != specter1 && sp.gameObject != specter2)
+            {
+                StartCoroutine(PurifyMinorSpecter(sp.gameObject));
+            }
+        }
+    }
+
+    IEnumerator PurifyMinorSpecter(GameObject spObj)
+    {
+        if (spObj == null) yield break;
+
+        // Desactivar colisiones para que no puedan asustar ni tocar a Carlos
+        var cols = spObj.GetComponentsInChildren<Collider2D>();
+        foreach (var c in cols) c.enabled = false;
+
+        var spAI = spObj.GetComponent<SpecterAI>();
+        if (spAI != null) spAI.enabled = false;
+
+        var sr = spObj.GetComponentInChildren<SpriteRenderer>();
+        var l2d = spObj.GetComponentInChildren<Light2D>();
+        if (l2d != null)
+        {
+            l2d.color = new Color(1.0f, 0.90f, 0.45f); // Luz sagrada dorada
+            l2d.intensity = 2.0f;
+        }
+
+        // Ascenso y desvanecimiento
+        for (float t = 0; t < 2.0f; t += Time.deltaTime)
+        {
+            float alpha = Mathf.Lerp(1.0f, 0f, t / 2.0f);
+            if (sr != null) sr.color = new Color(1.0f, 1.0f, 0.85f, alpha);
+            if (spObj != null) spObj.transform.position += Vector3.up * (Time.deltaTime * 0.45f);
+            yield return null;
+        }
+
+        if (spObj != null) spObj.SetActive(false);
     }
 
     void UpdateBossLightColor()
@@ -395,7 +570,7 @@ public class LloronaBossAI : MonoBehaviour
 
     void CheckCatch(Collider2D col)
     {
-        if (state == BossState.Purified || invulnerableTimer > 0f) return;
+        if (state == BossState.Purified || invulnerableTimer > 0f || stunTimer > 0f) return;
         if (col == null || !col.CompareTag("Player")) return;
         if (player != null && player.IsHidden) return;
 

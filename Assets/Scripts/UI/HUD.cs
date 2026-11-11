@@ -144,7 +144,7 @@ public class HUD : MonoBehaviour
                 if (activeHeartSprite != null && lostHeartSprite != null)
                 {
                     heartImages[i].sprite = (i < lives) ? activeHeartSprite : lostHeartSprite;
-                    heartImages[i].color = Color.white;
+                    heartImages[i].color = (i < lives) ? activeHeartColor : lostHeartColor;
                 }
                 else
                 {

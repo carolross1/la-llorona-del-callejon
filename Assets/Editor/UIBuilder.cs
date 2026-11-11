@@ -726,46 +726,57 @@ public static class UIBuilder
         RectTransform evtRt = evtNoticeGo.AddComponent<RectTransform>();
         evtRt.anchorMin = evtRt.anchorMax = new Vector2(0.5f, 1f);
         evtRt.pivot = new Vector2(0.5f, 1f);
-        evtRt.anchoredPosition = new Vector2(0f, -98f);
-        evtRt.sizeDelta = new Vector2(860f, 54f);
+        evtRt.anchoredPosition = new Vector2(0f, -95f);
+        evtRt.sizeDelta = new Vector2(980f, 72f);
 
         Image evtBg = evtNoticeGo.AddComponent<Image>();
         evtBg.sprite = BannersMenuSprite ?? PlacaNormal;
         evtBg.type = Image.Type.Sliced;
-        evtBg.color = new Color(0.08f, 0.05f, 0.12f, 0.94f);
+        evtBg.color = new Color(0.06f, 0.04f, 0.10f, 0.95f);
         CanvasGroup evtCg = evtNoticeGo.AddComponent<CanvasGroup>();
 
         Text evtTxt = CreateText(evtNoticeGo.transform, "AvisoTexto", "", 24,
-            TextAnchor.MiddleCenter, new Color(1f, 0.95f, 0.70f),
+            TextAnchor.MiddleCenter, new Color(1f, 0.94f, 0.65f),
             Vector2.zero, Vector2.one, Vector2.zero)
             .GetComponent<Text>();
         evtTxt.fontStyle = FontStyle.Bold;
-        evtTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
+        evtTxt.horizontalOverflow = HorizontalWrapMode.Wrap;
+        evtTxt.verticalOverflow = VerticalWrapMode.Overflow;
+        evtTxt.lineSpacing = 1.15f;
+        var evtOutline = evtTxt.gameObject.AddComponent<Outline>();
+        evtOutline.effectColor = new Color(0f, 0f, 0f, 0.9f);
+        evtOutline.effectDistance = new Vector2(1.5f, -1.5f);
         evtNoticeGo.SetActive(false);
 
         // ════════════════════════════════════════════════════════════════════════
-        // E. TUTORIAL FLOTANTE (A 60 px del borde inferior)
+        // E. TUTORIAL FLOTANTE (A 55 px del borde inferior)
         // ════════════════════════════════════════════════════════════════════════
         GameObject tutGo = new GameObject("Tutorial_Bottom60");
         tutGo.transform.SetParent(hudGo.transform, false);
         RectTransform tutRt = tutGo.AddComponent<RectTransform>();
         tutRt.anchorMin = tutRt.anchorMax = new Vector2(0.5f, 0f);
         tutRt.pivot = new Vector2(0.5f, 0f);
-        tutRt.anchoredPosition = new Vector2(0f, 60f);
-        tutRt.sizeDelta = new Vector2(980f, 78f);
+        tutRt.anchoredPosition = new Vector2(0f, 55f);
+        tutRt.sizeDelta = new Vector2(1040f, 96f);
 
         Image tutBg = tutGo.AddComponent<Image>();
         tutBg.sprite = PlacaNormal;
         tutBg.type = Image.Type.Sliced;
-        tutBg.color = new Color(0.10f, 0.07f, 0.14f, 0.92f);
+        tutBg.color = new Color(0.06f, 0.04f, 0.10f, 0.95f);
         CanvasGroup tutCg = tutGo.AddComponent<CanvasGroup>();
 
         Text tutTxt = CreateText(tutGo.transform, "TutorialText",
-            "WASD moverte · Shift correr · [E] esconderse · [F] vela", 26,
-            TextAnchor.MiddleCenter, new Color(1f, 0.95f, 0.85f),
+            "WASD moverte · Shift correr · [E] esconderse · [F] vela", 25,
+            TextAnchor.MiddleCenter, new Color(1f, 0.96f, 0.82f),
             Vector2.zero, Vector2.one, Vector2.zero)
             .GetComponent<Text>();
         tutTxt.fontStyle = FontStyle.Bold;
+        tutTxt.horizontalOverflow = HorizontalWrapMode.Wrap;
+        tutTxt.verticalOverflow = VerticalWrapMode.Overflow;
+        tutTxt.lineSpacing = 1.15f;
+        var tutOutline = tutTxt.gameObject.AddComponent<Outline>();
+        tutOutline.effectColor = new Color(0f, 0f, 0f, 0.9f);
+        tutOutline.effectDistance = new Vector2(1.5f, -1.5f);
         tutGo.SetActive(false);
 
         if (minimalHud)

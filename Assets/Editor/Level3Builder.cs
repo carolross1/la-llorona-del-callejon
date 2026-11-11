@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -11,13 +12,19 @@ using UnityEngine.Tilemaps;
 
 /// <summary>
 /// Constructor oficial y automatizado del Nivel 3: El Atrio de la Parroquia de Dolores.
-/// Reconstrucción monumental (Opción A):
-/// - Escenario amplio y expandido de 3 secciones (Calzada de Entrada, Gran Plaza de la Fuente, Explanada Superior y Parroquia).
-/// - Fachada monumental de la Parroquia con sus escaleras de cantera nativas.
-/// - Mecánica ritual de "Las Puertas Selladas": Carlos debe encontrar veladoras y consagrar 3 nichos sagrados (Altar, Fuente y Cripta) para abrir el santuario.
+/// Reconstrucción monumental expandida:
+/// - 4 Cuadrantes temáticos:
+///     1. Calzada Sur flanqueada por Cipreses Góticos nativos.
+///     2. Claustro Oeste con Arcadas Góticas coloniales iluminadas por faroles.
+///     3. Gran Plaza Central de la Fuente Sagrada con charcos ralentizantes.
+///     4. Patio Este con el Gran Mausoleo Gótico, criptas y escombros de ruinas ruidosos.
+/// - Mecánica ritual de "Las 4 Puertas Selladas": Carlos debe explorar los 4 sectores del atrio
+///   para consagrar los 4 nichos sagrados (Claustro, Fuente, Mausoleo y Altar Mayor) con veladoras [F].
+/// - Trampas de terreno: Escombros de cantera (crunching noise trap) que alertan a La Llorona al pisarlos.
 /// - Cada nicho consagrado crea una zona segura divina que repele a La Llorona, pero incrementa su agresión.
-/// - Al encender las 3 ofrendas, las campanas repican, las puertas se abren y Carlos sube las escaleras hasta la puerta para terminar el nivel.
-/// - HUD limpio con contador de Ofrendas (X/3) y Velas.
+/// - Al consagrar las 4 ofrendas, las campanas repican, las puertas de la Parroquia se abren y Carlos
+///   sube las escaleras hasta el umbral sagrado para completar el nivel.
+/// - HUD limpio con contador de Ofrendas (X/4) y Velas.
 /// </summary>
 public static class Level3Builder
 {
@@ -26,26 +33,33 @@ public static class Level3Builder
     [MenuItem("La Llorona/Construir Nivel 3")]
     public static void BuildLevel3Scene()
     {
-        Debug.Log("[Level3Builder] Iniciando reconstrucción monumental del Nivel 3 (El Atrio de Dolores - Opción A)...");
+        Debug.Log("[Level3Builder] Iniciando reconstrucción monumental del Nivel 3 (El Atrio de Dolores - 4 Ofrendas)...");
 
-        // 1. Asegurar slicing de sprites del Nivel 3
+        // 1. Asegurar slicing y configuración de sprites de Nivel 3
         SpriteSheetSlicer.SliceNivel3();
         AssetDatabase.Refresh();
 
         Scene scene = File.Exists(ScenePath)
             ? EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single)
-            : EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
         Undo.IncrementCurrentGroup();
         int group = Undo.GetCurrentGroup();
         Undo.SetCurrentGroupName("Construir Nivel 3 Monumental Oficial");
 
-        int wallsLayer = LayerMask.NameToLayer("Walls");
-        int hideSpotLayer = LayerMask.NameToLayer("HideSpot");
-        int playerLayer = LayerMask.NameToLayer("Player");
-        int lloronaLayer = LayerMask.NameToLayer("Llorona");
+        // Limpieza de objetos residuales de la escena para evitar basura o colisiones duplicadas
+        CleanOldSceneGarbage(scene);
 
-        // Cargar sprites oficiales del Nivel 3
+        int wallsLayer = LayerMask.NameToLayer("Walls");
+        if (wallsLayer < 0) wallsLayer = LayerMask.NameToLayer("Default");
+        int hideSpotLayer = LayerMask.NameToLayer("HideSpot");
+        if (hideSpotLayer < 0) hideSpotLayer = LayerMask.NameToLayer("Default");
+        int playerLayer = LayerMask.NameToLayer("Player");
+        if (playerLayer < 0) playerLayer = LayerMask.NameToLayer("Default");
+        int lloronaLayer = LayerMask.NameToLayer("Llorona");
+        if (lloronaLayer < 0) lloronaLayer = LayerMask.NameToLayer("Default");
+
+        // Cargar sprites oficiales nativos de Nivel 3
         Sprite catedralSprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/catedral.png")
             .OfType<Sprite>().FirstOrDefault();
         Sprite sAltarSagrado = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/altar_sagrado.png")
@@ -57,6 +71,18 @@ public static class Level3Builder
         Sprite sCirculoSantuario = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/circulo_santuario.png")
             .OfType<Sprite>().FirstOrDefault();
         Sprite sPuertasAbiertas = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/puertas_abiertas.png")
+            .OfType<Sprite>().FirstOrDefault();
+
+        // Cargar los 5 NUEVOS sprites pixel art de Nivel 3
+        Sprite sAltarCustom = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Nivel3/Altar de Día de Muertos en píxeles.png")
+            .OfType<Sprite>().FirstOrDefault() ?? sAltarSagrado;
+        Sprite sArcadaCustom = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Nivel3/Arcada gótica iluminada por faroles.png")
+            .OfType<Sprite>().FirstOrDefault();
+        Sprite sCipresCustom = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Nivel3/Ciprés gótico en pixel art.png")
+            .OfType<Sprite>().FirstOrDefault();
+        Sprite sEscombrosCustom = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Nivel3/Escombros de ruinas en pixel art.png")
+            .OfType<Sprite>().FirstOrDefault();
+        Sprite sMausoleoCustom = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Nivel3/Mausoleo gótico con velas y flores.png")
             .OfType<Sprite>().FirstOrDefault();
 
         // Cargar clips de audio oficiales del Nivel 3
@@ -82,8 +108,9 @@ public static class Level3Builder
         Sprite[] ofrendaSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Environment/Nivel 3/ofrendas.png")
             .OfType<Sprite>().OrderBy(s => s.name).ToArray();
 
-        // 2. Grid y Suelo con Tilemap Ampliado (Y de 0 a 28)
-        GameObject gridGo = GameObject.Find("Grid") ?? new GameObject("Grid");
+        // 2. Grid y Suelo con Tilemap Ampliado (X: -2 a 38, Y: 0 a 28)
+        GameObject gridGo = GameObject.Find("Grid");
+        if (gridGo == null) gridGo = new GameObject("Grid");
         if (gridGo.GetComponent<Grid>() == null) gridGo.AddComponent<Grid>();
 
         Tilemap suelo = GetOrCreateTilemap(gridGo.transform, "Suelo", 0, -1, false);
@@ -92,7 +119,6 @@ public static class Level3Builder
         paredes.ClearAllTiles();
 
         TileBase[] allTiles = LoadTiles();
-        // Llenar el atrio monumental: X de -2 a 38, Y de 0 a 28
         for (int x = -2; x <= 38; x++)
         {
             for (int y = 0; y <= 28; y++)
@@ -100,14 +126,6 @@ public static class Level3Builder
                 TileBase t = ((x + y) % 5 == 0) ? allTiles[1] : allTiles[0];
                 suelo.SetTile(new Vector3Int(x, y, 0), t);
             }
-        }
-
-        // Limpiar raíces obsoletas del Nivel 3 previo
-        string[] oldRoots = new string[] { "Props", "Hazards", "Barricadas", "Decoracion", "Luces", "Limites", "Escalinata", "Nichos_Sagrados" };
-        foreach (var r in oldRoots)
-        {
-            GameObject ex = GameObject.Find(r);
-            if (ex != null) Undo.DestroyObjectImmediate(ex);
         }
 
         // 3. Fachada Monumental de la Parroquia de Dolores (Al Norte del atrio, Y = 19.8f)
@@ -121,7 +139,7 @@ public static class Level3Builder
 
             SpriteRenderer srCat = catGo.AddComponent<SpriteRenderer>();
             srCat.sprite = catedralSprite;
-            srCat.sortingOrder = 2; // Fondo para que Carlos camine sobre las escaleras (sortingOrder 5)
+            srCat.sortingOrder = 2;
             srCat.color = new Color(0.98f, 0.96f, 1.0f);
 
             // Muros laterales que cubren las alas de la fachada y torres
@@ -146,7 +164,7 @@ public static class Level3Builder
         Sprite rejaInf = rejaSprites.FirstOrDefault(s => s.name == "Reja_Inferior") ?? rejaSprites.ElementAtOrDefault(6);
         Sprite farolaPie = rejaSprites.FirstOrDefault(s => s.name == "Farola_Pie_N3") ?? rejaSprites.ElementAtOrDefault(5);
 
-        // Reja sur inferior (dejando entrada central en X = 18)
+        // Reja sur inferior (dejando entrada central abierta en X = 15..21)
         for (float rx = 2.5f; rx <= 13.5f; rx += 5.5f)
         {
             CreateFencePiece(rejasGroup, $"Reja_Sur_Oeste_{rx:0}", rejaInf, rx, 0.8f, wallsLayer, new Vector2(5.5f, 1.0f));
@@ -156,29 +174,27 @@ public static class Level3Builder
             CreateFencePiece(rejasGroup, $"Reja_Sur_Este_{rx:0}", rejaInf, rx, 0.8f, wallsLayer, new Vector2(5.5f, 1.0f));
         }
 
-        // Farolas de pie a lo largo de las 3 secciones
-        float[] farolasCalzada = new float[] { 6.0f, 30.0f };
+        // Farolas de pie distribuidas estratégicamente
+        float[] farolasCalzada = new float[] { 5.0f, 31.0f };
         foreach (float fx in farolasCalzada)
         {
             CreateStandingLantern(rejasGroup, $"Farola_Calzada_{fx:0}", farolaPie, fx, 2.0f, wallsLayer);
         }
-
-        float[] farolasPlaza = new float[] { 6.0f, 12.0f, 24.0f, 30.0f };
+        float[] farolasPlaza = new float[] { 5.0f, 12.0f, 24.0f, 31.0f };
         foreach (float fx in farolasPlaza)
         {
             CreateStandingLantern(rejasGroup, $"Farola_Plaza_{fx:0}", farolaPie, fx, 11.0f, wallsLayer);
         }
-
         float[] farolasAtrioSup = new float[] { 13.0f, 23.0f };
         foreach (float fx in farolasAtrioSup)
         {
             CreateStandingLantern(rejasGroup, $"Farola_AtrioSup_{fx:0}", farolaPie, fx, 18.5f, wallsLayer);
         }
 
-        // Límites invisibles sólidos del atrio completo
+        // Límites invisibles sólidos del atrio completo (dejando amplio espacio caminable)
         Transform limits = FreshRoot("Limites_Atrio");
-        CreateInvisibleWall(limits, "Lim_Oeste",  2.0f,  13.5f, 27f, wallsLayer);
-        CreateInvisibleWall(limits, "Lim_Este",   34.0f,  13.5f, 27f, wallsLayer);
+        CreateInvisibleWall(limits, "Lim_Oeste",  1.0f,  13.5f, 27f, wallsLayer);
+        CreateInvisibleWall(limits, "Lim_Este",   35.0f,  13.5f, 27f, wallsLayer);
         CreateInvisibleWall(limits, "Lim_Sur",    18.0f,  0.2f,   1f, wallsLayer, 36.0f);
         CreateInvisibleWall(limits, "Lim_Norte",  18.0f, 25.0f,   1f, wallsLayer, 36.0f);
 
@@ -190,14 +206,14 @@ public static class Level3Builder
             GameObject fGo = new GameObject("Fuente_Octagonal_Central");
             fGo.transform.SetParent(props, false);
             fGo.transform.position = new Vector3(18.0f, 11.0f, 0f);
-            fGo.transform.localScale = Vector3.one * 1.2f;
+            fGo.transform.localScale = Vector3.one * 1.15f;
 
             SpriteRenderer srF = fGo.AddComponent<SpriteRenderer>();
             srF.sprite = fuenteSprite;
             srF.sortingOrder = 3;
 
             CircleCollider2D cc = fGo.AddComponent<CircleCollider2D>();
-            cc.radius = 2.3f;
+            cc.radius = 2.1f;
             cc.offset = new Vector2(0f, -0.2f);
             if (wallsLayer >= 0) fGo.layer = wallsLayer;
 
@@ -205,130 +221,158 @@ public static class Level3Builder
             lf.transform.SetParent(fGo.transform, false);
             Light2D l2df = lf.AddComponent<Light2D>();
             l2df.lightType = Light2D.LightType.Point;
-            l2df.color = new Color(0.45f, 0.75f, 1.0f);
-            l2df.intensity = 1.2f;
+            l2df.color = new Color(0.40f, 0.70f, 1.0f);
+            l2df.intensity = 1.3f;
             l2df.pointLightOuterRadius = 5.2f;
         }
 
-        // 6. Escondites y Props Coloniales (Distribuidos armónicamente en las 3 secciones)
+        // 6. SECTOR 1 (SUR): Calzada de los Cipreses Góticos
+        Sprite sCipres = sCipresCustom ?? accSprites.FirstOrDefault(s => s.name == "Cipres_Colonial_1") ?? accSprites.ElementAtOrDefault(4);
+        if (sCipres != null)
+        {
+            // Ala Oeste de la Calzada
+            CreateCypressTree(props, "Cipres_Calzada_O1", sCipres, 14.0f, 4.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Calzada_O2", sCipres,  9.5f, 4.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Calzada_O3", sCipres,  5.5f, 4.0f, wallsLayer);
+
+            // Ala Este de la Calzada
+            CreateCypressTree(props, "Cipres_Calzada_E1", sCipres, 22.0f, 4.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Calzada_E2", sCipres, 26.5f, 4.0f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Calzada_E3", sCipres, 30.5f, 4.0f, wallsLayer);
+
+            // Terraza Superior Norte enmarcando la Parroquia
+            CreateCypressTree(props, "Cipres_Atrio_Oeste", sCipres, 11.5f, 18.5f, wallsLayer);
+            CreateCypressTree(props, "Cipres_Atrio_Este",  sCipres, 24.5f, 18.5f, wallsLayer);
+        }
+
+        // 7. SECTOR 2 (OESTE): Claustro de las Arcadas Góticas Iluminadas
+        if (sArcadaCustom != null)
+        {
+            CreateGothicArcade(props, "Arcada_Gotica_Norte", sArcadaCustom,  7.5f, 16.5f, wallsLayer);
+            CreateGothicArcade(props, "Arcada_Gotica_Sur",   sArcadaCustom,  7.5f,  9.0f, wallsLayer);
+        }
+
+        // 8. SECTOR 4 (ESTE): Gran Mausoleo Gótico y Criptas
+        if (sMausoleoCustom != null)
+        {
+            CreateMausoleumBuilding(props, "Gran_Mausoleo_Gotico", sMausoleoCustom, 28.5f, 16.0f, wallsLayer);
+        }
+
+        // 9. Escondites Coloniales (Bancas, Confesionarios y Criptas)
         Sprite sConfesionario = accSprites.FirstOrDefault(s => s.name == "Confesionario_N3") ?? accSprites.ElementAtOrDefault(1);
         Sprite sBanca         = accSprites.FirstOrDefault(s => s.name == "Banca_Hierro_N3") ?? accSprites.ElementAtOrDefault(0);
         Sprite sCripta        = accSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? accSprites.ElementAtOrDefault(2);
-        Sprite sCipres        = accSprites.FirstOrDefault(s => s.name == "Cipres_Colonial_1") ?? accSprites.ElementAtOrDefault(4);
-        Sprite sAltar         = accSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? accSprites.ElementAtOrDefault(8);
 
-        // Sección 1: Bancas en la Calzada Sur
-        CreateHideSpotOfficial(props, "Banca_Calzada_Oeste", sBanca,  8.5f, 3.8f, 1.1f, hideSpotLayer, wallsLayer,
+        // Bancas en la Calzada Sur
+        CreateHideSpotOfficial(props, "Banca_Calzada_Oeste", sBanca,  9.0f, 2.2f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Banca_Calzada_Este",  sBanca, 27.5f, 3.8f, 1.1f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Banca_Calzada_Este",  sBanca, 27.0f, 2.2f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
-        // Sección 2: Altar y Confesionario en el Ala Oeste (Plazoleta del Altar)
-        if (sAltar != null)
-        {
-            CreateSolidProp(props, "Altar_Sagrado_Oeste", sAltar, 7.5f, 14.2f, 1.15f, wallsLayer, new Vector2(4.6f, 1.6f), new Vector2(0f, 0.8f));
-            GameObject lAltar = new GameObject("Luz_Altar");
-            lAltar.transform.SetParent(props, false);
-            lAltar.transform.position = new Vector3(7.5f, 14.6f, 0f);
-            Light2D l2dAltar = lAltar.AddComponent<Light2D>();
-            l2dAltar.lightType = Light2D.LightType.Point;
-            l2dAltar.color = new Color(1.0f, 0.70f, 0.25f);
-            l2dAltar.intensity = 1.6f;
-            l2dAltar.pointLightOuterRadius = 4.8f;
-            lAltar.AddComponent<LightFlicker>();
-        }
-        CreateHideSpotOfficial(props, "Confesionario_Ala_Oeste", sConfesionario, 5.5f, 9.5f, 1.15f, hideSpotLayer, wallsLayer,
+        // Confesionario en el Claustro Oeste
+        CreateHideSpotOfficial(props, "Confesionario_Claustro", sConfesionario, 4.5f, 13.0f, 1.15f, hideSpotLayer, wallsLayer,
             new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
 
-        // Sección 2: Criptas en el Ala Este (Jardín de las Criptas)
-        CreateHideSpotOfficial(props, "Cripta_Ala_Este", sCripta, 28.5f, 14.0f, 1.1f, hideSpotLayer, wallsLayer,
+        // Criptas en el Patio Este
+        CreateHideSpotOfficial(props, "Cripta_Patio_Este", sCripta, 31.5f, 11.5f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.4f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.8f, 1.8f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Banca_Jardin_Este", sBanca, 30.5f, 9.5f, 1.1f, hideSpotLayer, wallsLayer,
+        CreateHideSpotOfficial(props, "Banca_Jardin_Este", sBanca, 24.5f,  8.0f, 1.1f, hideSpotLayer, wallsLayer,
             new Vector2(2.8f, 0.9f), new Vector2(0f, 0.2f), new Vector2(3.2f, 1.6f), new Vector2(0f, -0.4f));
 
-        // Sección 3: Confesionario y Cripta adicionales en la explanada superior
+        // Confesionario superior cerca de la entrada del templo
         CreateHideSpotOfficial(props, "Confesionario_Atrio_Sup", sConfesionario,  7.0f, 19.5f, 1.15f, hideSpotLayer, wallsLayer,
             new Vector2(2.0f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.4f, 1.8f), new Vector2(0f, -0.4f));
-        CreateHideSpotOfficial(props, "Cripta_Atrio_Sup",       sCripta,        29.0f, 19.5f, 1.1f, hideSpotLayer, wallsLayer,
-            new Vector2(2.4f, 1.4f), new Vector2(0f, 0.4f), new Vector2(2.8f, 1.8f), new Vector2(0f, -0.4f));
 
-        // Cipreses enmarcando el atrio
-        if (sCipres != null)
-        {
-            CreateSolidProp(props, "Cipres_Calzada_Oeste", sCipres, 14.0f,  4.5f, 1.25f, wallsLayer, new Vector2(0.9f, 0.8f), new Vector2(0f, 0.45f));
-            CreateSolidProp(props, "Cipres_Calzada_Este",  sCipres, 22.0f,  4.5f, 1.25f, wallsLayer, new Vector2(0.9f, 0.8f), new Vector2(0f, 0.45f));
-            CreateSolidProp(props, "Cipres_Atrio_Oeste",    sCipres,  9.5f, 19.0f, 1.25f, wallsLayer, new Vector2(0.9f, 0.8f), new Vector2(0f, 0.45f));
-            CreateSolidProp(props, "Cipres_Atrio_Este",     sCipres, 26.5f, 19.0f, 1.25f, wallsLayer, new Vector2(0.9f, 0.8f), new Vector2(0f, 0.45f));
-        }
-
-        // 7. LOS 3 NICHOS SAGRADOS DEL RITUAL ([F] para ofrendar veladora)
+        // 10. LOS 4 NICHOS SAGRADOS DEL RITUAL ([F] para ofrendar veladora)
+        // Cuadrante 1: Claustro de Arcadas (Oeste)
+        // Cuadrante 2: Pocito de la Fuente (Centro)
+        // Cuadrante 3: Cripta del Gran Mausoleo (Este)
+        // Cuadrante 4: Altar Mayor de Dolores (Norte)
         Transform nichosGroup = FreshRoot("Nichos_Sagrados");
-        Sprite sAltarN3 = sAltarSagrado ?? accSprites.FirstOrDefault(s => s.name == "Altar_Atrio_N3") ?? ofrendaSprites.ElementAtOrDefault(3);
-        Sprite sCriptaN3 = sAltarSagrado ?? accSprites.FirstOrDefault(s => s.name == "Cripta_Cantera_N3") ?? ofrendaSprites.ElementAtOrDefault(6);
-        Sprite sCandelabro = ofrendaSprites.FirstOrDefault(s => s.name == "Candelabro_Vela") ?? ofrendaSprites.ElementAtOrDefault(3);
         Sprite sFlama = ofrendaSprites.FirstOrDefault(s => s.name == "Vela_Blanca_Grande") ?? ofrendaSprites.ElementAtOrDefault(4);
         Sprite sFlores = ofrendaSprites.FirstOrDefault(s => s.name == "Ramo_Cempasuchil_1") ?? ofrendaSprites.ElementAtOrDefault(7);
+        Sprite sCandelabro = ofrendaSprites.FirstOrDefault(s => s.name == "Candelabro_Vela") ?? ofrendaSprites.ElementAtOrDefault(3);
 
-        // Nicho 1: Altar Sagrado (Ala Oeste)
-        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar de la Cruz (Oeste)", 7.5f, 12.2f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
+        // Nicho 1: Claustro de las Arcadas (Oeste)
+        CreateShrineNiche(nichosGroup, "Nicho_Altar_Oeste", "Altar del Claustro (Oeste)",
+            7.5f, 12.5f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
-        // Nicho 2: Fuente Sagrada (Plaza Central)
-        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)", 18.0f, 14.0f, sAltarN3, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
+        // Nicho 2: Pocito de la Fuente Sagrada (Centro)
+        CreateShrineNiche(nichosGroup, "Nicho_Fuente_Centro", "Pocito de la Fuente (Centro)",
+            18.0f, 14.5f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
-        // Nicho 3: Cripta Sagrada (Ala Este)
-        CreateShrineNiche(nichosGroup, "Nicho_Cripta_Este", "Cripta de las Ánimas (Este)", 28.5f, 12.2f, sCriptaN3, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
+        // Nicho 3: Cripta de Ánimas en el Gran Mausoleo (Este)
+        CreateShrineNiche(nichosGroup, "Nicho_Mausoleo_Este", "Cripta de Ánimas (Este)",
+            28.5f, 12.5f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
-        // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado para dejar libre el paso central)
-        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.2f, sMesaVelas ?? sAltarN3, sCandelabro, wallsLayer, sfxTomarVela);
+        // Nicho 4: Altar Mayor de Dolores (Norte, a los pies de la escalinata)
+        CreateShrineNiche(nichosGroup, "Nicho_Altar_Norte", "Altar Mayor de Dolores (Norte)",
+            18.0f, 18.2f, sAltarCustom, sFlama, sFlores, sCirculoSantuario, wallsLayer, sfxPrenderVela, sfxNichoConsagrado);
 
-        // 8. Trampas de Terreno (Decals espaciados sin bloquear caminos)
+        // Mesa de Cirios Benditos (Dispensador en la Calzada Sur, al costado derecho para paso libre)
+        CreateCandleStandOfficial(nichosGroup, 22.5f, 3.0f, sMesaVelas ?? sAltarCustom, sCandelabro, wallsLayer, sfxTomarVela);
+
+        // 11. TRAMPAS DE TERRENO Y OBSTÁCULOS
         Transform hazards = FreshRoot("Obstaculos_Ofrendas");
         Sprite sAguaBendita = ofrendaSprites.FirstOrDefault(s => s.name == "Charco_AguaBendita") ?? ofrendaSprites.ElementAtOrDefault(0);
         Sprite sTepalcate   = ofrendaSprites.FirstOrDefault(s => s.name == "Vidrios_Jarron_Roto") ?? ofrendaSprites.ElementAtOrDefault(5);
         Sprite sVelaRoja    = ofrendaSprites.FirstOrDefault(s => s.name == "Vaso_Vela_Roja_1") ?? ofrendaSprites.ElementAtOrDefault(1);
 
-        CreateMudPuddleOfficial(hazards, sAguaBendita, 12.0f, 8.5f, 0.85f, sfxSplashCharco);
-        CreateMudPuddleOfficial(hazards, sAguaBendita, 24.0f, 16.5f, 0.85f, sfxSplashCharco);
-        CreateNoiseObstacleOfficial(hazards, sTepalcate, 24.0f, 8.5f, sfxTepalcatesCrunch);
-        CreateNoiseObstacleOfficial(hazards, sTepalcate, 12.0f, 16.5f, sfxTepalcatesCrunch);
+        // Charcos ralentizantes de agua bendita
+        CreateMudPuddleOfficial(hazards, sAguaBendita, 13.5f, 11.0f, 0.9f, sfxSplashCharco);
+        CreateMudPuddleOfficial(hazards, sAguaBendita, 22.5f, 11.0f, 0.9f, sfxSplashCharco);
 
-        // 9 Veladoras Coleccionables repartidas en el atrio
-        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  2.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Entrada_Oeste",  sVelaRoja, new Vector2(14.0f,  4.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Entrada_Este",   sVelaRoja, new Vector2(22.0f,  4.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Jardin_Oeste",   sVelaRoja, new Vector2( 8.5f,  7.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Jardin_Este",    sVelaRoja, new Vector2(27.5f,  7.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Fuente_Sur",     sVelaRoja, new Vector2(18.0f,  9.5f));
-        CreateCandlePickupOfficial(hazards, "Vela_Altar_Oeste",    sVelaRoja, new Vector2( 9.5f, 14.0f));
-        CreateCandlePickupOfficial(hazards, "Vela_Cripta_Este",    sVelaRoja, new Vector2(26.5f, 14.0f));
-        CreateCandlePickupOfficial(hazards, "Vela_Atrio_Superior", sVelaRoja, new Vector2(15.0f, 17.5f));
+        // Escombros de cantera con el nuevo sprite pixel art: ¡trampas sonoras que crujen y alertan a La Llorona!
+        Sprite rubbleSprite = sEscombrosCustom ?? sTepalcate;
+        CreateNoiseRubbleOfficial(hazards, "Escombros_Claustro_Sur", rubbleSprite,  9.5f,  8.5f, sfxTepalcatesCrunch);
+        CreateNoiseRubbleOfficial(hazards, "Escombros_Claustro_Norte", rubbleSprite, 5.5f, 14.5f, sfxTepalcatesCrunch);
+        CreateNoiseRubbleOfficial(hazards, "Escombros_Patio_Sur", rubbleSprite, 26.5f,  8.5f, sfxTepalcatesCrunch);
+        CreateNoiseRubbleOfficial(hazards, "Escombros_Patio_Norte", rubbleSprite, 30.5f, 15.0f, sfxTepalcatesCrunch);
+        CreateNoiseRubbleOfficial(hazards, "Escombros_Cruce_Norte_O", rubbleSprite, 14.0f, 15.5f, sfxTepalcatesCrunch);
+        CreateNoiseRubbleOfficial(hazards, "Escombros_Cruce_Norte_E", rubbleSprite, 22.0f, 15.5f, sfxTepalcatesCrunch);
 
-        // 9. Waypoints de Patrulla para La Llorona (Circuito amplio en el atrio extendido)
+        // 12 Veladoras Coleccionables repartidas en el atrio
+        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  2.2f));
+        CreateCandlePickupOfficial(hazards, "Vela_Entrada_Oeste",  sVelaRoja, new Vector2(14.0f,  5.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Entrada_Este",   sVelaRoja, new Vector2(22.0f,  5.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Claustro_Sur",   sVelaRoja, new Vector2( 4.5f, 10.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Claustro_Norte", sVelaRoja, new Vector2( 7.5f, 15.0f));
+        CreateCandlePickupOfficial(hazards, "Vela_Claustro_Paso",  sVelaRoja, new Vector2(10.5f, 11.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Plaza_Oeste",    sVelaRoja, new Vector2(15.0f,  9.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Plaza_Este",     sVelaRoja, new Vector2(21.0f,  9.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Patio_Sur",      sVelaRoja, new Vector2(25.5f, 10.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Mausoleo",       sVelaRoja, new Vector2(31.0f, 13.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Patio_Norte",    sVelaRoja, new Vector2(28.5f, 18.5f));
+        CreateCandlePickupOfficial(hazards, "Vela_Atrio_Superior", sVelaRoja, new Vector2(15.0f, 18.2f));
+
+        // 12. WAYPOINTS DE PATRULLA EXTENDIDA PARA LA LLORONA (10 Puntos)
         Transform wpRoot = FreshRoot("Waypoints");
-        Transform[] wps = new Transform[8];
+        Transform[] wps = new Transform[10];
         wps[0] = CreateEmpty(wpRoot, "WP_Sur_Entrada",     18.0f,  4.5f);
-        wps[1] = CreateEmpty(wpRoot, "WP_Plaza_Suroeste",  11.5f,  7.5f);
-        wps[2] = CreateEmpty(wpRoot, "WP_Altar_Oeste",      8.5f, 12.0f);
-        wps[3] = CreateEmpty(wpRoot, "WP_AtrioSup_Oeste",  13.0f, 17.5f);
-        wps[4] = CreateEmpty(wpRoot, "WP_AtrioSup_Centro", 18.0f, 18.0f);
-        wps[5] = CreateEmpty(wpRoot, "WP_AtrioSup_Este",   23.0f, 17.5f);
-        wps[6] = CreateEmpty(wpRoot, "WP_Cripta_Este",     27.5f, 12.0f);
-        wps[7] = CreateEmpty(wpRoot, "WP_Plaza_Sureste",   24.5f,  7.5f);
+        wps[1] = CreateEmpty(wpRoot, "WP_Claustro_Sur",    10.0f,  6.5f);
+        wps[2] = CreateEmpty(wpRoot, "WP_Claustro_Arcada",  7.5f, 10.5f);
+        wps[3] = CreateEmpty(wpRoot, "WP_Altar_Oeste",      7.5f, 15.0f);
+        wps[4] = CreateEmpty(wpRoot, "WP_Explanada_NO",    13.0f, 18.0f);
+        wps[5] = CreateEmpty(wpRoot, "WP_AltarMayor_Norte",18.0f, 18.0f);
+        wps[6] = CreateEmpty(wpRoot, "WP_Explanada_NE",    23.0f, 18.0f);
+        wps[7] = CreateEmpty(wpRoot, "WP_Gran_Mausoleo",   28.5f, 15.5f);
+        wps[8] = CreateEmpty(wpRoot, "WP_Criptas_Este",    28.5f, 10.5f);
+        wps[9] = CreateEmpty(wpRoot, "WP_Fuente_Centro",   18.0f, 11.5f);
 
-        // 10. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 21.2f)
+        // 13. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 21.2f)
         Transform exitGroup = FreshRoot("Salida_Meta");
-        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, sSelloPuerta, sPuertasAbiertas, sfxPortalApertura, sfxCampanas);
+        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 21.2f, 4, sSelloPuerta, sPuertasAbiertas, sfxPortalApertura, sfxCampanas);
 
-        // 11. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
+        // 14. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
         EnsureGlobalLight(0.50f);
 
-        // 12. Player (Carlos inicia en la calzada sur en Y = 1.8f)
+        // 15. Player (Carlos inicia en la calzada sur en Y = 1.8f)
         SetupPlayer(new Vector2(18.0f, 1.8f), playerLayer, sfxPuertaConfesionario, sfxRespiroAlivio);
 
-        // 13. La Llorona (Inicia patrullando entre la fuente y el paseo superior)
-        SetupLloronaCircular(new Vector2(18.0f, 11.0f), wps, wallsLayer, lloronaLayer, 1.6f, 2.8f, 5.5f, 110.0f, sfxLloronaGrito, sfxLloronaLlanto);
+        // 16. La Llorona (Inicia patrullando en la Fuente Central)
+        SetupLloronaCircular(new Vector2(18.0f, 11.5f), wps, wallsLayer, lloronaLayer, 1.6f, 2.85f, 5.5f, 110.0f, sfxLloronaGrito, sfxLloronaLlanto);
 
-        // 14. Cámara y Confiner 2D (Zoom dinámico cinematográfico para revelar la catedral completa)
+        // 17. Cámara y Confiner 2D (Zoom dinámico cinematográfico)
         Camera cam = Camera.main;
         if (cam == null)
         {
@@ -342,50 +386,200 @@ public static class Level3Builder
         cam.transform.position = new Vector3(18.0f, 4.0f, -10f);
         cam.backgroundColor = new Color(0.04f, 0.03f, 0.08f);
 
-        CameraFollow2D camFollow = cam.GetComponent<CameraFollow2D>() ?? cam.gameObject.AddComponent<CameraFollow2D>();
+        CameraFollow2D camFollow = cam.GetComponent<CameraFollow2D>();
+        if (camFollow == null) camFollow = cam.gameObject.AddComponent<CameraFollow2D>();
         camFollow.SetOrthoSize(3.6f);
         camFollow.SetOffset(new Vector3(0f, 1.1f, -10f));
-        camFollow.SetBounds(new Vector2(10.0f, 3.8f), new Vector2(26.0f, 25.5f));
+        camFollow.SetBounds(new Vector2(8.5f, 3.8f), new Vector2(27.5f, 25.5f));
         camFollow.EnableDynamicZoom(minY: 12.0f, maxY: 21.2f, minSize: 3.6f, maxSize: 4.8f, normalOffY: 1.1f, peakOffY: 2.6f);
 
-        // 15. Triggers de Tutorial narrativo
+        // 18. Triggers de Tutorial narrativo actualizado para 4 Ofrendas
         Transform tutRoot = FreshRoot("TutorialTriggers");
         CreateTutorialTrigger(tutRoot, "Tutorial_Inicio",
             new Vector2(18.0f, 2.0f), new Vector2(8f, 3f),
-            "¡El Atrio de la Parroquia de Dolores!\nLas puertas del templo están selladas por el luto espectral.\n• Busca las 3 columnas de luz divina en el atrio (Oeste, Centro, Este).\n• Acércate y pulsa [F] con una veladora para consagrar cada Nicho Sagrado.\n• Si te quedas sin veladoras, acude a la Mesa Bendita en la entrada para reponer.\n• Pulsa [E] para esconderte de La Llorona en bancas y confesionarios.",
+            "¡El Atrio de la Parroquia de Dolores!\nLas puertas del templo están selladas por el luto espectral.\n• Hay 4 Nichos Sagrados en el atrio: Claustro de Arcadas (Oeste), Fuente Sagrada (Centro), Gran Mausoleo (Este) y Altar Mayor (Norte).\n• Acércate a cada nicho con una veladora y pulsa [F] para consagrarlo.\n• ¡Cuidado con los escombros de ruinas en el suelo, crujirán y alertarán a La Llorona!\n• Repón veladoras en la Mesa Bendita de la entrada siempre que lo necesites.\n• Pulsa [E] para esconderte en confesionarios, criptas y bancas.\n• Consagra los 4 nichos sagrados para abrir las puertas y escapar.",
             showOnStart: true);
 
-        // 16. GameManager y AudioManager
+        // 19. GameManager y AudioManager
         SetupGameManager(3, sfxCampanas, sfxPrenderVela, sfxPuertaConfesionario, sfxLloronaGrito, sfxLloronaLlanto, sfxUiClickStone);
 
         Undo.CollapseUndoOperations(group);
+        EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
         UIBuilder.BuildLevel3UICanvas();
-        Debug.Log("[Level3Builder] ¡Nivel 3 monumental (El Atrio de Dolores - Opción A) reconstruido y guardado con éxito!");
+        Debug.Log("[Level3Builder] ¡Nivel 3 monumental (El Atrio de Dolores - 4 Ofrendas) reconstruido y guardado con éxito!");
     }
 
-    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y, Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite, int wallsLayer, AudioClip lightSfx = null, AudioClip blessSfx = null)
+    static void CleanOldSceneGarbage(Scene scene)
+    {
+        var roots = scene.GetRootGameObjects();
+        HashSet<string> preserveNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Main Camera", "Player", "Llorona", "GameManager", "AudioManager", "Global Light 2D", "UICanvas", "Canvas", "EventSystem"
+        };
+
+        foreach (var root in roots)
+        {
+            if (!preserveNames.Contains(root.name))
+            {
+                Undo.DestroyObjectImmediate(root);
+            }
+        }
+
+        // Remover cualquier LevelGoal huérfano de ejecuciones anteriores
+        foreach (var lg in UnityEngine.Object.FindObjectsByType<LevelGoal>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            Undo.DestroyObjectImmediate(lg);
+        }
+    }
+
+    static void CreateGothicArcade(Transform parent, string name, Sprite sprite, float x, float y, int wallsLayer)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * 0.38f;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+        sr.color = new Color(0.96f, 0.94f, 0.90f);
+
+        // Columnas laterales sólidas dejando el arco central libre para caminar
+        BoxCollider2D leftCol = go.AddComponent<BoxCollider2D>();
+        leftCol.size = new Vector2(1.2f, 2.0f);
+        leftCol.offset = new Vector2(-4.0f, 0.5f);
+
+        BoxCollider2D rightCol = go.AddComponent<BoxCollider2D>();
+        rightCol.size = new Vector2(1.2f, 2.0f);
+        rightCol.offset = new Vector2(4.0f, 0.5f);
+
+        if (wallsLayer >= 0) go.layer = wallsLayer;
+
+        // Farol colgante con luz cálida
+        GameObject lGo = new GameObject("Luz_Farol_Arcada");
+        lGo.transform.SetParent(go.transform, false);
+        lGo.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+        Light2D l2d = lGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.76f, 0.40f);
+        l2d.intensity = 1.8f;
+        l2d.pointLightOuterRadius = 6.0f;
+        lGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateMausoleumBuilding(Transform parent, string name, Sprite sprite, float x, float y, int wallsLayer)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * 0.35f;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 3;
+        sr.color = new Color(0.96f, 0.92f, 0.88f);
+
+        // Collider sólido en el cuerpo del mausoleo
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(3.8f, 2.4f);
+        col.offset = new Vector2(0f, 0.6f);
+        if (wallsLayer >= 0) go.layer = wallsLayer;
+
+        // Luz de veladoras votivas frente al mausoleo
+        GameObject lGo = new GameObject("Luz_Velas_Mausoleo");
+        lGo.transform.SetParent(go.transform, false);
+        lGo.transform.localPosition = new Vector3(0f, -0.4f, 0f);
+        Light2D l2d = lGo.AddComponent<Light2D>();
+        l2d.lightType = Light2D.LightType.Point;
+        l2d.color = new Color(1.0f, 0.68f, 0.28f);
+        l2d.intensity = 2.0f;
+        l2d.pointLightOuterRadius = 5.5f;
+        lGo.AddComponent<LightFlicker>();
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateCypressTree(Transform parent, string name, Sprite sprite, float x, float y, int wallsLayer)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * 0.28f;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 4;
+        sr.color = new Color(0.92f, 0.94f, 0.90f);
+
+        // Collider ceñido exclusivamente a la base del tronco para permitir paso alrededor
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.85f, 0.65f);
+        col.offset = new Vector2(0f, 0.35f);
+        if (wallsLayer >= 0) go.layer = wallsLayer;
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateNoiseRubbleOfficial(Transform parent, string name, Sprite sprite, float x, float y, AudioClip crunchSfx = null)
+    {
+        if (sprite == null) return;
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = new Vector3(x, y, 0f);
+        go.transform.localScale = Vector3.one * 0.18f;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 1;
+        sr.color = new Color(0.90f, 0.88f, 0.85f);
+
+        // Trigger amplio para detectar pisadas de Carlos
+        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
+        bc.isTrigger = true;
+        bc.size = new Vector2(3.0f, 1.8f);
+        bc.offset = Vector2.zero;
+
+        NoiseObstacle no = go.AddComponent<NoiseObstacle>();
+        if (crunchSfx != null)
+        {
+            SerializedObject sono = new SerializedObject(no);
+            sono.FindProperty("glassBreakSound").objectReferenceValue = crunchSfx;
+            sono.ApplyModifiedProperties();
+        }
+
+        Undo.RegisterCreatedObjectUndo(go, name);
+    }
+
+    static void CreateShrineNiche(Transform parent, string goName, string displayName, float x, float y,
+        Sprite pedestalSprite, Sprite flameSprite, Sprite flowerSprite, Sprite circuloSprite,
+        int wallsLayer, AudioClip lightSfx = null, AudioClip blessSfx = null)
     {
         GameObject go = new GameObject(goName);
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
 
-        // Pedestal base (Altar de cantera o Cripta)
+        // Pedestal base
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = pedestalSprite;
         sr.sortingOrder = 3;
-        sr.color = new Color(0.95f, 0.92f, 0.88f);
+        sr.color = new Color(0.96f, 0.94f, 0.90f);
 
-        float scaleFactor = (pedestalSprite != null && pedestalSprite.rect.width > 800) ? 0.35f : 0.85f;
+        float scaleFactor = (pedestalSprite != null && pedestalSprite.rect.width > 800) ? 0.22f : 0.85f;
         go.transform.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
 
-        // Collider físico para que el pedestal sea un obstáculo sólido
+        // Collider físico para que el altar sea un obstáculo sólido
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
         col.size = new Vector2(2.4f, 1.2f);
         col.offset = new Vector2(0f, 0.4f);
         if (wallsLayer >= 0) go.layer = wallsLayer;
 
-        // Ramilletes de cempasúchil a los lados
+        // Ramilletes de cempasúchil decorativos
         if (flowerSprite != null)
         {
             GameObject fl1 = new GameObject("Flores_Izq");
@@ -414,7 +608,7 @@ public static class Level3Builder
         srFlame.sortingOrder = 5;
         flameGo.SetActive(false);
 
-        // Luz divina dorada del nicho consagrado (Santuario)
+        // Luz divina dorada del nicho consagrado
         GameObject lightGo = new GameObject("Luz_Nicho");
         lightGo.transform.SetParent(go.transform, false);
         lightGo.transform.localPosition = new Vector3(0f, 1.0f, 0f);
@@ -426,7 +620,7 @@ public static class Level3Builder
         lightGo.AddComponent<LightFlicker>();
         l2d.enabled = false;
 
-        // Luz guía etérea (Faro celestial que llama al jugador desde lejos mientras esté apagado)
+        // Luz guía etérea (Faro celestial que llama al jugador desde lejos)
         GameObject beaconGo = new GameObject("Luz_Guia_Faro");
         beaconGo.transform.SetParent(go.transform, false);
         beaconGo.transform.localPosition = new Vector3(0f, 1.2f, 0f);
@@ -437,7 +631,7 @@ public static class Level3Builder
         l2dBeacon.pointLightOuterRadius = 6.5f;
         beaconGo.AddComponent<LightFlicker>();
 
-        // Aura de domo santuario (visible al consagrarse con el círculo ritual de cempasúchil en el suelo)
+        // Aura de domo santuario (círculo ritual de cempasúchil en el suelo)
         GameObject domeGo = new GameObject("Aura_Santuario");
         domeGo.transform.SetParent(go.transform, false);
         domeGo.transform.localPosition = new Vector3(0f, 0.4f, 0f);
@@ -460,7 +654,7 @@ public static class Level3Builder
         l2dDome.pointLightOuterRadius = 3.6f;
         domeGo.SetActive(false);
 
-        // Prompt de interacción [F] con TextMesh nativo legible
+        // Prompt de interacción [F] con TextMesh nativo
         GameObject promptGo = new GameObject("PromptInteraccion");
         promptGo.transform.SetParent(go.transform, false);
         promptGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
@@ -480,7 +674,7 @@ public static class Level3Builder
         ShrineNiche sn = go.AddComponent<ShrineNiche>();
         SerializedObject so = new SerializedObject(sn);
         so.FindProperty("shrineName").stringValue = displayName;
-        so.FindProperty("sanctuaryRadius").floatValue = 3.2f;
+        so.FindProperty("sanctuaryRadius").floatValue = 3.4f;
         so.FindProperty("flameVisual").objectReferenceValue = flameGo;
         so.FindProperty("shrineLight").objectReferenceValue = l2d;
         so.FindProperty("beaconLight").objectReferenceValue = l2dBeacon;
@@ -504,7 +698,7 @@ public static class Level3Builder
         sr.sprite = altarSprite;
         sr.sortingOrder = 3;
         sr.color = new Color(0.95f, 0.90f, 0.85f);
-        float scaleMesa = (altarSprite != null && altarSprite.rect.width > 800) ? 0.35f : 0.72f;
+        float scaleMesa = (altarSprite != null && altarSprite.rect.width > 800) ? 0.22f : 0.72f;
         go.transform.localScale = new Vector3(scaleMesa, scaleMesa, 1.0f);
 
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
@@ -559,13 +753,13 @@ public static class Level3Builder
         Undo.RegisterCreatedObjectUndo(go, "Mesa_Cirios_Benditos");
     }
 
-    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, Sprite selloSprite, Sprite openDoorsSprite, AudioClip openDoorsSfx = null, AudioClip bellsSfx = null)
+    static void CreateParroquiaEntranceGoalWithSeal(Transform parent, float x, float y, int requiredShrines, Sprite selloSprite, Sprite openDoorsSprite, AudioClip openDoorsSfx = null, AudioClip bellsSfx = null)
     {
         GameObject go = new GameObject("Puertas_Parroquia_Meta");
         go.transform.SetParent(parent, false);
         go.transform.position = new Vector3(x, y, 0f);
 
-        // Collider de victoria en la puerta de madera (inicia desactivado hasta abrir las 3 ofrendas)
+        // Collider de victoria en la puerta de madera (inicia desactivado hasta consagrar las 4 ofrendas)
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
         bc.size = new Vector2(3.2f, 1.2f);
@@ -573,7 +767,7 @@ public static class Level3Builder
         bc.enabled = false;
         go.AddComponent<LevelGoal>();
 
-        // Niebla espectral de sellado (morada/oscura) con el sprite oficial del estandarte espectral
+        // Niebla espectral de sellado
         GameObject sealMistGo = new GameObject("Aura_Sello_Espectral");
         sealMistGo.transform.SetParent(go.transform, false);
         sealMistGo.transform.localPosition = new Vector3(0f, 0.5f, 0f);
@@ -594,7 +788,7 @@ public static class Level3Builder
         l2dSeal.pointLightOuterRadius = 4.8f;
         sealMistGo.AddComponent<LightFlicker>();
 
-        // Visual de puertas abiertas e interior sagrado iluminado (inicia desactivado hasta consagrar 3/3 nichos)
+        // Visual de puertas abiertas e interior sagrado iluminado (inicia desactivado hasta consagrar 4/4 nichos)
         GameObject openDoorsGo = new GameObject("Entrada_Puertas_Abiertas");
         openDoorsGo.transform.SetParent(go.transform, false);
         openDoorsGo.transform.localPosition = new Vector3(0f, 0.35f, 0f);
@@ -604,7 +798,6 @@ public static class Level3Builder
             SpriteRenderer srOpen = openDoorsGo.AddComponent<SpriteRenderer>();
             srOpen.sprite = openDoorsSprite;
             srOpen.sortingOrder = 3;
-            // catedral.png tiene sortingOrder 2. El sprite de puertas abiertas en sortingOrder 3 cubre la entrada de madera cerrada.
             openDoorsGo.transform.localScale = new Vector3(0.65f, 0.65f, 1f);
         }
         openDoorsGo.SetActive(false);
@@ -626,7 +819,7 @@ public static class Level3Builder
         labelGo.transform.SetParent(go.transform, false);
         labelGo.transform.localPosition = new Vector3(0f, 1.9f, 0f);
         TextMesh tm = labelGo.AddComponent<TextMesh>();
-        tm.text = "PUERTAS SELLADAS\n(Ofrendas: 0/3)";
+        tm.text = $"PUERTAS SELLADAS\n(Ofrendas: 0/{requiredShrines})";
         tm.fontSize = 34;
         tm.characterSize = 0.17f;
         tm.fontStyle = FontStyle.Bold;
@@ -639,7 +832,7 @@ public static class Level3Builder
         // Controlador de sellado y apertura
         ParroquiaDoorController pdc = go.AddComponent<ParroquiaDoorController>();
         SerializedObject so = new SerializedObject(pdc);
-        so.FindProperty("requiredShrines").intValue = 3;
+        so.FindProperty("requiredShrines").intValue = requiredShrines;
         so.FindProperty("doorSealVisual").objectReferenceValue = sealMistGo;
         so.FindProperty("openDoorsVisual").objectReferenceValue = openDoorsGo;
         so.FindProperty("sanctuaryLight").objectReferenceValue = l2d;
@@ -674,13 +867,19 @@ public static class Level3Builder
         Transform ch = parent.Find(name);
         GameObject go = ch != null ? ch.gameObject : new GameObject(name);
         if (ch == null) { go.transform.SetParent(parent, false); Undo.RegisterCreatedObjectUndo(go, name); }
-        Tilemap tm = go.GetComponent<Tilemap>() ?? go.AddComponent<Tilemap>();
-        TilemapRenderer tr = go.GetComponent<TilemapRenderer>() ?? go.AddComponent<TilemapRenderer>();
+        
+        Tilemap tm = go.GetComponent<Tilemap>();
+        if (tm == null) tm = go.AddComponent<Tilemap>();
+
+        TilemapRenderer tr = go.GetComponent<TilemapRenderer>();
+        if (tr == null) tr = go.AddComponent<TilemapRenderer>();
         tr.sortingOrder = order;
+
         if (layer >= 0) go.layer = layer;
         if (hasCollider)
         {
-            TilemapCollider2D tc = go.GetComponent<TilemapCollider2D>() ?? go.AddComponent<TilemapCollider2D>();
+            TilemapCollider2D tc = go.GetComponent<TilemapCollider2D>();
+            if (tc == null) tc = go.AddComponent<TilemapCollider2D>();
             tc.compositeOperation = Collider2D.CompositeOperation.Merge;
         }
         return tm;
@@ -746,13 +945,11 @@ public static class Level3Builder
         sr.sprite = sprite;
         sr.sortingOrder = 3;
 
-        // 1. Collider sólido en capa Walls para evitar que Carlos o La Llorona atraviesen el objeto
         BoxCollider2D solidCol = go.AddComponent<BoxCollider2D>();
         solidCol.size = solidColSize;
         solidCol.offset = solidColOffset;
         if (wallsLayer >= 0) go.layer = wallsLayer;
 
-        // 2. Trigger en capa HideSpot para detección de proximidad con Carlos
         GameObject trigGo = new GameObject("TriggerOcultarse");
         trigGo.transform.SetParent(go.transform, false);
         BoxCollider2D trigCol = trigGo.AddComponent<BoxCollider2D>();
@@ -761,7 +958,6 @@ public static class Level3Builder
         trigCol.offset = trigColOffset;
         if (hideSpotLayer >= 0) trigGo.layer = hideSpotLayer;
 
-        // 3. Punto de reposo oculto de Carlos
         GameObject hp = new GameObject("HidePoint");
         hp.transform.SetParent(go.transform, false);
         hp.transform.localPosition = new Vector3(0f, solidColOffset.y + 0.15f, 0f);
@@ -770,26 +966,6 @@ public static class Level3Builder
         SerializedObject so = new SerializedObject(hs);
         so.FindProperty("hidePoint").objectReferenceValue = hp.transform;
         so.ApplyModifiedProperties();
-
-        Undo.RegisterCreatedObjectUndo(go, name);
-    }
-
-    static void CreateSolidProp(Transform parent, string name, Sprite sprite, float x, float y, float scale, int layer, Vector2 colSize, Vector2 colOffset)
-    {
-        if (sprite == null) return;
-        GameObject go = new GameObject(name);
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-        go.transform.localScale = Vector3.one * scale;
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 3;
-
-        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-        col.size = colSize;
-        col.offset = colOffset;
-        if (layer >= 0) go.layer = layer;
 
         Undo.RegisterCreatedObjectUndo(go, name);
     }
@@ -805,7 +981,6 @@ public static class Level3Builder
         sr.sprite = sprite;
         sr.sortingOrder = 1;
 
-        // Cápsula horizontal ceñida exactamente al cuerpo visible del charco para no dispararse en falso
         CapsuleCollider2D cc = go.AddComponent<CapsuleCollider2D>();
         cc.direction = CapsuleDirection2D.Horizontal;
         cc.isTrigger = true;
@@ -820,32 +995,6 @@ public static class Level3Builder
             somp.ApplyModifiedProperties();
         }
         Undo.RegisterCreatedObjectUndo(go, "Charco_AguaBendita");
-    }
-
-    static void CreateNoiseObstacleOfficial(Transform parent, Sprite sprite, float x, float y, AudioClip crunchSfx = null)
-    {
-        GameObject go = new GameObject("Tepalcates_Ruido");
-        go.transform.SetParent(parent, false);
-        go.transform.position = new Vector3(x, y, 0f);
-
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = 2;
-
-        // Collider generoso a lo ancho de los fragmentos de cerámica para crujir con cualquier pisada
-        BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-        bc.isTrigger = true;
-        bc.size = new Vector2(2.2f, 1.1f);
-        bc.offset = new Vector2(0f, -0.1f);
-
-        NoiseObstacle no = go.AddComponent<NoiseObstacle>();
-        if (crunchSfx != null)
-        {
-            SerializedObject sono = new SerializedObject(no);
-            sono.FindProperty("glassBreakSound").objectReferenceValue = crunchSfx;
-            sono.ApplyModifiedProperties();
-        }
-        Undo.RegisterCreatedObjectUndo(go, "Tepalcates_Ruido");
     }
 
     static void CreateCandlePickupOfficial(Transform parent, string name, Sprite sprite, Vector2 pos)
@@ -891,7 +1040,8 @@ public static class Level3Builder
     {
         GameObject glGo = GameObject.Find("Global Light 2D");
         if (glGo == null) glGo = new GameObject("Global Light 2D");
-        Light2D gl = glGo.GetComponent<Light2D>() ?? glGo.AddComponent<Light2D>();
+        Light2D gl = glGo.GetComponent<Light2D>();
+        if (gl == null) gl = glGo.AddComponent<Light2D>();
         gl.lightType = Light2D.LightType.Global;
         gl.color = new Color(0.90f, 0.88f, 0.82f);
         gl.intensity = intensity;
@@ -909,9 +1059,12 @@ public static class Level3Builder
         playerGo.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0f);
         if (layer >= 0) playerGo.layer = layer;
 
-        PlayerMovement pm = playerGo.GetComponent<PlayerMovement>() ?? playerGo.AddComponent<PlayerMovement>();
+        PlayerMovement pm = playerGo.GetComponent<PlayerMovement>();
+        if (pm == null) pm = playerGo.AddComponent<PlayerMovement>();
         if (playerGo.GetComponent<PlayerAnimation>() == null) playerGo.AddComponent<PlayerAnimation>();
-        HideSystem hs = playerGo.GetComponent<HideSystem>() ?? playerGo.AddComponent<HideSystem>();
+        HideSystem hs = playerGo.GetComponent<HideSystem>();
+        if (hs == null) hs = playerGo.AddComponent<HideSystem>();
+
         if (hideInSfx != null || reliefSfx != null)
         {
             SerializedObject soHs = new SerializedObject(hs);
@@ -923,11 +1076,13 @@ public static class Level3Builder
         SpriteRenderer sr = playerGo.GetComponentInChildren<SpriteRenderer>();
         if (sr != null) sr.sortingOrder = 5;
 
-        CircleCollider2D col = playerGo.GetComponent<CircleCollider2D>() ?? playerGo.AddComponent<CircleCollider2D>();
+        CircleCollider2D col = playerGo.GetComponent<CircleCollider2D>();
+        if (col == null) col = playerGo.AddComponent<CircleCollider2D>();
         col.radius = 0.28f;
         col.offset = new Vector2(0f, -0.45f);
 
-        Rigidbody2D rb = playerGo.GetComponent<Rigidbody2D>() ?? playerGo.AddComponent<Rigidbody2D>();
+        Rigidbody2D rb = playerGo.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = playerGo.AddComponent<Rigidbody2D>();
         rb.freezeRotation = true;
         rb.gravityScale = 0f;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -952,7 +1107,8 @@ public static class Level3Builder
         lloronaGo.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0f);
         if (lloronaLayer >= 0) lloronaGo.layer = lloronaLayer;
 
-        LloronaAI ai = lloronaGo.GetComponent<LloronaAI>() ?? lloronaGo.AddComponent<LloronaAI>();
+        LloronaAI ai = lloronaGo.GetComponent<LloronaAI>();
+        if (ai == null) ai = lloronaGo.AddComponent<LloronaAI>();
         ai.Waypoints = wps;
 
         SerializedObject so = new SerializedObject(ai);

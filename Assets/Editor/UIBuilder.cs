@@ -482,7 +482,7 @@ public static class UIBuilder
 
     public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity", "Cruza el mercado sin que La Llorona te vea");
     public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity", "Llega al final del callejón esquivando los obstáculos");
-    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Consagra las 3 ofrendas y llega a la Parroquia", false);
+    public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Consagra las 4 ofrendas y llega a la Parroquia", false);
     public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "¡Escapa hacia tu casa! Cuidado con las ánimas y el perro");
 
     public static void BuildLevelUICanvas(string path, string objetivoTexto = "", bool minimalHud = false)

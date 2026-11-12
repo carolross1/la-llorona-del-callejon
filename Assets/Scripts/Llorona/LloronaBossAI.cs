@@ -295,8 +295,8 @@ public class LloronaBossAI : MonoBehaviour
             if (specter1 != null) specter1.SetActive(true);
             if (specter2 != null) specter2.SetActive(true);
 
-            // Reubicarse en el centro
-            transform.position = new Vector3(23.5f, 14.0f, 0f);
+            // Reubicarse en el centro de la arena expandida (X: 45)
+            transform.position = new Vector3(45.0f, 14.0f, 0f);
         }
         else if (newPhase == 3)
         {
@@ -409,7 +409,7 @@ public class LloronaBossAI : MonoBehaviour
             float angle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
             Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5.5f;
             Vector3 newPos = player.transform.position + (Vector3)offset;
-            newPos.x = Mathf.Clamp(newPos.x, 4.0f, 42.0f);
+            newPos.x = Mathf.Clamp(newPos.x, 6.0f, 66.0f);
             newPos.y = Mathf.Clamp(newPos.y, 4.0f, 24.0f);
             transform.position = newPos;
         }

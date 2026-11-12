@@ -424,6 +424,8 @@ public static class Level4Builder
         // ----------------------------------------------------
         // 18. BARRA DE VIDA DE JEFE EN EL CANVAS
         // ----------------------------------------------------
+        UIBuilder.BuildLevel4UICanvas();
+
         Canvas canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
         if (canvas != null)
         {

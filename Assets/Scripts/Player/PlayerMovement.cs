@@ -36,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
+        Candle.ResetInventory();
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         if (rb != null)
@@ -110,7 +111,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (HUD.Instance != null)
                 {
-                    HUD.Instance.ShowEventNotice("¡No tienes veladoras!\nRecoge una en el suelo o acude a la Mesa de Cirios.", 3.0f);
+                    bool nearShrine = ShrineNiche.IsPlayerNearAnyUnlitShrine(transform.position);
+                    if (nearShrine)
+                    {
+                        HUD.Instance.ShowEventNotice("❌ ¡Necesitas 1 veladora para consagrar este nicho!\nRecoge una en el suelo con [E] o acude a la Mesa de Cirios.", 3.0f);
+                    }
+                    else
+                    {
+                        HUD.Instance.ShowEventNotice("❌ ¡No tienes veladoras en el inventario!\nRecoge una en el suelo con [E] o acude a la Mesa de Cirios.", 3.0f);
+                    }
                 }
             }
         }

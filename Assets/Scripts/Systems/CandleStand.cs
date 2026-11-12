@@ -94,7 +94,7 @@ public class CandleStand : MonoBehaviour
 
         if (HUD.Instance != null)
         {
-            HUD.Instance.ShowEventNotice("¡Tomaste una veladora bendita del atrio!", 3.0f);
+            HUD.Instance.ShowEventNotice($"🕯️ ¡Tomaste un cirio bendito! (Llevas {Candle.PlayerCandlesCount}/{maxCandlesAllowed})\nÚsalo con [F] frente a un nicho sagrado.", 3.0f);
         }
     }
 

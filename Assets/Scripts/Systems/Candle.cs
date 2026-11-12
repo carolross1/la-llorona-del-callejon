@@ -19,13 +19,23 @@ public class Candle : MonoBehaviour
     [Header("Retroalimentación")]
     [SerializeField] ParticleSystem pickupParticles;
 
+    GameObject promptGo;
+    TextMesh promptText;
     PlayerMovement player;
     bool isCollected;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStaticData()
+    {
+        PlayerCandlesCount = 0;
+        OnCandlesCountChanged = null;
+    }
 
     void Start()
     {
         player = FindAnyObjectByType<PlayerMovement>();
         EnsureTriggerCollider();
+        EnsurePromptVisual();
     }
 
     void EnsureTriggerCollider()
@@ -33,8 +43,33 @@ public class Candle : MonoBehaviour
         CircleCollider2D col = GetComponent<CircleCollider2D>();
         if (col == null) col = gameObject.AddComponent<CircleCollider2D>();
         col.isTrigger = true;
-        col.radius = 1.3f;
+        col.radius = 0.55f;
         col.offset = Vector2.zero;
+    }
+
+    void EnsurePromptVisual()
+    {
+        if (promptGo != null) return;
+
+        promptGo = new GameObject("Prompt_RecogerVela");
+        promptGo.transform.SetParent(transform, false);
+        promptGo.transform.localPosition = new Vector3(0f, 0.65f, 0f);
+
+        promptText = promptGo.AddComponent<TextMesh>();
+        promptText.text = "[E] Recoger Veladora";
+        promptText.fontSize = 64;
+        promptText.characterSize = 0.038f;
+        promptText.alignment = TextAlignment.Center;
+        promptText.anchor = TextAnchor.MiddleCenter;
+        promptText.color = new Color(1.0f, 0.94f, 0.45f);
+
+        MeshRenderer mr = promptGo.GetComponent<MeshRenderer>();
+        if (mr != null)
+        {
+            mr.sortingOrder = 10;
+        }
+
+        promptGo.SetActive(false);
     }
 
     void Update()
@@ -49,15 +84,24 @@ public class Candle : MonoBehaviour
 
         float dist = Vector2.Distance(transform.position, player.transform.position);
 
-        // 1. Recogida automática al caminar sobre la vela (muy cómodo y sin fallas)
-        if (dist <= 1.35f)
+        // Feedback visual flotante cuando Carlos está cerca
+        if (promptGo != null)
+        {
+            bool inRange = dist <= 2.0f;
+            if (promptGo.activeSelf != inRange)
+                promptGo.SetActive(inRange);
+        }
+
+        // 1. Recogida manual deliberada con tecla [E] al estar cerca
+        var kb = Keyboard.current;
+        if (dist <= 1.8f && kb != null && kb.eKey.wasPressedThisFrame)
         {
             CollectCandle();
             return;
         }
 
-        // 2. O recogida presionando [E] al estar a distancia media
-        if (dist <= 2.2f && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        // 2. O recogida por contacto directo al pisar la veladora
+        if (dist <= 0.55f)
         {
             CollectCandle();
             return;
@@ -96,7 +140,7 @@ public class Candle : MonoBehaviour
             AudioManager.Instance.PlayCandleSound();
 
         if (HUD.Instance != null)
-            HUD.Instance.ShowEventNotice("¡Veladora recogida!\nPresiona [F] para orar y distraer a La Llorona.", 4.0f);
+            HUD.Instance.ShowEventNotice($"🕯️ ¡Veladora recogida! (Llevas {PlayerCandlesCount})\nPresiona [F] para consagrar un nicho o apaciguar a La Llorona.", 3.5f);
 
         if (pickupParticles != null)
         {
@@ -164,7 +208,7 @@ public class Candle : MonoBehaviour
         if (HUD.Instance != null)
         {
             HUD.Instance.SetEyeAlert(false);
-            HUD.Instance.ShowEventNotice("¡Has colocado una ofrenda sagrada! La Llorona se detiene a rezar.", 4.0f);
+            HUD.Instance.ShowEventNotice($"🕯️ ¡Has colocado una ofrenda sagrada! (Te quedan {PlayerCandlesCount})\nLa Llorona se detiene a rezar.", 4.0f);
         }
 
         return true;

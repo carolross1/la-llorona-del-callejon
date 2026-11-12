@@ -1,4 +1,4 @@
-// Assets/Editor/UIBuilder.cs
+﻿// Assets/Editor/UIBuilder.cs
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -28,6 +28,19 @@ public static class UIBuilder
     const string MarcoHudPath    = "Assets/Sprites/UI/marco_hud.png";
     const string BannersMenuPath = "Assets/Sprites/UI/banners_menu.png";
     const string IconosHudPath   = "Assets/Sprites/UI/iconos_hud.png";
+    const string HudPlacaOrnadaPath     = "Assets/Sprites/UI/HUD_Placa_Ornada.png";
+    const string HudPlacaRectaPath      = "Assets/Sprites/UI/HUD_Placa_Recta.png";
+    const string HudMedallonPath        = "Assets/Sprites/UI/HUD_Medallon.png";
+    const string HudCorazonLlenoPath    = "Assets/Sprites/UI/HUD_Corazon_Lleno.png";
+    const string HudCorazonVacioPath    = "Assets/Sprites/UI/HUD_Corazon_Vacio.png";
+    const string HudVelaPath            = "Assets/Sprites/UI/HUD_Vela.png";
+    const string HudOfrendaPath         = "Assets/Sprites/UI/HUD_Ofrenda.png";
+    const string HudBrujulaPath         = "Assets/Sprites/UI/HUD_Brujula.png";
+    const string HudOjoPath             = "Assets/Sprites/UI/HUD_Ojo.png";
+    const string HudBarraEstaminaPath   = "Assets/Sprites/UI/HUD_Barra_Estamina.png";
+    const string HudCruzPath            = "Assets/Sprites/UI/HUD_Cruz.png";
+    const string HudAguaBenditaPath     = "Assets/Sprites/UI/HUD_AguaBendita.png";
+    const string HudCalaveraPath        = "Assets/Sprites/UI/HUD_Calavera.png";
 
     // ── Acceso a Sprites ─────────────────────────────────────────────────────
 
@@ -62,6 +75,19 @@ public static class UIBuilder
     public static Sprite MarcoHudSprite    => AssetDatabase.LoadAssetAtPath<Sprite>(MarcoHudPath);
     public static Sprite BannersMenuSprite => AssetDatabase.LoadAssetAtPath<Sprite>(BannersMenuPath);
     public static Sprite IconosHudSprite   => AssetDatabase.LoadAssetAtPath<Sprite>(IconosHudPath);
+    public static Sprite HudPlacaOrnada     => AssetDatabase.LoadAssetAtPath<Sprite>(HudPlacaOrnadaPath);
+    public static Sprite HudPlacaRecta      => AssetDatabase.LoadAssetAtPath<Sprite>(HudPlacaRectaPath);
+    public static Sprite HudMedallon        => AssetDatabase.LoadAssetAtPath<Sprite>(HudMedallonPath);
+    public static Sprite HudCorazonLleno    => AssetDatabase.LoadAssetAtPath<Sprite>(HudCorazonLlenoPath);
+    public static Sprite HudCorazonVacio    => AssetDatabase.LoadAssetAtPath<Sprite>(HudCorazonVacioPath);
+    public static Sprite HudVela            => AssetDatabase.LoadAssetAtPath<Sprite>(HudVelaPath);
+    public static Sprite HudOfrenda         => AssetDatabase.LoadAssetAtPath<Sprite>(HudOfrendaPath);
+    public static Sprite HudBrujula         => AssetDatabase.LoadAssetAtPath<Sprite>(HudBrujulaPath);
+    public static Sprite HudOjo             => AssetDatabase.LoadAssetAtPath<Sprite>(HudOjoPath);
+    public static Sprite HudBarraEstamina   => AssetDatabase.LoadAssetAtPath<Sprite>(HudBarraEstaminaPath);
+    public static Sprite HudCruz            => AssetDatabase.LoadAssetAtPath<Sprite>(HudCruzPath);
+    public static Sprite HudAguaBendita     => AssetDatabase.LoadAssetAtPath<Sprite>(HudAguaBenditaPath);
+    public static Sprite HudCalavera        => AssetDatabase.LoadAssetAtPath<Sprite>(HudCalaveraPath);
 
     public static Sprite SalidaThumb(int index) => GetSprite(SalidasPath, $"Salida_{index}", index);
 
@@ -90,6 +116,34 @@ public static class UIBuilder
     }
 
     // ── 1. Splash Scene ──────────────────────────────────────────────────────
+
+    [MenuItem("La Llorona/Generar HUD en Todos los Niveles")]
+    public static void BuildAllLevelsHUD()
+    {
+        BuildLevel1UICanvas();
+        BuildLevel2UICanvas();
+        BuildLevel3UICanvas();
+        BuildLevel4UICanvas();
+        Debug.Log("[UIBuilder] \u00a1HUD HD Colonial generado con \u00e9xito en todos los niveles (1, 2, 3 y 4)!");
+    }
+
+    [MenuItem("La Llorona/Actualizar HUD Escena Actual")]
+    public static void RebuildCurrentSceneHUD()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        string objetivo = "Cruza el callej\u00f3n sin que La Llorona te vea";
+        if (activeScene.name.Contains("Mercado") || activeScene.name.Contains("Level1"))
+            objetivo = "Cruza el mercado sin que La Llorona te vea";
+        else if (activeScene.name.Contains("Callejon") || activeScene.name.Contains("Level2"))
+            objetivo = "Llega al final del callej\u00f3n esquivando los obst\u00e1culos";
+        else if (activeScene.name.Contains("Atrio") || activeScene.name.Contains("Level3"))
+            objetivo = "Consagra las 4 ofrendas y llega a la Parroquia";
+        else if (activeScene.name.Contains("Cementerio") || activeScene.name.Contains("Level4"))
+            objetivo = "\u00a1Escapa hacia tu casa! Cuidado con las \u00e1nimas y el perro";
+
+        BuildLevelUICanvas(activeScene.path, objetivo);
+        Debug.Log($"[UIBuilder] \u00a1HUD Colonial HD actualizado con \u00e9xito en {activeScene.name}!");
+    }
 
     public static void BuildSplashScene()
     {
@@ -481,9 +535,9 @@ public static class UIBuilder
     // ── 5. Canvas HUD de Niveles (Franja Superior 120px, Centro Libre) ────────
 
     public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity", "Cruza el mercado sin que La Llorona te vea");
-    public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity", "Llega al final del callejón esquivando los obstáculos");
+    public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity", "Llega al final del callej\u00f3n esquivando los obst\u00e1culos");
     public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Consagra las 4 ofrendas y llega a la Parroquia", false);
-    public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "¡Escapa hacia tu casa! Cuidado con las ánimas y el perro");
+    public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "\u00a1Escapa hacia tu casa! Cuidado con las \u00e1nimas y el perro");
 
     public static void BuildLevelUICanvas(string path, string objetivoTexto = "", bool minimalHud = false)
     {
@@ -520,43 +574,37 @@ public static class UIBuilder
         // ════════════════════════════════════════════════════════════════════════
         // BARRA SUPERIOR UNIFICADA DECORATIVA GÓTICA (Cubre la franja superior de 80px)
         // ════════════════════════════════════════════════════════════════════════
-        GameObject topBarGo = new GameObject("HUD_BarraSuperior");
-        topBarGo.transform.SetParent(hudGo.transform, false);
-        RectTransform rtTopBar = topBarGo.AddComponent<RectTransform>();
-        rtTopBar.anchorMin = new Vector2(0f, 1f);
-        rtTopBar.anchorMax = new Vector2(1f, 1f);
-        rtTopBar.pivot     = new Vector2(0.5f, 1f);
-        rtTopBar.anchoredPosition = Vector2.zero;
-        rtTopBar.sizeDelta = new Vector2(0f, 82f);
+        bool isAtrio = path.Contains("Atrio") || path.Contains("Level3");
+        bool isCementerio = path.Contains("Cementerio") || path.Contains("Level4");
+        bool usesInventory = isAtrio || isCementerio;
+        float plaqueWidth = usesInventory ? 500f : 480f;
+        float plaqueHeight = usesInventory ? 160f : 124f;
 
-        Image topBarBg = topBarGo.AddComponent<Image>();
-        topBarBg.color = new Color(0.04f, 0.02f, 0.07f, 0.90f);
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // 1. PLACA IZQUIERDA: ESTADO (Corazones, Estamina e Inventario Velas/Agua)
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        GameObject leftPlaque = new GameObject("HUD_Placa_Izquierda");
+        leftPlaque.transform.SetParent(hudGo.transform, false);
+        RectTransform rtLeft = leftPlaque.AddComponent<RectTransform>();
+        rtLeft.anchorMin = rtLeft.anchorMax = new Vector2(0f, 1f);
+        rtLeft.pivot = new Vector2(0f, 1f);
+        rtLeft.anchoredPosition = new Vector2(24f, -16f);
+        rtLeft.sizeDelta = new Vector2(plaqueWidth, plaqueHeight);
 
-        // Borde inferior dorado fino que delimita sutilmente la barra
-        GameObject borderLine = CreateImage(topBarGo.transform, "BordeInferiorDorado",
-            new Color(0.80f, 0.65f, 0.28f, 0.70f),
-            new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 2f));
-        borderLine.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
+        Image leftBg = leftPlaque.AddComponent<Image>();
+        leftBg.sprite = HudPlacaRecta ?? PlacaNormal;
+        leftBg.type = Image.Type.Sliced;
+        leftBg.color = Color.white;
 
-        // ════════════════════════════════════════════════════════════════════════
-        // A. CLÚSTER IZQUIERDO: VIDAS, VELAS/OFRENDAS Y ESTAMINA
-        // ════════════════════════════════════════════════════════════════════════
-        GameObject leftRoot = new GameObject("HUD_Izquierda_Estado");
-        leftRoot.transform.SetParent(topBarGo.transform, false);
-        RectTransform rtLeft = leftRoot.AddComponent<RectTransform>();
-        rtLeft.anchorMin = rtLeft.anchorMax = new Vector2(0f, 0.5f);
-        rtLeft.pivot = new Vector2(0f, 0.5f);
-        rtLeft.anchoredPosition = new Vector2(24f, 0f);
-        rtLeft.sizeDelta = new Vector2(520f, 72f);
-
-        // Fila 1 (Arriba, Y = +15): Corazones + Barra de Estamina
+        // Fila 1: Corazones (3x de 44 Ã— 44 px, espaciado generoso de 48 px)
+        float heartY = usesInventory ? 36f : 12f;
         GameObject heartsRoot = new GameObject("Corazones_Vida");
-        heartsRoot.transform.SetParent(leftRoot.transform, false);
+        heartsRoot.transform.SetParent(leftPlaque.transform, false);
         RectTransform rtH = heartsRoot.AddComponent<RectTransform>();
         rtH.anchorMin = rtH.anchorMax = new Vector2(0f, 0.5f);
         rtH.pivot = new Vector2(0f, 0.5f);
-        rtH.anchoredPosition = new Vector2(0f, 15f);
-        rtH.sizeDelta = new Vector2(130f, 34f);
+        rtH.anchoredPosition = new Vector2(46f, heartY);
+        rtH.sizeDelta = new Vector2(160f, 44f);
 
         Image[] heartImgs = new Image[3];
         for (int i = 0; i < 3; i++)
@@ -564,28 +612,29 @@ public static class UIBuilder
             GameObject h = new GameObject($"Corazon_{i + 1}");
             h.transform.SetParent(heartsRoot.transform, false);
             Image hImg = h.AddComponent<Image>();
-            hImg.sprite = CorazonLleno;
+            hImg.sprite = HudCorazonLleno ?? CorazonLleno;
             hImg.preserveAspect = true;
             RectTransform hRt = h.GetComponent<RectTransform>();
             hRt.anchorMin = hRt.anchorMax = new Vector2(0f, 0.5f);
             hRt.pivot = new Vector2(0f, 0.5f);
-            hRt.sizeDelta = new Vector2(34f, 34f);
-            hRt.anchoredPosition = new Vector2(i * 40f, 0f);
+            hRt.sizeDelta = new Vector2(44f, 44f);
+            hRt.anchoredPosition = new Vector2(i * 48f, 0f);
             heartImgs[i] = hImg;
         }
 
-        // Estamina al lado de los corazones en la misma fila superior
+        // Fila 2: Barra de Estamina Amplia (ancho 280-290 px, altura 20 px)
+        float stamY = usesInventory ? -4f : -18f;
         GameObject staminaRoot = new GameObject("Estamina_Barra");
-        staminaRoot.transform.SetParent(leftRoot.transform, false);
+        staminaRoot.transform.SetParent(leftPlaque.transform, false);
         RectTransform rtStam = staminaRoot.AddComponent<RectTransform>();
         rtStam.anchorMin = rtStam.anchorMax = new Vector2(0f, 0.5f);
         rtStam.pivot = new Vector2(0f, 0.5f);
-        rtStam.anchoredPosition = new Vector2(140f, 15f);
-        rtStam.sizeDelta = new Vector2(340f, 26f);
+        rtStam.anchoredPosition = new Vector2(46f, stamY);
+        rtStam.sizeDelta = new Vector2(plaqueWidth - 92f, 26f);
 
-        Text stamLabel = CreateText(staminaRoot.transform, "StaminaLabel", "ESTAMINA [Shift]", 15,
+        Text stamLabel = CreateText(staminaRoot.transform, "StaminaLabel", "ESTAMINA", 15,
             TextAnchor.MiddleLeft, new Color(1f, 0.88f, 0.50f),
-            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(140f, 24f))
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(90f, 22f))
             .GetComponent<Text>();
         stamLabel.fontStyle = FontStyle.Bold;
         stamLabel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
@@ -595,132 +644,181 @@ public static class UIBuilder
         RectTransform barRt = stamBarGo.AddComponent<RectTransform>();
         barRt.anchorMin = barRt.anchorMax = new Vector2(0f, 0.5f);
         barRt.pivot = new Vector2(0f, 0.5f);
-        barRt.anchoredPosition = new Vector2(144f, 0f);
-        barRt.sizeDelta = new Vector2(180f, 14f);
+        barRt.anchoredPosition = new Vector2(96f, 0f);
+        barRt.sizeDelta = new Vector2(usesInventory ? 290f : 280f, 20f);
 
         Image stamBg = stamBarGo.AddComponent<Image>();
-        stamBg.sprite = BarraMarco;
+        stamBg.sprite = BarraMarco ?? PlacaNormal;
         stamBg.type = Image.Type.Sliced;
         CanvasGroup stamCg = staminaRoot.AddComponent<CanvasGroup>();
 
         GameObject stamFillGo = new GameObject("Fill");
         stamFillGo.transform.SetParent(stamBarGo.transform, false);
         Image stamFill = stamFillGo.AddComponent<Image>();
-        stamFill.sprite = PlacaNormal;
+        stamFill.sprite = null;
         stamFill.type = Image.Type.Filled;
         stamFill.fillMethod = Image.FillMethod.Horizontal;
         stamFill.fillOrigin = 0;
         stamFill.fillAmount = 1f;
-        stamFill.color = new Color(0.95f, 0.80f, 0.25f);
+        stamFill.color = new Color(0.98f, 0.82f, 0.20f);
         RectTransform fillRt = stamFillGo.GetComponent<RectTransform>();
-        fillRt.anchorMin = new Vector2(0.02f, 0.15f);
-        fillRt.anchorMax = new Vector2(0.98f, 0.85f);
+        fillRt.anchorMin = new Vector2(0.03f, 0.15f);
+        fillRt.anchorMax = new Vector2(0.97f, 0.85f);
         fillRt.offsetMin = fillRt.offsetMax = Vector2.zero;
 
-        // Fila 2 (Abajo, Y = -15): Icono vela y texto completo de inventario/ofrendas
+        // Fila 3: Inventario de Velas / Agua Bendita (SOLO en niveles 3 y 4)
         GameObject candleRoot = new GameObject("Velas_Inventario");
-        candleRoot.transform.SetParent(leftRoot.transform, false);
+        candleRoot.transform.SetParent(leftPlaque.transform, false);
         RectTransform rtC = candleRoot.AddComponent<RectTransform>();
         rtC.anchorMin = rtC.anchorMax = new Vector2(0f, 0.5f);
         rtC.pivot = new Vector2(0f, 0.5f);
-        rtC.anchoredPosition = new Vector2(0f, -15f);
-        rtC.sizeDelta = new Vector2(500f, 30f);
+        rtC.anchoredPosition = new Vector2(46f, -44f);
+        rtC.sizeDelta = new Vector2(plaqueWidth - 92f, 32f);
 
-        GameObject velaIconGo = new GameObject("IconoVela");
+        GameObject velaIconGo = new GameObject("IconoInventario");
         velaIconGo.transform.SetParent(candleRoot.transform, false);
         Image velaIcon = velaIconGo.AddComponent<Image>();
-        velaIcon.sprite = IconoVela;
+        velaIcon.sprite = isCementerio ? (HudAguaBendita ?? HudOfrenda ?? HudVela) : (HudOfrenda ?? HudVela ?? IconoVela);
         velaIcon.preserveAspect = true;
         RectTransform velaRt = velaIconGo.GetComponent<RectTransform>();
         velaRt.anchorMin = velaRt.anchorMax = new Vector2(0f, 0.5f);
         velaRt.pivot = new Vector2(0f, 0.5f);
-        velaRt.sizeDelta = new Vector2(26f, 26f);
+        velaRt.sizeDelta = new Vector2(34f, 34f);
         velaRt.anchoredPosition = new Vector2(0f, 0f);
 
-        Text candleTxt = CreateText(candleRoot.transform, "CandleCountText", "×0  [F] Colocar", 20,
+        string defaultCandleText = isAtrio 
+            ? "Nichos: 0/4   |   Velas: 0"
+            : (isCementerio ? "Agua Bendita: 5/5" : "");
+
+        Text candleTxt = CreateText(candleRoot.transform, "CandleCountText", defaultCandleText, 15,
             TextAnchor.MiddleLeft, new Color(1f, 0.94f, 0.48f),
-            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(460f, 28f))
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(plaqueWidth - 145f, 28f))
             .GetComponent<Text>();
         candleTxt.fontStyle = FontStyle.Bold;
-        candleTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
-        candleTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(34f, 0f);
+        candleTxt.horizontalOverflow = HorizontalWrapMode.Wrap;
+        candleTxt.verticalOverflow = VerticalWrapMode.Truncate;
+        candleTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(42f, 0f);
+        var candleOutline = candleTxt.gameObject.AddComponent<Outline>();
+        candleOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        candleOutline.effectDistance = new Vector2(1.2f, -1.2f);
 
-        // ════════════════════════════════════════════════════════════════════════
-        // B. CLÚSTER CENTRAL: TIEMPO Y PUNTOS
-        // ════════════════════════════════════════════════════════════════════════
-        GameObject centerCard = new GameObject("HUD_Centro_TiempoPuntos");
-        centerCard.transform.SetParent(topBarGo.transform, false);
-        RectTransform rtCenter = centerCard.AddComponent<RectTransform>();
-        rtCenter.anchorMin = rtCenter.anchorMax = new Vector2(0.5f, 0.5f);
-        rtCenter.pivot = new Vector2(0.5f, 0.5f);
-        rtCenter.anchoredPosition = Vector2.zero;
-        rtCenter.sizeDelta = new Vector2(300f, 72f);
+        if (!usesInventory)
+        {
+            candleRoot.SetActive(false);
+        }
 
-        Text timerTxt = CreateText(centerCard.transform, "TimerText", "TIEMPO 00:00", 22,
-            TextAnchor.MiddleCenter, new Color(1f, 0.97f, 0.90f),
-            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(280f, 28f))
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // 2. MEDALLÃ“N CENTRAL: TIEMPO Y PUNTOS (Anchor Top-Center, 180 Ã— 160 px)
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        GameObject centerMedallon = new GameObject("HUD_Medallon_Centro");
+        centerMedallon.transform.SetParent(hudGo.transform, false);
+        RectTransform rtCenter = centerMedallon.AddComponent<RectTransform>();
+        rtCenter.anchorMin = rtCenter.anchorMax = new Vector2(0.5f, 1f);
+        rtCenter.pivot = new Vector2(0.5f, 1f);
+        rtCenter.anchoredPosition = new Vector2(0f, -14f);
+        rtCenter.sizeDelta = new Vector2(180f, 160f);
+
+        Image centerBg = centerMedallon.AddComponent<Image>();
+        centerBg.sprite = HudMedallon ?? HudPlacaRecta;
+        centerBg.preserveAspect = true;
+        centerBg.color = Color.white;
+
+        Text timerTxt = CreateText(centerMedallon.transform, "TimerText", "00:00", 20,
+            TextAnchor.MiddleCenter, new Color(1f, 0.98f, 0.92f),
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(100f, 26f))
             .GetComponent<Text>();
         timerTxt.fontStyle = FontStyle.Bold;
-        timerTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
-        timerTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 13f);
+        timerTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -10f);
+        var timerOutline = timerTxt.gameObject.AddComponent<Outline>();
+        timerOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        timerOutline.effectDistance = new Vector2(1.2f, -1.2f);
 
-        Text scoreTxt = CreateText(centerCard.transform, "ScoreText", "PUNTOS 0", 18,
-            TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.35f),
-            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(280f, 24f))
+        Text scoreTxt = CreateText(centerMedallon.transform, "ScoreText", "0 PTS", 14,
+            TextAnchor.MiddleCenter, new Color(1f, 0.84f, 0.32f),
+            new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(100f, 20f))
             .GetComponent<Text>();
         scoreTxt.fontStyle = FontStyle.Bold;
-        scoreTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
-        scoreTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -13f);
+        scoreTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -32f);
+        var scoreOutline = scoreTxt.gameObject.AddComponent<Outline>();
+        scoreOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        scoreOutline.effectDistance = new Vector2(1.2f, -1.2f);
 
-        // ════════════════════════════════════════════════════════════════════════
-        // C. CLÚSTER DERECHO: OBJETIVO, META Y OJO ROJO
-        // ════════════════════════════════════════════════════════════════════════
-        GameObject rightCard = new GameObject("HUD_Derecha_Objetivo");
-        rightCard.transform.SetParent(topBarGo.transform, false);
-        RectTransform rtRight = rightCard.AddComponent<RectTransform>();
-        rtRight.anchorMin = rtRight.anchorMax = new Vector2(1f, 0.5f);
-        rtRight.pivot = new Vector2(1f, 0.5f);
-        rtRight.anchoredPosition = new Vector2(-24f, 0f);
-        rtRight.sizeDelta = new Vector2(480f, 72f);
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // 3. PLACA DERECHA: OBJETIVO, META Y OJO ROJO (Anchor Top-Right, 480-500 px)
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        GameObject rightPlaque = new GameObject("HUD_Placa_Derecha");
+        rightPlaque.transform.SetParent(hudGo.transform, false);
+        RectTransform rtRight = rightPlaque.AddComponent<RectTransform>();
+        rtRight.anchorMin = rtRight.anchorMax = new Vector2(1f, 1f);
+        rtRight.pivot = new Vector2(1f, 1f);
+        rtRight.anchoredPosition = new Vector2(-24f, -16f);
+        rtRight.sizeDelta = new Vector2(plaqueWidth, plaqueHeight);
 
-        Text objTxt = CreateText(rightCard.transform, "ObjectiveText",
-            $"OBJETIVO: {objetivoTexto}", 17, TextAnchor.MiddleRight,
-            new Color(0.85f, 0.95f, 1f),
-            new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(440f, 26f))
-            .GetComponent<Text>();
-        objTxt.fontStyle = FontStyle.Bold;
-        objTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
-        objTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 13f);
+        Image rightBg = rightPlaque.AddComponent<Image>();
+        rightBg.sprite = HudPlacaRecta ?? PlacaNormal;
+        rightBg.type = Image.Type.Sliced;
+        rightBg.color = Color.white;
 
-        Text distTxt = CreateText(rightCard.transform, "MetaText", "META: --m", 18,
-            TextAnchor.MiddleRight, new Color(1f, 0.90f, 0.40f),
-            new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(440f, 26f))
-            .GetComponent<Text>();
-        distTxt.fontStyle = FontStyle.Bold;
-        distTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
-        distTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -13f);
+        // BrÃºjula en el lado izquierdo dentro de la placa (44 Ã— 44 px)
+        GameObject compassGo = new GameObject("IconoBrujula");
+        compassGo.transform.SetParent(rightPlaque.transform, false);
+        Image compassImg = compassGo.AddComponent<Image>();
+        compassImg.sprite = HudBrujula ?? IconoVela;
+        compassImg.preserveAspect = true;
+        RectTransform compRt = compassGo.GetComponent<RectTransform>();
+        compRt.anchorMin = compRt.anchorMax = new Vector2(0f, 0.5f);
+        compRt.pivot = new Vector2(0f, 0.5f);
+        compRt.sizeDelta = new Vector2(44f, 44f);
+        compRt.anchoredPosition = new Vector2(46f, 0f);
 
-        GoalCompassUI compass = rightCard.AddComponent<GoalCompassUI>();
-        SerializedObject soComp = new SerializedObject(compass);
-        soComp.FindProperty("arrowRect").objectReferenceValue = null;
-        soComp.FindProperty("distanceText").objectReferenceValue = distTxt;
-        soComp.ApplyModifiedProperties();
-
-        // Icono_ojo de alerta integrado a la izquierda del objetivo
+        // Ojo de alerta al lado de la brÃºjula (44 Ã— 36 px)
         GameObject eyeGo = new GameObject("IconoOjo_Alerta");
-        eyeGo.transform.SetParent(rightCard.transform, false);
+        eyeGo.transform.SetParent(rightPlaque.transform, false);
         Image eyeImg = eyeGo.AddComponent<Image>();
-        eyeImg.sprite = IconoOjo;
+        eyeImg.sprite = HudOjo ?? IconoOjo;
         eyeImg.preserveAspect = true;
         RectTransform eyeRt = eyeGo.GetComponent<RectTransform>();
         eyeRt.anchorMin = eyeRt.anchorMax = new Vector2(0f, 0.5f);
         eyeRt.pivot = new Vector2(0f, 0.5f);
-        eyeRt.anchoredPosition = new Vector2(0f, 0f);
-        eyeRt.sizeDelta = new Vector2(40f, 40f);
+        eyeRt.sizeDelta = new Vector2(44f, 36f);
+        eyeRt.anchoredPosition = new Vector2(98f, 0f);
 
-        // ════════════════════════════════════════════════════════════════════════
-        // D. AVISOS DE EVENTO (A 108 px del borde superior, centro libre)
-        // ════════════════════════════════════════════════════════════════════════
+        // Textos dentro de la placa derecha (X = 152f, ancho generoso de 282-302 px)
+        float txtObjY = usesInventory ? 18f : 8f;
+        float txtMetaY = usesInventory ? -24f : -18f;
+        float rightTextW = plaqueWidth - 198f;
+
+        Text objTxt = CreateText(rightPlaque.transform, "ObjectiveText",
+            objetivoTexto, 15, TextAnchor.MiddleLeft,
+            new Color(0.36f, 0.98f, 0.90f),
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(rightTextW, usesInventory ? 48f : 34f))
+            .GetComponent<Text>();
+        objTxt.fontStyle = FontStyle.Bold;
+        objTxt.horizontalOverflow = HorizontalWrapMode.Wrap;
+        objTxt.verticalOverflow = VerticalWrapMode.Truncate;
+        objTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(152f, txtObjY);
+        var objOutline = objTxt.gameObject.AddComponent<Outline>();
+        objOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        objOutline.effectDistance = new Vector2(1.2f, -1.2f);
+
+        Text distTxt = CreateText(rightPlaque.transform, "MetaText", "SALIDA: --m", 16,
+            TextAnchor.MiddleLeft, new Color(1f, 0.88f, 0.40f),
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(rightTextW, 26f))
+            .GetComponent<Text>();
+        distTxt.fontStyle = FontStyle.Bold;
+        distTxt.GetComponent<RectTransform>().anchoredPosition = new Vector2(152f, txtMetaY);
+        var distOutline = distTxt.gameObject.AddComponent<Outline>();
+        distOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        distOutline.effectDistance = new Vector2(1.2f, -1.2f);
+
+        GoalCompassUI compass = rightPlaque.AddComponent<GoalCompassUI>();
+        SerializedObject soComp = new SerializedObject(compass);
+        soComp.FindProperty("arrowRect").objectReferenceValue = compRt;
+        soComp.FindProperty("distanceText").objectReferenceValue = distTxt;
+        soComp.ApplyModifiedProperties();
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // D. AVISOS DE EVENTO (A 135 px del borde superior, centro libre)
+        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         GameObject evtNoticeGo = new GameObject("AvisoEvento_Top140");
         evtNoticeGo.transform.SetParent(hudGo.transform, false);
         RectTransform evtRt = evtNoticeGo.AddComponent<RectTransform>();
@@ -783,7 +881,7 @@ public static class UIBuilder
         {
             // Reduce únicamente tarjetas accesorias si se pide HUD ultra-compacto
             scoreTxt.gameObject.SetActive(false);
-            rightCard.SetActive(false);
+            rightPlaque.SetActive(false);
             eyeGo.SetActive(false);
         }
 
@@ -792,18 +890,21 @@ public static class UIBuilder
         SerializedProperty hpArray = soHud.FindProperty("heartImages");
         hpArray.arraySize = 3;
         for (int i = 0; i < 3; i++) hpArray.GetArrayElementAtIndex(i).objectReferenceValue = heartImgs[i];
-        soHud.FindProperty("activeHeartSprite").objectReferenceValue   = CorazonLleno;
-        soHud.FindProperty("lostHeartSprite").objectReferenceValue     = CorazonVacio;
+        soHud.FindProperty("activeHeartSprite").objectReferenceValue   = HudCorazonLleno ?? CorazonLleno;
+        soHud.FindProperty("lostHeartSprite").objectReferenceValue     = HudCorazonVacio ?? CorazonVacio;
+        soHud.FindProperty("activeHeartColor").colorValue              = Color.white;
+        soHud.FindProperty("lostHeartColor").colorValue                = Color.white;
         soHud.FindProperty("timerText").objectReferenceValue           = timerTxt;
         soHud.FindProperty("scoreText").objectReferenceValue           = scoreTxt;
         soHud.FindProperty("objectiveText").objectReferenceValue       = objTxt;
+        soHud.FindProperty("showCandleInventory").boolValue            = usesInventory;
         soHud.FindProperty("candleInventoryRoot").objectReferenceValue = candleRoot;
         soHud.FindProperty("candleCountText").objectReferenceValue     = candleTxt;
         soHud.FindProperty("staminaFillImage").objectReferenceValue    = stamFill;
         soHud.FindProperty("staminaCanvasGroup").objectReferenceValue  = stamCg;
         soHud.FindProperty("eyeIconImage").objectReferenceValue        = eyeImg;
-        soHud.FindProperty("eyeNormalSprite").objectReferenceValue     = IconoOjo;
-        soHud.FindProperty("eyeAlertSprite").objectReferenceValue      = IconoOjo;
+        soHud.FindProperty("eyeNormalSprite").objectReferenceValue     = HudOjo ?? IconoOjo;
+        soHud.FindProperty("eyeAlertSprite").objectReferenceValue      = HudOjo ?? IconoOjo;
         soHud.FindProperty("eventNoticePanel").objectReferenceValue       = evtNoticeGo;
         soHud.FindProperty("eventNoticeText").objectReferenceValue        = evtTxt;
         soHud.FindProperty("eventNoticeCanvasGroup").objectReferenceValue = evtCg;
@@ -1128,21 +1229,29 @@ public static class UIBuilder
         t.fontSize  = fontSize;
         t.alignment = alignment;
         t.color     = color;
-        t.font      = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        t.horizontalOverflow = HorizontalWrapMode.Overflow;
-        t.verticalOverflow   = VerticalWrapMode.Overflow;
-
-        Outline outline = go.AddComponent<Outline>();
-        outline.effectColor = new Color(0f, 0f, 0f, 1.0f);
-        outline.effectDistance = new Vector2(1.5f, -1.5f);
+        Font customFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/TextMesh Pro/Fonts/LiberationSans.ttf");
+        t.font      = customFont != null ? customFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        t.horizontalOverflow = HorizontalWrapMode.Wrap;
+        t.verticalOverflow   = VerticalWrapMode.Truncate;
+        t.raycastTarget      = false;
 
         Shadow shadow = go.AddComponent<Shadow>();
         shadow.effectColor = new Color(0f, 0f, 0f, 0.90f);
-        shadow.effectDistance = new Vector2(2f, -2f);
+        shadow.effectDistance = new Vector2(1.2f, -1.2f);
 
         RectTransform rt = go.GetComponent<RectTransform>();
         rt.anchorMin = anchorMin;
         rt.anchorMax = anchorMax;
+
+        float px = 0.5f;
+        if (alignment == TextAnchor.UpperLeft || alignment == TextAnchor.MiddleLeft || alignment == TextAnchor.LowerLeft) px = 0f;
+        else if (alignment == TextAnchor.UpperRight || alignment == TextAnchor.MiddleRight || alignment == TextAnchor.LowerRight) px = 1f;
+
+        float py = 0.5f;
+        if (alignment == TextAnchor.UpperLeft || alignment == TextAnchor.UpperCenter || alignment == TextAnchor.UpperRight) py = 1f;
+        else if (alignment == TextAnchor.LowerLeft || alignment == TextAnchor.LowerCenter || alignment == TextAnchor.LowerRight) py = 0f;
+
+        rt.pivot = new Vector2(px, py);
         rt.anchoredPosition = Vector2.zero;
         rt.sizeDelta = sizeDelta;
         return go;

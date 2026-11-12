@@ -320,8 +320,7 @@ public static class Level3Builder
         CreateNoiseRubbleOfficial(hazards, "Escombros_Escalinata_Oeste",  rubbleSprite, 13.0f, 32.0f, sfxTepalcatesCrunch);
         CreateNoiseRubbleOfficial(hazards, "Escombros_Escalinata_Este",   rubbleSprite, 23.0f, 32.0f, sfxTepalcatesCrunch);
 
-        // 14 Veladoras Coleccionables bien distribuidas en las zonas
-        CreateCandlePickupOfficial(hazards, "Vela_Calzada_Sur",    sVelaRoja, new Vector2(18.0f,  3.5f));
+        // 13 Veladoras Coleccionables bien distribuidas en las zonas (El inicio permanece despejado sin veladoras)
         CreateCandlePickupOfficial(hazards, "Vela_Calzada_Oeste",  sVelaRoja, new Vector2(14.0f,  9.0f));
         CreateCandlePickupOfficial(hazards, "Vela_Calzada_Este",   sVelaRoja, new Vector2(22.0f,  9.0f));
         CreateCandlePickupOfficial(hazards, "Vela_Claustro_Sur",   sVelaRoja, new Vector2(-5.0f, 20.0f));
@@ -350,9 +349,9 @@ public static class Level3Builder
         wps[8] = CreateEmpty(wpRoot, "WP_Acceso_Panteon_SE",  31.5f, 18.0f);
         wps[9] = CreateEmpty(wpRoot, "WP_Fuente_Centro",      18.0f, 21.0f);
 
-        // 13. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 41.2f)
+        // 13. META DEL NIVEL: Puertas Principales de la Parroquia de Dolores (Coronando las escaleras en Y = 40.05f)
         Transform exitGroup = FreshRoot("Salida_Meta");
-        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 41.2f, 4, sSelloPuerta, sPuertasAbiertas, sfxPortalApertura, sfxCampanas);
+        CreateParroquiaEntranceGoalWithSeal(exitGroup, 18.0f, 40.05f, 4, sSelloPuerta, sPuertasAbiertas, sfxPortalApertura, sfxCampanas);
 
         // 14. Iluminación Global URP 2D (Noche en el atrio: 0.50f)
         EnsureGlobalLight(0.50f);
@@ -777,62 +776,62 @@ public static class Level3Builder
         // Collider de victoria en la puerta de madera (inicia desactivado hasta consagrar las 4 ofrendas)
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
-        bc.size = new Vector2(3.2f, 1.2f);
-        bc.offset = Vector2.zero;
+        bc.size = new Vector2(2.6f, 1.2f);
+        bc.offset = new Vector2(0f, 0.6f);
         bc.enabled = false;
         go.AddComponent<LevelGoal>();
 
         // Niebla espectral de sellado
         GameObject sealMistGo = new GameObject("Aura_Sello_Espectral");
         sealMistGo.transform.SetParent(go.transform, false);
-        sealMistGo.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+        sealMistGo.transform.localPosition = new Vector3(0f, 0.7f, 0f);
 
         if (selloSprite != null)
         {
             SpriteRenderer srSeal = sealMistGo.AddComponent<SpriteRenderer>();
             srSeal.sprite = selloSprite;
-            srSeal.sortingOrder = 4;
+            srSeal.sortingOrder = 5;
             srSeal.color = new Color(0.95f, 0.88f, 1.0f, 0.90f);
-            sealMistGo.transform.localScale = new Vector3(0.50f, 0.50f, 1f);
+            sealMistGo.transform.localScale = new Vector3(0.40f, 0.40f, 1f);
         }
 
         Light2D l2dSeal = sealMistGo.AddComponent<Light2D>();
         l2dSeal.lightType = Light2D.LightType.Point;
         l2dSeal.color = new Color(0.65f, 0.25f, 0.85f);
         l2dSeal.intensity = 2.2f;
-        l2dSeal.pointLightOuterRadius = 4.8f;
+        l2dSeal.pointLightOuterRadius = 3.8f;
         sealMistGo.AddComponent<LightFlicker>();
 
         // Visual de puertas abiertas e interior sagrado iluminado (inicia desactivado hasta consagrar 4/4 nichos)
         GameObject openDoorsGo = new GameObject("Entrada_Puertas_Abiertas");
         openDoorsGo.transform.SetParent(go.transform, false);
-        openDoorsGo.transform.localPosition = new Vector3(0f, 0.35f, 0f);
+        openDoorsGo.transform.localPosition = Vector3.zero;
 
         if (openDoorsSprite != null)
         {
             SpriteRenderer srOpen = openDoorsGo.AddComponent<SpriteRenderer>();
             srOpen.sprite = openDoorsSprite;
-            srOpen.sortingOrder = 3;
-            openDoorsGo.transform.localScale = new Vector3(0.65f, 0.65f, 1f);
+            srOpen.sortingOrder = 4;
+            openDoorsGo.transform.localScale = new Vector3(0.50f, 0.50f, 1f);
         }
         openDoorsGo.SetActive(false);
 
         // Luz divina del santuario (dorada/cálida, se enciende al abrir)
         GameObject lightGo = new GameObject("Luz_Entrada_Parroquia");
         lightGo.transform.SetParent(go.transform, false);
-        lightGo.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+        lightGo.transform.localPosition = new Vector3(0f, 0.8f, 0f);
         Light2D l2d = lightGo.AddComponent<Light2D>();
         l2d.lightType = Light2D.LightType.Point;
         l2d.color = new Color(1.0f, 0.88f, 0.48f);
         l2d.intensity = 2.8f;
-        l2d.pointLightOuterRadius = 8.0f;
+        l2d.pointLightOuterRadius = 7.0f;
         lightGo.AddComponent<LightFlicker>();
         l2d.enabled = false;
 
         // Letrero de estado de la puerta con TextMesh HD (fontSize 80, characterSize 0.045f)
         GameObject labelGo = new GameObject("LabelPuerta");
         labelGo.transform.SetParent(go.transform, false);
-        labelGo.transform.localPosition = new Vector3(0f, 1.9f, 0f);
+        labelGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
         TextMesh tm = labelGo.AddComponent<TextMesh>();
         tm.text = $"PUERTAS SELLADAS\n(Ofrendas: 0/{requiredShrines})";
         tm.fontSize = 80;
@@ -1024,7 +1023,7 @@ public static class Level3Builder
 
         CircleCollider2D col = go.AddComponent<CircleCollider2D>();
         col.isTrigger = true;
-        col.radius = 1.3f;
+        col.radius = 0.55f;
         col.offset = Vector2.zero;
 
         GameObject lightGo = new GameObject("LuzVela");

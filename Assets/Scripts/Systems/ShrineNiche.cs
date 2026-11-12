@@ -195,6 +195,22 @@ public class ShrineNiche : MonoBehaviour
     }
 
     /// <summary>
+    /// Determina si el jugador está a corta distancia de algún nicho sagrado que aún no esté consagrado.
+    /// </summary>
+    public static bool IsPlayerNearAnyUnlitShrine(Vector3 playerPos, float maxDist = 3.2f)
+    {
+        foreach (var s in AllShrines)
+        {
+            if (s != null && !s.IsLit)
+            {
+                if (Vector2.Distance(playerPos, s.transform.position) <= maxDist)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
     /// Verifica si una posición se encuentra dentro de la zona sagrada de algún nicho encendido.
     /// </summary>
     public static bool IsPositionSafe(Vector3 position)

@@ -102,10 +102,10 @@ public static class Level4Builder
         if (rootEnv == null) rootEnv = new GameObject("Escenario_Panteon_Oficial");
 
         // ----------------------------------------------------
-        // 2. MOSAICO DE SUELO MODULAR (46 x 28)
+        // 2. MOSAICO DE SUELO MODULAR (70 x 28) - ESCENARIO EXPANDIDO
         // ----------------------------------------------------
         GameObject groundGroup = GetOrCreateChild(rootEnv, "Suelo_Modular_Cantera");
-        int widthTiles = 46;
+        int widthTiles = 70;
         int heightTiles = 28;
         for (int x = 0; x < widthTiles; x++)
         {
@@ -130,32 +130,33 @@ public static class Level4Builder
             }
         }
 
-        // Tapetes de Cempasúchil en entradas y senderos principales
+        // Tapetes de Cempasúchil en entradas, sectores y senderos principales
         if (tapeteFlores != null)
         {
             GameObject matsGroup = GetOrCreateChild(rootEnv, "Senderos_Cempasuchil");
-            CreatePiece(matsGroup, "Tapete_Entrada", new Vector3(4.5f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.1f, 1.1f, 1f));
-            CreatePiece(matsGroup, "Tapete_Sendero_1", new Vector3(14.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.0f, 1.0f, 1f));
-            CreatePiece(matsGroup, "Tapete_Sendero_2", new Vector3(28.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.2f, 1.2f, 1f));
-            CreatePiece(matsGroup, "Tapete_Salida", new Vector3(41.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.1f, 1.1f, 1f));
+            CreatePiece(matsGroup, "Tapete_Entrada",   new Vector3( 4.5f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.1f, 1.1f, 1f));
+            CreatePiece(matsGroup, "Tapete_Sector_1", new Vector3(18.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.1f, 1.1f, 1f));
+            CreatePiece(matsGroup, "Tapete_Sector_2", new Vector3(38.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.1f, 1.1f, 1f));
+            CreatePiece(matsGroup, "Tapete_Tumba",    new Vector3(49.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.3f, 1.3f, 1f));
+            CreatePiece(matsGroup, "Tapete_Salida",   new Vector3(65.0f, 14.0f, 0f), tapeteFlores, "Props", 1, new Vector3(1.2f, 1.2f, 1f));
         }
 
         // ----------------------------------------------------
-        // 3. MUROS PERIMETRALES Y VERJAS
+        // 3. MUROS PERIMETRALES Y VERJAS (LONGITUD 70 METROS)
         // ----------------------------------------------------
         GameObject boundsGroup = GetOrCreateChild(rootEnv, "Limites_Perimetrales");
         GameObject wallsGroup  = GetOrCreateChild(rootEnv, "Muros_Verjas_Visuales");
 
-        // Muro Norte (Y = 27.5)
-        CreateSolidBarrier(boundsGroup, "Col_Muro_Norte", new Vector2(23.0f, 27.5f), new Vector2(46.0f, 1.2f), wallsLayer);
-        for (float x = 1.5f; x <= 44.5f; x += 3.2f)
+        // Muro Norte (Y = 27.5, X: 0 a 70)
+        CreateSolidBarrier(boundsGroup, "Col_Muro_Norte", new Vector2(35.0f, 27.5f), new Vector2(70.0f, 1.2f), wallsLayer);
+        for (float x = 1.5f; x <= 68.5f; x += 3.2f)
         {
             CreatePiece(wallsGroup, $"Verja_Norte_{x:F0}", new Vector3(x, 27.0f, 0f), muroVerja, "Default", 2, new Vector3(0.85f, 0.85f, 1f));
         }
 
-        // Muro Sur (Y = 0.5)
-        CreateSolidBarrier(boundsGroup, "Col_Muro_Sur", new Vector2(23.0f, 0.5f), new Vector2(46.0f, 1.2f), wallsLayer);
-        for (float x = 1.5f; x <= 44.5f; x += 3.2f)
+        // Muro Sur (Y = 0.5, X: 0 a 70)
+        CreateSolidBarrier(boundsGroup, "Col_Muro_Sur", new Vector2(35.0f, 0.5f), new Vector2(70.0f, 1.2f), wallsLayer);
+        for (float x = 1.5f; x <= 68.5f; x += 3.2f)
         {
             CreatePiece(wallsGroup, $"Verja_Sur_{x:F0}", new Vector3(x, 1.0f, 0f), muroVerja, "Default", 2, new Vector3(0.85f, 0.85f, 1f));
         }
@@ -167,83 +168,99 @@ public static class Level4Builder
             CreatePiece(wallsGroup, $"Pilar_Oeste_{y:F0}", new Vector3(1.0f, y, 0f), pilarCantera, "Default", 2, new Vector3(0.70f, 0.70f, 1f));
         }
 
-        // Muro Este (Salida a casa con apertura para la Gran Reja Gótica entre Y=11.5 e Y=16.5)
-        CreateSolidBarrier(boundsGroup, "Col_Muro_Este_Norte", new Vector2(45.2f, 22.0f), new Vector2(1.2f, 11.0f), wallsLayer);
-        CreateSolidBarrier(boundsGroup, "Col_Muro_Este_Sur",   new Vector2(45.2f,  6.0f), new Vector2(1.2f, 11.0f), wallsLayer);
+        // Muro Este (Salida con apertura para la Gran Reja Gótica en X = 69.2, entre Y=11.5 e Y=16.5)
+        CreateSolidBarrier(boundsGroup, "Col_Muro_Este_Norte", new Vector2(69.2f, 22.0f), new Vector2(1.2f, 11.0f), wallsLayer);
+        CreateSolidBarrier(boundsGroup, "Col_Muro_Este_Sur",   new Vector2(69.2f,  6.0f), new Vector2(1.2f, 11.0f), wallsLayer);
         for (float y = 17.5f; y <= 26.0f; y += 4.5f)
         {
-            CreatePiece(wallsGroup, $"Pilar_Este_N_{y:F0}", new Vector3(45.0f, y, 0f), pilarCantera, "Default", 2, new Vector3(0.70f, 0.70f, 1f));
+            CreatePiece(wallsGroup, $"Pilar_Este_N_{y:F0}", new Vector3(69.0f, y, 0f), pilarCantera, "Default", 2, new Vector3(0.70f, 0.70f, 1f));
         }
         for (float y = 2.5f; y <= 10.5f; y += 4.5f)
         {
-            CreatePiece(wallsGroup, $"Pilar_Este_S_{y:F0}", new Vector3(45.0f, y, 0f), pilarCantera, "Default", 2, new Vector3(0.70f, 0.70f, 1f));
+            CreatePiece(wallsGroup, $"Pilar_Este_S_{y:F0}", new Vector3(69.0f, y, 0f), pilarCantera, "Default", 2, new Vector3(0.70f, 0.70f, 1f));
         }
 
         // ----------------------------------------------------
-        // 4. MUROS INTERIORES DEL LABERINTO (PASILLOS AMPLIOS DE 7 METROS)
+        // 4. MUROS INTERIORES DE LOS 4 SECTORES (PASILLOS AMPLIOS DE 7 METROS)
         // ----------------------------------------------------
-        CreateSolidBarrier(boundsGroup, "Col_Interior_Oeste_Norte", new Vector2(11.0f, 22.0f), new Vector2(1.0f, 9.0f), wallsLayer);
-        CreateSolidBarrier(boundsGroup, "Col_Interior_Oeste_Sur",   new Vector2(11.0f,  6.0f), new Vector2(1.0f, 9.0f), wallsLayer);
+        // Verja Interior 1 (X = 18.0)
+        CreateSolidBarrier(boundsGroup, "Col_Interior_1_Norte", new Vector2(18.0f, 22.0f), new Vector2(1.0f, 9.0f), wallsLayer);
+        CreateSolidBarrier(boundsGroup, "Col_Interior_1_Sur",   new Vector2(18.0f,  6.0f), new Vector2(1.0f, 9.0f), wallsLayer);
         for (float y = 18.0f; y <= 25.5f; y += 3.0f)
         {
-            CreatePiece(wallsGroup, $"Verja_Int_ON_{y:F0}", new Vector3(11.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
+            CreatePiece(wallsGroup, $"Verja_Int_1N_{y:F0}", new Vector3(18.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
         }
         for (float y = 2.0f; y <= 9.5f; y += 3.0f)
         {
-            CreatePiece(wallsGroup, $"Verja_Int_OS_{y:F0}", new Vector3(11.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
+            CreatePiece(wallsGroup, $"Verja_Int_1S_{y:F0}", new Vector3(18.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
         }
 
-        CreateSolidBarrier(boundsGroup, "Col_Interior_Este_Norte", new Vector2(33.5f, 22.0f), new Vector2(1.0f, 9.0f), wallsLayer);
-        CreateSolidBarrier(boundsGroup, "Col_Interior_Este_Sur",   new Vector2(33.5f,  6.0f), new Vector2(1.0f, 9.0f), wallsLayer);
+        // Verja Interior 2 (X = 38.0)
+        CreateSolidBarrier(boundsGroup, "Col_Interior_2_Norte", new Vector2(38.0f, 22.0f), new Vector2(1.0f, 9.0f), wallsLayer);
+        CreateSolidBarrier(boundsGroup, "Col_Interior_2_Sur",   new Vector2(38.0f,  6.0f), new Vector2(1.0f, 9.0f), wallsLayer);
         for (float y = 18.0f; y <= 25.5f; y += 3.0f)
         {
-            CreatePiece(wallsGroup, $"Verja_Int_EN_{y:F0}", new Vector3(33.5f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
+            CreatePiece(wallsGroup, $"Verja_Int_2N_{y:F0}", new Vector3(38.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
         }
         for (float y = 2.0f; y <= 9.5f; y += 3.0f)
         {
-            CreatePiece(wallsGroup, $"Verja_Int_ES_{y:F0}", new Vector3(33.5f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
+            CreatePiece(wallsGroup, $"Verja_Int_2S_{y:F0}", new Vector3(38.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
+        }
+
+        // Verja Interior 3 (X = 56.0)
+        CreateSolidBarrier(boundsGroup, "Col_Interior_3_Norte", new Vector2(56.0f, 22.0f), new Vector2(1.0f, 9.0f), wallsLayer);
+        CreateSolidBarrier(boundsGroup, "Col_Interior_3_Sur",   new Vector2(56.0f,  6.0f), new Vector2(1.0f, 9.0f), wallsLayer);
+        for (float y = 18.0f; y <= 25.5f; y += 3.0f)
+        {
+            CreatePiece(wallsGroup, $"Verja_Int_3N_{y:F0}", new Vector3(56.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
+        }
+        for (float y = 2.0f; y <= 9.5f; y += 3.0f)
+        {
+            CreatePiece(wallsGroup, $"Verja_Int_3S_{y:F0}", new Vector3(56.0f, y, 0f), muroVerja, "Default", 2, new Vector3(0.75f, 0.75f, 1f));
         }
 
         // ----------------------------------------------------
         // 5. MAUSOLEOS MONUMENTALES Y CRIPTAS (COLISIÓN EXCLUSIVA EN BASE)
         // ----------------------------------------------------
         GameObject mausoleosGroup = GetOrCreateChild(rootEnv, "Mausoleos_Labyrinth");
-        CreateMausoleum(mausoleosGroup, "Mausoleo_Grande_Norte", new Vector3(17.0f, 19.5f, 0f), mausoleoGrande, new Vector3(0.65f, 0.65f, 1f), new Vector2(3.2f, 1.4f), -1.6f, wallsLayer);
-        CreateMausoleum(mausoleosGroup, "Cripta_Pared_Norte", new Vector3(23.5f, 20.0f, 0f), criptaPared, new Vector3(0.80f, 0.80f, 1f), new Vector2(2.4f, 1.2f), -1.0f, wallsLayer);
-        CreateMausoleum(mausoleosGroup, "Mausoleo_Capilla_Noreste", new Vector3(29.5f, 20.5f, 0f), mausoleoMedio, new Vector3(0.75f, 0.75f, 1f), new Vector2(2.4f, 1.3f), -1.3f, wallsLayer);
-        CreateMausoleum(mausoleosGroup, "Mausoleo_Cripta_Suroeste", new Vector3(16.5f, 7.5f, 0f), mausoleoCripta, new Vector3(0.75f, 0.75f, 1f), new Vector2(2.2f, 1.3f), -1.1f, wallsLayer);
-        CreateMausoleum(mausoleosGroup, "Mausoleo_Capilla_Sur", new Vector3(23.0f, 7.5f, 0f), mausoleoMedio, new Vector3(0.75f, 0.75f, 1f), new Vector2(2.4f, 1.3f), -1.3f, wallsLayer);
-        CreateMausoleum(mausoleosGroup, "Mausoleo_Cripta_Sureste", new Vector3(29.5f, 7.5f, 0f), mausoleoCripta, new Vector3(0.75f, 0.75f, 1f), new Vector2(2.2f, 1.3f), -1.1f, wallsLayer);
+        CreateMausoleum(mausoleosGroup, "Mausoleo_Grande_Norte",    new Vector3(24.0f, 20.5f, 0f), mausoleoGrande, new Vector3(0.65f, 0.65f, 1f), new Vector2(3.2f, 1.4f), -1.6f, wallsLayer);
+        CreateMausoleum(mausoleosGroup, "Cripta_Pared_Norte",       new Vector3(32.0f, 20.5f, 0f), criptaPared,     new Vector3(0.80f, 0.80f, 1f), new Vector2(2.4f, 1.2f), -1.0f, wallsLayer);
+        CreateMausoleum(mausoleosGroup, "Mausoleo_Capilla_Arena",   new Vector3(51.0f, 21.0f, 0f), mausoleoMedio,   new Vector3(0.75f, 0.75f, 1f), new Vector2(2.4f, 1.3f), -1.3f, wallsLayer);
+        CreateMausoleum(mausoleosGroup, "Mausoleo_Cripta_Suroeste", new Vector3(23.5f,  7.5f, 0f), mausoleoCripta,  new Vector3(0.75f, 0.75f, 1f), new Vector2(2.2f, 1.3f), -1.1f, wallsLayer);
+        CreateMausoleum(mausoleosGroup, "Mausoleo_Capilla_Sur",     new Vector3(32.0f,  7.5f, 0f), mausoleoMedio,   new Vector3(0.75f, 0.75f, 1f), new Vector2(2.4f, 1.3f), -1.3f, wallsLayer);
+        CreateMausoleum(mausoleosGroup, "Mausoleo_Cripta_ArenaSur", new Vector3(45.0f,  6.5f, 0f), mausoleoCripta,  new Vector3(0.75f, 0.75f, 1f), new Vector2(2.2f, 1.3f), -1.1f, wallsLayer);
 
         // ----------------------------------------------------
         // 6. ESCONDITES DE SIGILO (BASE SÓLIDA + TRIGGER [E])
         // ----------------------------------------------------
         GameObject stealthGroup = GetOrCreateChild(rootEnv, "Escondites_Sigilo");
         CreateSarcophagusHideSpot(stealthGroup, "Sarcofago_Inicio", new Vector3(8.0f, 12.5f, 0f), sarcofagoCruz, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
-        CreateSarcophagusHideSpot(stealthGroup, "Sarcofago_Laberinto_Central", new Vector3(19.5f, 11.8f, 0f), sarcofagoDoble, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
-        CreateSarcophagusHideSpot(stealthGroup, "Sarcofago_Criptas_Norte", new Vector3(26.5f, 25.5f, 0f), sarcofagoCruz, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
-        CreateSarcophagusHideSpot(stealthGroup, "Tumba_Escondite_Sur", new Vector3(26.0f, 3.8f, 0f), tumbaOrnamental, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
-        CreateCabinHideSpot(stealthGroup, "Cabana_Sepulturero", new Vector3(38.5f, 19.5f, 0f), cabanaSepul, new Vector3(0.60f, 0.60f, 1f), wallsLayer, hideSpotLayer);
+        CreateSarcophagusHideSpot(stealthGroup, "Sarcofago_Sector2_Norte", new Vector3(28.5f, 21.0f, 0f), sarcofagoCruz, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
+        CreateSarcophagusHideSpot(stealthGroup, "Tumba_Escondite_Sector2", new Vector3(24.0f, 4.0f, 0f), tumbaOrnamental, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
+        CreateSarcophagusHideSpot(stealthGroup, "Sarcofago_Arena_Central", new Vector3(42.0f, 18.5f, 0f), sarcofagoDoble, new Vector3(0.75f, 0.75f, 1f), hideSpotLayer, wallsLayer);
+        CreateCabinHideSpot(stealthGroup, "Cabana_Sepulturero", new Vector3(42.5f, 22.0f, 0f), cabanaSepul, new Vector3(0.60f, 0.60f, 1f), wallsLayer, hideSpotLayer);
 
         // ----------------------------------------------------
-        // 7. PILAS DE AGUA BENDITA (ESTACIONES DE RECARGA PARA EL BOSS FIGHT)
+        // 7. PILAS DE AGUA BENDITA (5 ESTACIONES ESTRATÉGICAS DISTRIBUIDAS)
         // ----------------------------------------------------
         GameObject holySupplyGroup = GetOrCreateChild(rootEnv, "Pilas_Agua_Bendita");
-        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Oeste", new Vector3( 7.5f, 14.0f, 0f), pilarCantera, refillSfx, wallsLayer);
-        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Norte", new Vector3(21.0f, 21.0f, 0f), pilarCantera, refillSfx, wallsLayer);
-        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Sur",   new Vector3(20.5f,  6.8f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Oeste",   new Vector3( 7.5f, 14.0f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Norte",   new Vector3(28.0f, 23.5f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Sur",     new Vector3(27.0f,  4.5f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Arena",   new Vector3(41.0f, 14.0f, 0f), pilarCantera, refillSfx, wallsLayer);
+        CreateHolyWaterSupplyStation(holySupplyGroup, "Pila_Agua_Salida",  new Vector3(62.0f, 14.0f, 0f), pilarCantera, refillSfx, wallsLayer);
 
         // ----------------------------------------------------
         // 8. ALTARES Y LA GRAN TUMBA SAGRADA DE LA LLORONA
         // ----------------------------------------------------
         GameObject shrinesGroup = GetOrCreateChild(rootEnv, "Altares_Cempasuchil");
         CreateShrineAltar(shrinesGroup, "Altar_Arco_Oeste", new Vector3(6.5f, 20.0f, 0f), altarArco, "Altar de la Piedad", new Vector3(0.85f, 0.85f, 1f), wallsLayer);
-        CreateShrineAltar(shrinesGroup, "Altar_Mesa_Sur", new Vector3(22.5f, 3.5f, 0f), ofrendaMesa, "Ofrenda de las Ánimas", new Vector3(0.90f, 0.90f, 1f), wallsLayer);
+        CreateShrineAltar(shrinesGroup, "Altar_Mesa_Sur", new Vector3(27.0f, 3.8f, 0f), ofrendaMesa, "Ofrenda de las Ánimas", new Vector3(0.90f, 0.90f, 1f), wallsLayer);
 
-        // Gran Tumba Olvidada de La Llorona (Ofrenda final del ritual para abrir la Gran Reja)
+        // Gran Tumba Olvidada de La Llorona (En el corazón del Sector 3)
         CreateLloronaGrave(
             shrinesGroup,
-            new Vector3(28.0f, 14.0f, 0f),
+            new Vector3(49.0f, 14.0f, 0f),
             altarMagno,
             angelDoliente,
             tapeteFlores,
@@ -254,30 +271,31 @@ public static class Level4Builder
             wallsLayer);
 
         // Ítem interactivo para buscar en el panteón: Ofrenda Sagrada de Cempasúchil y Veladoras
-        CreateSacredOfferingPickupItem(shrinesGroup, new Vector3(22.5f, 4.3f, 0f), velaSprite, refillSfx);
+        CreateSacredOfferingPickupItem(shrinesGroup, new Vector3(27.0f, 5.0f, 0f), velaSprite, refillSfx);
 
         if (ofrendaColumna != null)
         {
-            CreatePiece(shrinesGroup, "Columna_Flores_Izq", new Vector3(25.5f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
-            CreatePiece(shrinesGroup, "Columna_Flores_Der", new Vector3(30.5f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
+            CreatePiece(shrinesGroup, "Columna_Flores_Izq", new Vector3(46.5f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
+            CreatePiece(shrinesGroup, "Columna_Flores_Der", new Vector3(51.5f, 15.8f, 0f), ofrendaColumna, "Props", 3, new Vector3(0.8f, 0.8f, 1f));
         }
 
         // ----------------------------------------------------
         // 9. NATURALEZA TÉTRICA Y ÁRBOLES FUNERARIOS
         // ----------------------------------------------------
         GameObject treesGroup = GetOrCreateChild(rootEnv, "Naturaleza_Funeraria");
-        CreatePieceWithCollider(treesGroup, "Arbol_Seco_Oeste", new Vector3( 4.0f, 23.5f, 0f), arbolSeco, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
-        CreatePieceWithCollider(treesGroup, "Arbol_Seco_Este",  new Vector3(36.0f,  6.5f, 0f), arbolSeco, "Props", 10, new Vector3(0.70f, 0.70f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
-        CreatePieceWithCollider(treesGroup, "Sauce_Oeste",      new Vector3( 8.5f,  7.0f, 0f), sauceFunerario, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
-        CreatePieceWithCollider(treesGroup, "Sauce_Noreste",    new Vector3(32.0f, 22.5f, 0f), sauceFunerario, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
+        CreatePieceWithCollider(treesGroup, "Arbol_Seco_Oeste",  new Vector3( 4.0f, 23.5f, 0f), arbolSeco, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
+        CreatePieceWithCollider(treesGroup, "Arbol_Seco_Centro", new Vector3(36.0f,  6.5f, 0f), arbolSeco, "Props", 10, new Vector3(0.70f, 0.70f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
+        CreatePieceWithCollider(treesGroup, "Arbol_Seco_Arena",  new Vector3(54.0f, 23.5f, 0f), arbolSeco, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
+        CreatePieceWithCollider(treesGroup, "Sauce_Oeste",       new Vector3( 8.5f,  7.0f, 0f), sauceFunerario, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
+        CreatePieceWithCollider(treesGroup, "Sauce_Noreste",     new Vector3(34.0f, 22.5f, 0f), sauceFunerario, "Props", 10, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.0f, 0.8f), -0.5f, wallsLayer);
 
         CreatePiece(treesGroup, "Cipres_1", new Vector3( 3.0f, 19.5f, 0f), cipresAlto, "Props", 4, new Vector3(0.85f, 0.85f, 1f));
-        CreatePiece(treesGroup, "Cipres_2", new Vector3(42.5f,  8.5f, 0f), cipresAlto, "Props", 4, new Vector3(0.85f, 0.85f, 1f));
-        CreatePiece(treesGroup, "Cipres_3", new Vector3(42.5f, 20.0f, 0f), cipresAlto, "Props", 4, new Vector3(0.85f, 0.85f, 1f));
+        CreatePiece(treesGroup, "Cipres_2", new Vector3(65.0f,  8.5f, 0f), cipresAlto, "Props", 4, new Vector3(0.85f, 0.85f, 1f));
+        CreatePiece(treesGroup, "Cipres_3", new Vector3(65.0f, 19.5f, 0f), cipresAlto, "Props", 4, new Vector3(0.85f, 0.85f, 1f));
 
         CreatePiece(treesGroup, "Zarza_1", new Vector3( 9.0f,  4.5f, 0f), matorral1, "Props", 2, new Vector3(0.65f, 0.65f, 1f));
-        CreatePiece(treesGroup, "Zarza_2", new Vector3(25.0f, 25.5f, 0f), matorral2, "Props", 2, new Vector3(0.65f, 0.65f, 1f));
-        CreatePiece(treesGroup, "Zarza_3", new Vector3(38.0f,  9.5f, 0f), matorral1, "Props", 2, new Vector3(0.65f, 0.65f, 1f));
+        CreatePiece(treesGroup, "Zarza_2", new Vector3(31.0f, 25.5f, 0f), matorral2, "Props", 2, new Vector3(0.65f, 0.65f, 1f));
+        CreatePiece(treesGroup, "Zarza_3", new Vector3(48.0f,  4.5f, 0f), matorral1, "Props", 2, new Vector3(0.65f, 0.65f, 1f));
 
         // ----------------------------------------------------
         // 10. LÁPIDAS, CRUCES Y FOSAS
@@ -287,8 +305,9 @@ public static class Level4Builder
         {
             new Vector2( 5.0f, 11.0f), new Vector2( 7.0f, 11.0f),
             new Vector2( 5.0f,  5.5f), new Vector2( 7.0f,  5.5f),
-            new Vector2(18.5f, 25.8f), new Vector2(23.5f, 25.8f),
-            new Vector2(36.5f, 16.8f), new Vector2(36.5f, 11.2f)
+            new Vector2(21.0f, 25.8f), new Vector2(25.0f, 25.8f),
+            new Vector2(44.0f, 25.5f), new Vector2(50.0f, 25.5f),
+            new Vector2(59.0f, 17.5f), new Vector2(59.0f, 10.5f)
         };
         for (int i = 0; i < lapidasP1.Length; i++)
         {
@@ -296,41 +315,42 @@ public static class Level4Builder
             CreateSolidProp(tombsGroup, $"Lapida_{i+1}", lapidasP1[i], s, new Vector3(0.65f, 0.65f, 1f), new Vector2(0.6f, 0.4f), -0.2f, wallsLayer);
         }
 
-        CreateSolidProp(tombsGroup, "Angel_Doliente_Oeste", new Vector3(13.5f, 16.5f, 0f), angelDoliente, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.8f, 0.6f), -0.4f, wallsLayer);
-        CreateSolidProp(tombsGroup, "Angel_Doliente_Este",  new Vector3(31.5f, 16.5f, 0f), angelDoliente, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.8f, 0.6f), -0.4f, wallsLayer);
-        CreateSolidProp(tombsGroup, "Obelisco_Sur",   new Vector3( 9.0f,  9.5f, 0f), obelisco, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.6f, 0.6f), -0.5f, wallsLayer);
-        CreateSolidProp(tombsGroup, "Obelisco_Norte", new Vector3(21.0f, 25.8f, 0f), obelisco, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.6f, 0.6f), -0.5f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Angel_Doliente_Oeste", new Vector3(14.0f, 14.0f, 0f), angelDoliente, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.8f, 0.6f), -0.4f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Angel_Doliente_Arena", new Vector3(53.0f, 16.5f, 0f), angelDoliente, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.8f, 0.6f), -0.4f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Obelisco_Sur",         new Vector3( 9.0f,  9.5f, 0f), obelisco, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.6f, 0.6f), -0.5f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Obelisco_Salida_N",    new Vector3(61.0f, 20.0f, 0f), obelisco, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.6f, 0.6f), -0.5f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Obelisco_Salida_S",    new Vector3(61.0f,  8.0f, 0f), obelisco, new Vector3(0.70f, 0.70f, 1f), new Vector2(0.6f, 0.6f), -0.5f, wallsLayer);
 
-        CreateSolidProp(tombsGroup, "Fosa_Abierta_1", new Vector2(18.0f, 2.6f), tumbaFosa, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.5f, 0.8f), 0f, wallsLayer);
-        CreateSolidProp(tombsGroup, "Fosa_Abierta_2", new Vector2(30.0f, 2.6f), tumbaFosa, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.5f, 0.8f), 0f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Fosa_Abierta_1", new Vector2(43.0f, 3.0f), tumbaFosa, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.5f, 0.8f), 0f, wallsLayer);
+        CreateSolidProp(tombsGroup, "Fosa_Abierta_2", new Vector2(53.0f, 3.0f), tumbaFosa, new Vector3(0.75f, 0.75f, 1f), new Vector2(1.5f, 0.8f), 0f, wallsLayer);
 
         // ----------------------------------------------------
         // 11. PELIGROS AMBIENTALES
         // ----------------------------------------------------
         GameObject hazardsGroup = GetOrCreateChild(rootEnv, "Peligros_Ambientales");
         CreateMudPuddle(hazardsGroup, 13.0f, 12.0f, 1.2f);
-        CreateMudPuddle(hazardsGroup, 23.5f, 12.0f, 1.2f);
-        CreateMudPuddle(hazardsGroup, 34.0f, 12.0f, 1.2f);
-        CreateMudPuddle(hazardsGroup, 18.5f,  3.8f, 1.1f);
+        CreateMudPuddle(hazardsGroup, 22.0f, 12.0f, 1.2f);
+        CreateMudPuddle(hazardsGroup, 34.0f, 16.0f, 1.2f);
+        CreateMudPuddle(hazardsGroup, 47.0f, 10.0f, 1.2f);
 
         // ----------------------------------------------------
         // 12. ESPECTROS MENORES DE LA FASE 2 (DURMIENTES)
         // ----------------------------------------------------
         GameObject spectersGroup = GetOrCreateChild(rootEnv, "Amenazas_Espectros");
-        GameObject specter1 = CreateCemeterySpecter(spectersGroup, "Espectro_Anima_1", new Vector3(16.0f, 10.5f, 0f), 13.0f, 28.0f, 1.45f, screamSfx, ambientSfx);
-        GameObject specter2 = CreateCemeterySpecter(spectersGroup, "Espectro_Anima_2", new Vector3(25.0f, 24.0f, 0f), 15.0f, 32.0f, 1.55f, screamSfx, ambientSfx);
+        GameObject specter1 = CreateCemeterySpecter(spectersGroup, "Espectro_Anima_1", new Vector3(26.0f, 10.5f, 0f), 20.0f, 36.0f, 1.45f, screamSfx, ambientSfx);
+        GameObject specter2 = CreateCemeterySpecter(spectersGroup, "Espectro_Anima_2", new Vector3(46.0f, 24.0f, 0f), 40.0f, 54.0f, 1.55f, screamSfx, ambientSfx);
         specter1.SetActive(false);
         specter2.SetActive(false);
 
         // ----------------------------------------------------
-        // 13. PORTAL MONUMENTAL DE SALIDA SELLADO (GRAN REJA GÓTICA)
+        // 13. PORTAL MONUMENTAL DE SALIDA SELLADO (GRAN REJA GÓTICA EN X = 68.2)
         // ----------------------------------------------------
         GameObject gateObj;
         Collider2D exitTrigger;
         Collider2D gateSolid;
         Light2D gateLight;
         TextMesh gateLabel;
-        CreateExitGate(rootEnv, new Vector3(44.2f, 14.0f, 0f), rejaSalida, wallsLayer,
+        CreateExitGate(rootEnv, new Vector3(68.2f, 14.0f, 0f), rejaSalida, wallsLayer,
             out gateObj, out exitTrigger, out gateSolid, out gateLight, out gateLabel);
 
         // ----------------------------------------------------
@@ -339,7 +359,7 @@ public static class Level4Builder
         if (nieblaSprite != null)
         {
             GameObject fogRoot = GetOrCreateChild(rootEnv, "Niebla_Atmocion_Panteon");
-            for (float fx = 6.0f; fx <= 42.0f; fx += 12.0f)
+            for (float fx = 6.0f; fx <= 66.0f; fx += 12.0f)
             {
                 for (float fy = 6.0f; fy <= 24.0f; fy += 12.0f)
                 {
@@ -364,14 +384,16 @@ public static class Level4Builder
         {
             new Vector2( 3.5f, 14.0f),
             new Vector2( 9.0f, 19.5f),
-            new Vector2(13.5f, 14.0f),
-            new Vector2(16.5f, 24.0f),
-            new Vector2(16.5f,  4.0f),
-            new Vector2(23.0f, 14.0f),
-            new Vector2(25.5f, 20.0f),
-            new Vector2(28.0f, 16.5f),
-            new Vector2(38.0f, 16.5f),
-            new Vector2(43.5f, 14.0f)
+            new Vector2(14.0f, 14.0f),
+            new Vector2(18.0f, 22.0f),
+            new Vector2(24.0f, 14.0f),
+            new Vector2(27.0f,  4.5f),
+            new Vector2(34.0f, 20.0f),
+            new Vector2(41.0f, 14.0f),
+            new Vector2(49.0f, 16.5f),
+            new Vector2(56.0f, 14.0f),
+            new Vector2(62.0f, 14.0f),
+            new Vector2(67.5f, 14.0f)
         };
         for (int i = 0; i < lanternPositions.Length; i++)
         {
@@ -385,10 +407,10 @@ public static class Level4Builder
         SetupPlayerCombat(playerObj, bottleSprite, throwSfx, holySfx, emptySfx);
 
         // ----------------------------------------------------
-        // 17. LA LLORONA (BOSS FIGHT FINAL - 3 FASES)
+        // 17. LA LLORONA (BOSS FIGHT FINAL EN X = 45.0f, Y = 14.0f)
         // ----------------------------------------------------
         SetupBossLlorona(
-            pos:         new Vector2(23.5f, 14.0f),
+            pos:         new Vector2(45.0f, 14.0f),
             sp1:         specter1,
             sp2:         specter2,
             scream:      screamSfx,
@@ -417,7 +439,7 @@ public static class Level4Builder
             showOnStart: true);
 
         // ----------------------------------------------------
-        // 20. CÁMARA CON SEGUIMIENTO SUAVE
+        // 20. CÁMARA CON SEGUIMIENTO SUAVE (BOUNDS: 1.5 a 68.5)
         // ----------------------------------------------------
         Camera cam = Camera.main;
         if (cam == null)
@@ -432,7 +454,7 @@ public static class Level4Builder
         cam.backgroundColor = new Color(0.04f, 0.04f, 0.08f);
 
         CameraFollow2D camFollow = GetOrAddComponent<CameraFollow2D>(cam.gameObject);
-        camFollow.SetBounds(new Vector2(1.5f, 2.0f), new Vector2(44.5f, 26.0f));
+        camFollow.SetBounds(new Vector2(1.5f, 2.0f), new Vector2(68.5f, 26.0f));
         camFollow.SetOrthoSize(5.2f);
 
         // GameManager y AudioManager nivel 4
@@ -893,40 +915,62 @@ public static class Level4Builder
         GameObject bossBarGo = new GameObject("Barra_Jefe_Llorona");
         bossBarGo.transform.SetParent(canvasTransform, false);
 
+        // Ubicada en la parte inferior central para NO empalmar con el medallón de tiempo/puntos superior
         RectTransform rt = bossBarGo.AddComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0.5f, 1f);
-        rt.anchorMax = new Vector2(0.5f, 1f);
-        rt.pivot = new Vector2(0.5f, 1f);
-        rt.anchoredPosition = new Vector2(0f, -18f);
+        rt.anchorMin = new Vector2(0.5f, 0f);
+        rt.anchorMax = new Vector2(0.5f, 0f);
+        rt.pivot = new Vector2(0.5f, 0f);
+        rt.anchoredPosition = new Vector2(0f, 22f);
         rt.sizeDelta = new Vector2(620f, 85f);
 
         Image bgPanel = bossBarGo.AddComponent<Image>();
-        bgPanel.color = new Color(0.04f, 0.04f, 0.08f, 0.88f);
+        Sprite[] uiSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/UI/interfaz.png").OfType<Sprite>().ToArray();
+        Sprite plateNormal = uiSprites.FirstOrDefault(s => s.name == "Placa_normal");
+        if (plateNormal != null)
+        {
+            bgPanel.sprite = plateNormal;
+            bgPanel.type = Image.Type.Sliced;
+            bgPanel.color = new Color(0.12f, 0.08f, 0.10f, 0.92f);
+        }
+        else
+        {
+            bgPanel.color = new Color(0.04f, 0.04f, 0.08f, 0.88f);
+        }
+
+        Font customFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/TextMesh Pro/Fonts/LiberationSans.ttf")
+            ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         GameObject titleGo = new GameObject("BossTitle");
         titleGo.transform.SetParent(bossBarGo.transform, false);
         Text titleTxt = titleGo.AddComponent<Text>();
         titleTxt.text = "✦ LA LLORONA - EL ALMA EN PENA ✦";
-        titleTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        titleTxt.font = customFont;
         titleTxt.fontSize = 18;
         titleTxt.fontStyle = FontStyle.Bold;
         titleTxt.alignment = TextAnchor.MiddleCenter;
-        titleTxt.color = new Color(1.0f, 0.85f, 0.35f);
+        titleTxt.color = new Color(1.0f, 0.88f, 0.40f);
+        var titleOutline = titleGo.AddComponent<Outline>();
+        titleOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        titleOutline.effectDistance = new Vector2(1.2f, -1.2f);
         RectTransform rtTitle = titleGo.GetComponent<RectTransform>();
         rtTitle.anchorMin = new Vector2(0.5f, 1f);
         rtTitle.anchorMax = new Vector2(0.5f, 1f);
         rtTitle.pivot = new Vector2(0.5f, 1f);
         rtTitle.anchoredPosition = new Vector2(0f, -6f);
-        rtTitle.sizeDelta = new Vector2(600f, 24f);
+        rtTitle.sizeDelta = new Vector2(600f, 22f);
 
         GameObject subGo = new GameObject("BossSubtitle");
         subGo.transform.SetParent(bossBarGo.transform, false);
         Text subTxt = subGo.AddComponent<Text>();
         subTxt.text = "Fase 1: El Llanto de las Sombras";
-        subTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        subTxt.fontSize = 13;
+        subTxt.font = customFont;
+        subTxt.fontSize = 14;
+        subTxt.fontStyle = FontStyle.Bold;
         subTxt.alignment = TextAnchor.MiddleCenter;
-        subTxt.color = new Color(0.35f, 0.85f, 1.0f);
+        subTxt.color = new Color(0.40f, 0.90f, 1.0f);
+        var subOutline = subGo.AddComponent<Outline>();
+        subOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        subOutline.effectDistance = new Vector2(1.2f, -1.2f);
         RectTransform rtSub = subGo.GetComponent<RectTransform>();
         rtSub.anchorMin = new Vector2(0.5f, 1f);
         rtSub.anchorMax = new Vector2(0.5f, 1f);
@@ -961,11 +1005,14 @@ public static class Level4Builder
         ammoGo.transform.SetParent(bossBarGo.transform, false);
         Text ammoTxt = ammoGo.AddComponent<Text>();
         ammoTxt.text = "💧 Agua Bendita: [ ● ● ● ]  (Clic / [F] para lanzar)";
-        ammoTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        ammoTxt.fontSize = 13;
+        ammoTxt.font = customFont;
+        ammoTxt.fontSize = 14;
         ammoTxt.fontStyle = FontStyle.Bold;
         ammoTxt.alignment = TextAnchor.MiddleCenter;
-        ammoTxt.color = new Color(0.35f, 0.90f, 1.0f);
+        ammoTxt.color = new Color(0.40f, 0.92f, 1.0f);
+        var ammoOutline = ammoGo.AddComponent<Outline>();
+        ammoOutline.effectColor = new Color(0f, 0f, 0f, 0.95f);
+        ammoOutline.effectDistance = new Vector2(1.2f, -1.2f);
         RectTransform rtAmmo = ammoGo.GetComponent<RectTransform>();
         rtAmmo.anchorMin = new Vector2(0.5f, 1f);
         rtAmmo.anchorMax = new Vector2(0.5f, 1f);

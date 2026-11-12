@@ -184,48 +184,8 @@ public static class Level2MasterController
 
     static void EnsureUICanvas(UnityEngine.SceneManagement.Scene currentScene)
     {
-        GameObject uiCanvas = GameObject.Find("UICanvas");
-        if (uiCanvas == null)
-        {
-            Debug.Log("[Level2MasterController] UICanvas no encontrado en Nivel 2. Clonando desde Nivel 1...");
-            var level1Scene = EditorSceneManager.OpenScene("Assets/Scenes/Level1_Mercado.unity", OpenSceneMode.Additive);
-            GameObject sourceCanvas = null;
-            foreach (var root in level1Scene.GetRootGameObjects())
-            {
-                if (root.name == "UICanvas")
-                {
-                    sourceCanvas = root;
-                    break;
-                }
-            }
-
-            if (sourceCanvas != null)
-            {
-                GameObject clone = UnityEngine.Object.Instantiate(sourceCanvas);
-                clone.name = "UICanvas";
-                SceneManager.MoveGameObjectToScene(clone, currentScene);
-                uiCanvas = clone;
-                Debug.Log("[Level2MasterController] ¡UICanvas clonado e integrado exitosamente en Nivel 2!");
-            }
-            EditorSceneManager.CloseScene(level1Scene, true);
-        }
-
-        // Conectar el objetivo de la brújula (GoalCompassUI) hacia la salida monumental
-        GoalCompassUI compass = UnityEngine.Object.FindAnyObjectByType<GoalCompassUI>();
-        if (compass != null)
-        {
-            GameObject goalObj = GameObject.Find("Salida_Tunel_Colonial");
-            if (goalObj != null)
-            {
-                SerializedObject soComp = new SerializedObject(compass);
-                var targetProp = soComp.FindProperty("target");
-                if (targetProp != null)
-                {
-                    targetProp.objectReferenceValue = goalObj.transform;
-                    soComp.ApplyModifiedProperties();
-                }
-            }
-        }
+        Debug.Log("[Level2MasterController] Reconstruyendo UICanvas oficial de Carol Rios para Nivel 2...");
+        UIBuilder.BuildLevel2UICanvas();
     }
 
     static void ConfigurePlayerAndCamera()

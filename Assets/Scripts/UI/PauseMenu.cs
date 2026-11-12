@@ -43,8 +43,26 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
-        // Detectar tecla Escape con protección ante Keyboard nulo (móvil)
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        bool pausePressed = false;
+
+        // Detectar tecla Escape o tecla P (indispensable para navegadores/Itch.io)
+        var kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.escapeKey.wasPressedThisFrame || kb.pKey.wasPressedThisFrame)
+            {
+                pausePressed = true;
+            }
+        }
+
+        // Soporte para botón Start / Menu de Gamepad
+        var pad = Gamepad.current;
+        if (pad != null && pad.startButton.wasPressedThisFrame)
+        {
+            pausePressed = true;
+        }
+
+        if (pausePressed)
         {
             if (optionsSubPanel != null && optionsSubPanel.activeSelf)
             {

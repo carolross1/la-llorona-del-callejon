@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -7,80 +6,115 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Módulo de Configuración del HUD para el Nivel 2.
-/// Asegura que se use exclusivamente el HUD oficial diseñado por el equipo (UIBuilder.BuildLevel2UICanvas),
-/// elimina elementos duplicados y garantiza que todas las referencias a vidas, tiempo, puntos y estamina
-/// estén conectadas estrictamente para que el tiempo corra y las vidas se resten en pantalla.
+/// Asegura que se use exclusivamente el HUD oficial diseñado por Carol Rios (UIBuilder.BuildLevel2UICanvas),
+/// elimina cualquier resto del HUD antiguo (HUD_Placa_Izquierda, HUD_Medallon_Centro, HUD_Placa_Derecha)
+/// y garantiza que todas las referencias de HUD.cs estén correctamente vinculadas para que el tiempo corra
+/// y las vidas se resten en pantalla de forma fluida.
 /// </summary>
 public static class Level2HUD
 {
     public static void SetupHUD()
     {
+        // 1. Reconstruir UICanvas oficial de Carol Rios
+        UIBuilder.BuildLevel2UICanvas();
+
         Canvas canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
-        if (canvas == null)
-        {
-            UIBuilder.BuildLevel2UICanvas();
-            canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
-            if (canvas == null) return;
-        }
+        if (canvas == null) return;
 
         HUD hud = UnityEngine.Object.FindAnyObjectByType<HUD>();
+        if (hud == null) return;
 
-        // 1. Eliminar cualquier elemento duplicado o empalmado que compita con el HUD oficial
-        string[] duplicateNames = {
-            "HUD_Izquierda_Estado",
-            "HUD_Centro_Tiempo",
-            "HUD_Centro_TiempoPuntos",
-            "HUD_Derecha_Objetivo",
+        // 2. Eliminar cualquier elemento remanente del HUD antiguo/propio
+        string[] oldCustomHudNames = {
+            "HUD_Placa_Izquierda",
+            "HUD_Medallon_Centro",
+            "HUD_Placa_Derecha",
             "HUD_Inferior_Corazones_Duplicados"
         };
 
-        foreach (var dName in duplicateNames)
+        foreach (var oldName in oldCustomHudNames)
         {
-            Transform dUnderCanvas = canvas.transform.Find(dName);
-            if (dUnderCanvas != null && (hud == null || dUnderCanvas.gameObject != hud.gameObject))
+            Transform tCanvas = canvas.transform.Find(oldName);
+            if (tCanvas != null && tCanvas.gameObject != hud.gameObject)
             {
-                UnityEngine.Object.DestroyImmediate(dUnderCanvas.gameObject);
+                UnityEngine.Object.DestroyImmediate(tCanvas.gameObject);
             }
 
-            if (hud != null)
+            Transform tHud = hud.transform.Find(oldName);
+            if (tHud != null)
             {
-                Transform dUnderHud = hud.transform.Find(dName);
-                if (dUnderHud != null)
+                UnityEngine.Object.DestroyImmediate(tHud.gameObject);
+            }
+        }
+
+        // 3. Verificar y asegurar vinculación estricta de componentes de HUD.cs con el HUD oficial de Carol
+        Transform topBar = hud.transform.Find("HUD_BarraSuperior");
+        if (topBar == null) return;
+
+        Transform leftCluster = topBar.Find("HUD_Izquierda_Estado");
+        Transform centerCluster = topBar.Find("HUD_Centro_TiempoPuntos");
+        Transform rightCluster = topBar.Find("HUD_Derecha_Objetivo");
+
+        SerializedObject soHud = new SerializedObject(hud);
+
+        // Corazones de vida oficiales de Carol
+        if (leftCluster != null)
+        {
+            Transform heartsRoot = leftCluster.Find("Corazones_Vida");
+            if (heartsRoot != null)
+            {
+                SerializedProperty hpProp = soHud.FindProperty("heartImages");
+                hpProp.arraySize = 3;
+                for (int i = 0; i < 3; i++)
                 {
-                    UnityEngine.Object.DestroyImmediate(dUnderHud.gameObject);
+                    Transform hChild = heartsRoot.Find($"Corazon_{i + 1}");
+                    Image hImg = hChild != null ? hChild.GetComponent<Image>() : null;
+                    hpProp.GetArrayElementAtIndex(i).objectReferenceValue = hImg;
+                }
+            }
+
+            // Estamina oficial de Carol
+            Transform stamRoot = leftCluster.Find("Estamina_Barra");
+            if (stamRoot != null)
+            {
+                soHud.FindProperty("staminaCanvasGroup").objectReferenceValue = stamRoot.GetComponent<CanvasGroup>();
+                Transform fillChild = stamRoot.Find("MarcoBarra/Fill");
+                if (fillChild != null)
+                {
+                    soHud.FindProperty("staminaFillImage").objectReferenceValue = fillChild.GetComponent<Image>();
                 }
             }
         }
 
-        // 2. Verificar estructura del HUD oficial de Carol Rios
-        Transform leftPlaque = hud != null ? hud.transform.Find("HUD_Placa_Izquierda") : null;
-        Transform centerMedallon = hud != null ? hud.transform.Find("HUD_Medallon_Centro") : null;
-        Transform rightPlaque = hud != null ? hud.transform.Find("HUD_Placa_Derecha") : null;
-
-        if (hud == null || leftPlaque == null || centerMedallon == null || rightPlaque == null)
+        // Tiempo y Puntos oficiales de Carol
+        if (centerCluster != null)
         {
-            UIBuilder.BuildLevel2UICanvas();
-            hud = UnityEngine.Object.FindAnyObjectByType<HUD>();
-            if (hud == null) return;
-            leftPlaque = hud.transform.Find("HUD_Placa_Izquierda");
-            centerMedallon = hud.transform.Find("HUD_Medallon_Centro");
-            rightPlaque = hud.transform.Find("HUD_Placa_Derecha");
+            Transform timerChild = centerCluster.Find("TimerText");
+            if (timerChild != null)
+            {
+                soHud.FindProperty("timerText").objectReferenceValue = timerChild.GetComponent<Text>();
+            }
+
+            Transform scoreChild = centerCluster.Find("ScoreText");
+            if (scoreChild != null)
+            {
+                soHud.FindProperty("scoreText").objectReferenceValue = scoreChild.GetComponent<Text>();
+            }
         }
 
-        // 3. Garantizar el enlazado estricto de todas las referencias de HUD.cs
-        SerializedObject soHud = new SerializedObject(hud);
-
-        // Enlazar los 3 corazones de vida
-        Transform heartsRoot = leftPlaque != null ? leftPlaque.Find("Corazones_Vida") : null;
-        if (heartsRoot != null)
+        // Objetivo y Alerta oficial de Carol
+        if (rightCluster != null)
         {
-            SerializedProperty hpProp = soHud.FindProperty("heartImages");
-            hpProp.arraySize = 3;
-            for (int i = 0; i < 3; i++)
+            Transform objChild = rightCluster.Find("ObjectiveText");
+            if (objChild != null)
             {
-                Transform hChild = heartsRoot.Find($"Corazon_{i + 1}");
-                Image hImg = hChild != null ? hChild.GetComponent<Image>() : null;
-                hpProp.GetArrayElementAtIndex(i).objectReferenceValue = hImg;
+                soHud.FindProperty("objectiveText").objectReferenceValue = objChild.GetComponent<Text>();
+            }
+
+            Transform eyeChild = rightCluster.Find("IconoOjo_Alerta");
+            if (eyeChild != null)
+            {
+                soHud.FindProperty("eyeIconImage").objectReferenceValue = eyeChild.GetComponent<Image>();
             }
         }
 
@@ -98,44 +132,9 @@ public static class Level2HUD
         soHud.FindProperty("activeHeartColor").colorValue = Color.white;
         soHud.FindProperty("lostHeartColor").colorValue = Color.white;
 
-        // Enlazar Tiempo y Puntos en Medallón Centro
-        if (centerMedallon != null)
-        {
-            Transform tChild = centerMedallon.Find("TimerText");
-            if (tChild != null) soHud.FindProperty("timerText").objectReferenceValue = tChild.GetComponent<Text>();
-
-            Transform scChild = centerMedallon.Find("ScoreText");
-            if (scChild != null) soHud.FindProperty("scoreText").objectReferenceValue = scChild.GetComponent<Text>();
-        }
-
-        // Enlazar Objetivo y Ojo en Placa Derecha
-        if (rightPlaque != null)
-        {
-            Transform objChild = rightPlaque.Find("ObjectiveText");
-            if (objChild != null) soHud.FindProperty("objectiveText").objectReferenceValue = objChild.GetComponent<Text>();
-
-            Transform eyeChild = rightPlaque.Find("IconoOjo_Alerta");
-            if (eyeChild != null) soHud.FindProperty("eyeIconImage").objectReferenceValue = eyeChild.GetComponent<Image>();
-        }
-
-        // Enlazar Estamina en Placa Izquierda
-        if (leftPlaque != null)
-        {
-            Transform stamRoot = leftPlaque.Find("Estamina_Barra");
-            if (stamRoot != null)
-            {
-                soHud.FindProperty("staminaCanvasGroup").objectReferenceValue = stamRoot.GetComponent<CanvasGroup>();
-                Transform fillChild = stamRoot.Find("MarcoBarra/Fill");
-                if (fillChild != null)
-                {
-                    soHud.FindProperty("staminaFillImage").objectReferenceValue = fillChild.GetComponent<Image>();
-                }
-            }
-        }
-
         soHud.ApplyModifiedProperties();
         EditorUtility.SetDirty(hud);
-        Debug.Log("[Level2HUD] ¡Todas las referencias de HUD vinculadas exitosamente (vidas, tiempo, puntos, estamina)!");
+        Debug.Log("[Level2HUD] HUD oficial de Carol Rios configurado y vinculado exitosamente para Nivel 2.");
     }
 }
 #endif

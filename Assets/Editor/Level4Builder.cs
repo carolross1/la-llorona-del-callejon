@@ -424,9 +424,20 @@ public static class Level4Builder
         // ----------------------------------------------------
         // 18. BARRA DE VIDA DE JEFE EN EL CANVAS
         // ----------------------------------------------------
+        UIBuilder.BuildLevel4UICanvas();
+
         Canvas canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
         if (canvas != null)
         {
+            // Ajustar Tutorial_Bottom60 para que flote por encima de la barra de jefe y no se empalmen
+            Transform tut = canvas.transform.Find("HUD/Tutorial_Bottom60");
+            if (tut == null) tut = canvas.transform.Find("Tutorial_Bottom60");
+            if (tut != null)
+            {
+                RectTransform rtTut = tut.GetComponent<RectTransform>();
+                if (rtTut != null) rtTut.anchoredPosition = new Vector2(0f, 135f);
+            }
+
             CreateBossHealthBarUI(canvas.transform);
         }
 

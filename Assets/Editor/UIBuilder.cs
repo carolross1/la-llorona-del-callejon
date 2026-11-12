@@ -1,4 +1,4 @@
-﻿// Assets/Editor/UIBuilder.cs
+// Assets/Editor/UIBuilder.cs
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -537,7 +537,7 @@ public static class UIBuilder
     public static void BuildLevel1UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level1_Mercado.unity", "Cruza el mercado sin que La Llorona te vea");
     public static void BuildLevel2UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level2_Callejon.unity", "Llega al final del callej\u00f3n esquivando los obst\u00e1culos");
     public static void BuildLevel3UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level3_Atrio.unity", "Consagra las 4 ofrendas y llega a la Parroquia", false);
-    public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "\u00a1Escapa hacia tu casa! Cuidado con las \u00e1nimas y el perro");
+    public static void BuildLevel4UICanvas() => BuildLevelUICanvas("Assets/Scenes/Level4_Cementerio.unity", "¡Purifica a La Llorona arrojándole Agua Bendita!");
 
     public static void BuildLevelUICanvas(string path, string objetivoTexto = "", bool minimalHud = false)
     {

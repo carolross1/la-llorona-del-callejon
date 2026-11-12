@@ -36,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
+        Candle.ResetInventory();
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         if (rb != null)
@@ -97,11 +98,29 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Ofrenda / Orar con [F] (Prioriza consagrar nicho sagrado si está cerca, o colocar ofrenda en el suelo)
-        if (kb.fKey.wasPressedThisFrame && Candle.PlayerCandlesCount > 0 && !IsHidden)
+        if (kb.fKey.wasPressedThisFrame && !IsHidden)
         {
-            if (!ShrineNiche.TryLightNearestShrine(transform.position))
+            if (Candle.PlayerCandlesCount > 0)
             {
-                Candle.TryPlaceOffering(transform.position);
+                if (!ShrineNiche.TryLightNearestShrine(transform.position))
+                {
+                    Candle.TryPlaceOffering(transform.position);
+                }
+            }
+            else
+            {
+                if (HUD.Instance != null)
+                {
+                    bool nearShrine = ShrineNiche.IsPlayerNearAnyUnlitShrine(transform.position);
+                    if (nearShrine)
+                    {
+                        HUD.Instance.ShowEventNotice("❌ ¡Necesitas 1 veladora para consagrar este nicho!\nRecoge una en el suelo con [E] o acude a la Mesa de Cirios.", 3.0f);
+                    }
+                    else
+                    {
+                        HUD.Instance.ShowEventNotice("❌ ¡No tienes veladoras en el inventario!\nRecoge una en el suelo con [E] o acude a la Mesa de Cirios.", 3.0f);
+                    }
+                }
             }
         }
 

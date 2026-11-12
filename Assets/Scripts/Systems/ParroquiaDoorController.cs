@@ -39,10 +39,12 @@ public class ParroquiaDoorController : MonoBehaviour
         Instance = this;
         litCount = 0;
         isOpen = false;
+        Candle.ResetInventory();
     }
 
     void Start()
     {
+        Candle.ResetInventory();
         UpdateDoorState();
         HUD.ActiveShrinesLit = 0;
         HUD.TotalShrines = requiredShrines;

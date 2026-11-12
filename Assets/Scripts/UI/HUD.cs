@@ -1,4 +1,4 @@
-// Assets/Scripts/UI/HUD.cs
+﻿// Assets/Scripts/UI/HUD.cs
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,6 +33,7 @@ public class HUD : MonoBehaviour
     [SerializeField] Text objectiveText;
 
     [Header("Inventario de Velas / Ofrendas")]
+    [SerializeField] bool showCandleInventory = true;
     [SerializeField] GameObject candleInventoryRoot;
     [SerializeField] Text candleCountText;
 
@@ -74,6 +75,7 @@ public class HUD : MonoBehaviour
     void Start()
     {
         Candle.OnCandlesCountChanged += UpdateCandleCount;
+        PlayerHolyWaterLauncher.OnJarsChanged += UpdateHolyWaterJars;
         UpdateCandleCount(Candle.PlayerCandlesCount);
 
         if (GameManager.Instance != null)
@@ -98,6 +100,7 @@ public class HUD : MonoBehaviour
     void OnDestroy()
     {
         Candle.OnCandlesCountChanged -= UpdateCandleCount;
+        PlayerHolyWaterLauncher.OnJarsChanged -= UpdateHolyWaterJars;
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnLivesChanged -= UpdateLives;
@@ -108,15 +111,43 @@ public class HUD : MonoBehaviour
 
     public void UpdateCandleCount(int count)
     {
+        if (!showCandleInventory)
+        {
+            if (candleInventoryRoot != null) candleInventoryRoot.SetActive(false);
+            return;
+        }
+
         if (candleInventoryRoot != null)
             candleInventoryRoot.SetActive(true);
         if (candleCountText != null)
         {
             if (TotalShrines > 0)
-                candleCountText.text = $"Ofrendas: {ActiveShrinesLit}/{TotalShrines}   Velas: {count}  [F]";
+            {
+                string statusVelas = count > 0 
+                    ? $"Velas: {count}  [F] Ofrendar" 
+                    : "Velas: 0 (Sin velas)";
+                candleCountText.text = $"Nichos: {ActiveShrinesLit}/{TotalShrines}   |   {statusVelas}";
+            }
             else
-                candleCountText.text = count > 0 ? $"Velas: {count}  [F] Orar" : "Velas: 0";
+            {
+                candleCountText.text = count > 0 
+                    ? $"Velas: {count}  [F] Ofrendar" 
+                    : "Velas: 0 (Sin velas)";
+            }
+
+            candleCountText.color = count > 0 
+                ? new Color(1.0f, 0.94f, 0.45f) 
+                : new Color(0.80f, 0.80f, 0.80f, 0.85f);
         }
+    }
+
+    public void UpdateHolyWaterJars(int current, int max)
+    {
+        if (!showCandleInventory || candleCountText == null) return;
+        candleCountText.text = $"Agua Bendita: {current}/{max}";
+        candleCountText.color = current > 0 
+            ? new Color(0.40f, 0.95f, 1.0f) 
+            : new Color(0.80f, 0.80f, 0.80f, 0.85f);
     }
 
     public void UpdateLives(int lives)
@@ -159,13 +190,13 @@ public class HUD : MonoBehaviour
         if (timerText == null) return;
         int min = Mathf.FloorToInt(seconds / 60f);
         int sec = Mathf.FloorToInt(seconds % 60f);
-        timerText.text = $"TIEMPO {min:00}:{sec:00}";
+        timerText.text = $"{min:00}:{sec:00}";
     }
 
     public void UpdateScore(int score)
     {
         if (scoreText == null) return;
-        scoreText.text = $"PUNTOS {score}";
+        scoreText.text = $"{score} PTS";
     }
 
     public void SetObjective(string text)

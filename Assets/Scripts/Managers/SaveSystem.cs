@@ -66,12 +66,15 @@ public static class SaveSystem
     }
 
     /// <summary>
-    /// Guarda el volumen de música.
+    /// Guarda el volumen de música y lo aplica de inmediato al AudioManager.
     /// </summary>
     public static void SetMusicVolume(float volume)
     {
-        PlayerPrefs.SetFloat(KeyMusicVolume, Mathf.Clamp01(volume));
+        float clamped = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(KeyMusicVolume, clamped);
         PlayerPrefs.Save();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.SetMusicVolume(clamped);
     }
 
     /// <summary>
@@ -83,12 +86,15 @@ public static class SaveSystem
     }
 
     /// <summary>
-    /// Guarda el volumen de efectos sonoros.
+    /// Guarda el volumen de efectos sonoros y lo aplica de inmediato al AudioManager.
     /// </summary>
     public static void SetSfxVolume(float volume)
     {
-        PlayerPrefs.SetFloat(KeySfxVolume, Mathf.Clamp01(volume));
+        float clamped = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(KeySfxVolume, clamped);
         PlayerPrefs.Save();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.SetSfxVolume(clamped);
     }
 
     /// <summary>

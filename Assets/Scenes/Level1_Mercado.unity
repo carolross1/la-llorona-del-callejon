@@ -11889,6 +11889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompletedUI
   panel: {fileID: 42393034}
+  finalHouseBackgroundSprite: {fileID: 0}
   titleText: {fileID: 0}
   timeResultText: {fileID: 1285107137}
   scoreResultText: {fileID: 308889655}
@@ -15143,8 +15144,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenu
   pausePanel: {fileID: 796440319}
   optionsSubPanel: {fileID: 0}
+  controlsSubPanel: {fileID: 0}
   resumeButton: {fileID: 1501236699}
   restartButton: {fileID: 1451771058}
+  controlsButton: {fileID: 0}
   optionsButton: {fileID: 1148622643}
   menuButton: {fileID: 855895718}
 --- !u!1 &1488264230

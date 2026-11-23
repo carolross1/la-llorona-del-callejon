@@ -72,7 +72,6 @@ public class AudioManager : MonoBehaviour
         CheckAudioListener();
     }
 
-    
     void OnEnable()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
@@ -101,7 +100,7 @@ public class AudioManager : MonoBehaviour
         }
         else if (listeners.Length > 1 && myListener != null)
         {
-            // Si otra cmara ya tiene AudioListener activo, desactivar el de respaldo
+            // Si otra cámara ya tiene AudioListener activo, desactivar el de respaldo
             myListener.enabled = false;
         }
     }
@@ -178,8 +177,8 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            AudioSource activeSource = activeIsA ? musicSourceA : musicSourceB;
-            if (activeSource != null) activeSource.volume = currentMusicTargetVol;
+            if (musicSourceA != null) musicSourceA.volume = currentMusicTargetVol;
+            if (musicSourceB != null) musicSourceB.volume = currentMusicTargetVol;
         }
     }
 
@@ -224,9 +223,9 @@ public class AudioManager : MonoBehaviour
         to.clip = nextClip;
         to.loop = true;
 
-        float targetVol = currentMusicTargetVol > 0.05f ? currentMusicTargetVol : 0.38f;
+        float targetVol = currentMusicTargetVol;
 
-        // Si no haba msica previa sonando, reproducir de inmediato a volumen completo
+        // Si no había música previa sonando, reproducir de inmediato a volumen completo
         if (from == null || !from.isPlaying || from.clip == null)
         {
             to.volume = targetVol;
@@ -268,7 +267,7 @@ public class AudioManager : MonoBehaviour
 
     IEnumerator DuckMusicRoutine(float duration, float duckVolumeRatio)
     {
-        AudioSource activeSource = activeIsA ? musicSourceA : musicSourceB;
+        AudioSource activeSource = (musicSourceA != null && musicSourceA.isPlaying) ? musicSourceA : musicSourceB;
         if (activeSource == null || !activeSource.isPlaying) yield break;
 
         float normalVol = currentMusicTargetVol;
@@ -299,8 +298,8 @@ public class AudioManager : MonoBehaviour
         activeSource.volume = normalVol;
     }
 
-        /// <summary>
-    /// Reproduce la cancin de Intro en la pantalla de Men con crossfade suave.
+    /// <summary>
+    /// Reproduce la canción de Intro en la pantalla de Menú con crossfade suave.
     /// </summary>
     public void PlayMenuMusic()
     {
@@ -314,7 +313,7 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Reproduce la msica calibrada para cada nivel:
+    /// Reproduce la música calibrada para cada nivel:
     /// - Nivel 1: Breath_Behind_the_Stall
     /// - Nivel 2: Nivel 2
     /// </summary>
@@ -356,7 +355,7 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Reproduce la msica de nivel (Nivel 1 por defecto).
+    /// Reproduce la música de nivel (Nivel 1 por defecto).
     /// </summary>
     public void PlayLevelMusic(AudioClip overrideClip = null)
     {

@@ -9,7 +9,7 @@ using UnityEngine.Rendering.Universal;
 /// - Punto sagrado donde reposan los restos del alma en pena.
 /// - Fase 1 (Durante el combate): La tumba está sellada por el rencor.
 /// - Fase 2 (Tras derrotar a La Llorona): El espíritu apaciguado se reúne aquí.
-///   Carlos debe BUSCAR PRIMERO la Ofrenda Sagrada en el panteón y traerla aquí con [E].
+///   Carlos debe BUSCAR PRIMERO la Ofrenda Sagrada en el panteón y traerla aquí con [E] (o botón táctil).
 /// - Fase 3 (Ofrenda completada): La tumba estalla en flores y luz dorada,
 ///   el alma de La Llorona asciende en paz al cielo y la Gran Reja hacia casa se abre.
 /// </summary>
@@ -83,11 +83,13 @@ public class LloronaGraveOffering : MonoBehaviour
 
         UpdatePromptVisuals(inRange);
 
-        // Interacción con tecla [E] o [Espacio]
+        // Interacción con tecla [E], [Espacio] o botón táctil
         if (inRange && state == GraveState.ReadyForOffering)
         {
             var kb = Keyboard.current;
-            if (kb != null && (kb.eKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+            bool interactPressed = (kb != null && (kb.eKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+                                || MobileInputManager.InteractPressedThisFrame;
+            if (interactPressed)
             {
                 PlaceSacredOffering();
             }

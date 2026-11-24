@@ -36,11 +36,14 @@ public class HideSystem : MonoBehaviour
 
     void Update()
     {
-        var kb = Keyboard.current;
-        if (kb == null) return;
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+            return;
 
-        // Tecla [E] estándar para esconderse o salir del escondite en todos los niveles (también acepta [C])
-        bool hideTriggered = kb.eKey.wasPressedThisFrame || kb.cKey.wasPressedThisFrame;
+        var kb = Keyboard.current;
+
+        // Tecla [E] estándar o botón táctil [USAR / OCULTAR] para esconderse o salir del escondite
+        bool hideTriggered = (kb != null && (kb.eKey.wasPressedThisFrame || kb.cKey.wasPressedThisFrame))
+                          || MobileInputManager.InteractPressedThisFrame;
 
         if (hideTriggered)
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// Sistema de guardado y carga persistente usando PlayerPrefs.
-/// Gestiona nivel desbloqueado, récords de puntaje, audio y calidad gráfica.
+/// Gestiona nivel desbloqueado, récords de puntaje, audio, calidad gráfica y modo de controles táctiles.
 /// </summary>
 public static class SaveSystem
 {
@@ -12,6 +12,7 @@ public static class SaveSystem
     const string KeyMusicVolume = "LL_MusicVolume";
     const string KeySfxVolume = "LL_SfxVolume";
     const string KeyQualityLevel = "LL_QualityLevel";
+    const string KeyMobileControlsMode = "LL_MobileControlsMode"; // 0 = Auto, 1 = Mostrar, 2 = Ocultar
 
     /// <summary>
     /// Obtiene el nivel máximo desbloqueado (mínimo nivel 1).
@@ -58,7 +59,7 @@ public static class SaveSystem
     }
 
     /// <summary>
-    /// Obtiene el volumen de música (rango 0 a 1, defecto 1).
+    /// Obtiene el volumen de música (rango 0 a 1, defecto 0.8).
     /// </summary>
     public static float GetMusicVolume()
     {
@@ -78,7 +79,7 @@ public static class SaveSystem
     }
 
     /// <summary>
-    /// Obtiene el volumen de efectos sonoros (rango 0 a 1, defecto 1).
+    /// Obtiene el volumen de efectos sonoros (rango 0 a 1, defecto 0.9).
     /// </summary>
     public static float GetSfxVolume()
     {
@@ -113,6 +114,26 @@ public static class SaveSystem
         PlayerPrefs.SetInt(KeyQualityLevel, level);
         QualitySettings.SetQualityLevel(level, true);
         PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Obtiene el modo de visualización de controles táctiles:
+    /// 0 = Automático (celular / pantalla táctil), 1 = Siempre visibles, 2 = Ocultos.
+    /// </summary>
+    public static int GetMobileControlsMode()
+    {
+        return Mathf.Clamp(PlayerPrefs.GetInt(KeyMobileControlsMode, 0), 0, 2);
+    }
+
+    /// <summary>
+    /// Guarda el modo de visualización de controles táctiles y actualiza la interfaz en tiempo real.
+    /// </summary>
+    public static void SetMobileControlsMode(int mode)
+    {
+        int clamped = Mathf.Clamp(mode, 0, 2);
+        PlayerPrefs.SetInt(KeyMobileControlsMode, clamped);
+        PlayerPrefs.Save();
+        MobileInputManager.NotifyVisibilityModeChanged();
     }
 
     /// <summary>

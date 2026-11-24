@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Pantalla de inicio (Splash) que presenta el logotipo del equipo y el título del juego.
-/// Inicia la música de intro y carga automáticamente el Menú Principal tras 3 segundos o al presionar cualquier tecla.
+/// Inicia la música de intro y carga automáticamente el Menú Principal tras 3 segundos o al tocar/presionar cualquier tecla.
 /// </summary>
 public class SplashScreen : MonoBehaviour
 {
@@ -39,11 +39,12 @@ public class SplashScreen : MonoBehaviour
     {
         if (isMoving) return;
 
-        // Omitir con teclado o ratón
+        // Omitir con teclado, ratón o toque en pantalla táctil
         bool keyPressed = Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame;
         bool mousePressed = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        bool touchPressed = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
 
-        if (keyPressed || mousePressed)
+        if (keyPressed || mousePressed || touchPressed)
         {
             StopAllCoroutines();
             Proceed();

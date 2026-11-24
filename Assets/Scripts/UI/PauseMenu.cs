@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// Menú modal de pausa. Se activa con la tecla Escape o P y detiene el juego con Time.timeScale = 0.
-/// Ofrece: Reanudar, Reiniciar Nivel, Controles, Opciones (con barras interactivas de audio) y Menú Principal.
+/// Menú modal de pausa. Se activa con la tecla Escape, P o el botón táctil de Pausa [||] y detiene el juego con Time.timeScale = 0.
+/// Ofrece: Reanudar, Reiniciar Nivel, Controles, Opciones (con barras interactivas de audio y controles táctiles) y Menú Principal.
 /// </summary>
 public class PauseMenu : MonoBehaviour
 {
@@ -116,9 +116,9 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
-        bool pausePressed = false;
+        bool pausePressed = MobileInputManager.PausePressedThisFrame;
 
-        // Detectar tecla Escape o tecla P (indispensable para navegadores/Itch.io)
+        // Detectar tecla Escape (también mapeada al botón Atrás de Android) o tecla P
         var kb = Keyboard.current;
         if (kb != null)
         {
@@ -144,6 +144,7 @@ public class PauseMenu : MonoBehaviour
             }
             else if (GameManager.Instance != null)
             {
+                if (AudioManager.Instance != null) AudioManager.Instance.PlayButtonSound();
                 GameManager.Instance.TogglePause();
             }
         }

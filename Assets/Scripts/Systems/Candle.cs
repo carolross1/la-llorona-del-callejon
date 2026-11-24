@@ -6,8 +6,8 @@ using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Vela coleccionable en el escenario.
-/// Se recoge automáticamente al caminar sobre ella o acercarse y presionar [E].
-/// Con la tecla [F] Carlos ora y coloca una ofrenda sagrada en el suelo,
+/// Se recoge automáticamente al caminar sobre ella o acercarse y presionar [E] (o botón táctil).
+/// Con la tecla [F] (o botón táctil OFRENDA) Carlos ora y coloca una ofrenda sagrada en el suelo,
 /// la cual distrae y pacifica a La Llorona durante varios segundos.
 /// </summary>
 public class Candle : MonoBehaviour
@@ -92,9 +92,10 @@ public class Candle : MonoBehaviour
                 promptGo.SetActive(inRange);
         }
 
-        // 1. Recogida manual deliberada con tecla [E] al estar cerca
+        // 1. Recogida manual deliberada con tecla [E] o botón táctil al estar cerca
         var kb = Keyboard.current;
-        if (dist <= 1.8f && kb != null && kb.eKey.wasPressedThisFrame)
+        bool interactPressed = (kb != null && kb.eKey.wasPressedThisFrame) || MobileInputManager.InteractPressedThisFrame;
+        if (dist <= 1.8f && interactPressed)
         {
             CollectCandle();
             return;

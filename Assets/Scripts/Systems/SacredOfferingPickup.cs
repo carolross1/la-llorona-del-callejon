@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// Ítem interactivo en el Panteón (Nivel 4 Clímax):
 /// - Representa las Flores Sagradas de Cempasúchil y Veladoras consagradas.
-/// - Carlos debe buscar y recoger esta ofrenda con [E] para llevarla a la Tumba de La Llorona.
+/// - Carlos debe buscar y recoger esta ofrenda con [E] (o botón táctil) para llevarla a la Tumba de La Llorona.
 /// - Cuenta con levitación suave y una columna de luz dorada visible.
 /// </summary>
 public class SacredOfferingPickup : MonoBehaviour
@@ -62,7 +62,9 @@ public class SacredOfferingPickup : MonoBehaviour
         if (inRange)
         {
             var kb = Keyboard.current;
-            if (kb != null && (kb.eKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+            bool interactPressed = (kb != null && (kb.eKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+                                || MobileInputManager.InteractPressedThisFrame;
+            if (interactPressed)
             {
                 TakeOffering();
             }

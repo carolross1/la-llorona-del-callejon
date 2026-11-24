@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Constructor y estilizador en tiempo de ejecución para los modales de Pausa,
-/// Opciones (con barras interactivas de Música, SFX y Pantalla Completa) y
+/// Opciones (con barras interactivas de Música, SFX, Controles Táctiles y Pantalla Completa) y
 /// Controles del Juego, garantizando estética colonial consistente en todos los niveles.
 /// </summary>
 public static class ColonialMenuModalHelper
@@ -244,7 +244,7 @@ public static class ColonialMenuModalHelper
     }
 
     /// <summary>
-    /// Construye el panel interactivo de Opciones (Volumen de Música, Volumen SFX, Pantalla Completa y acceso a Controles).
+    /// Construye el panel interactivo de Opciones (Volumen de Música, Volumen SFX, Controles Táctiles, Pantalla Completa y Controles).
     /// </summary>
     public static GameObject BuildOptionsSubPanel(Transform parentOverlay, Font font,
         Action onCloseClicked, Action onOpenControlsClicked)
@@ -260,11 +260,11 @@ public static class ColonialMenuModalHelper
 
         GameObject panel = new GameObject("PanelOpciones", typeof(RectTransform));
         panel.transform.SetParent(parentOverlay, false);
-        StyleColonialModalPanel(panel, "OPCIONES", new Vector2(620f, 500f), font);
+        StyleColonialModalPanel(panel, "OPCIONES", new Vector2(620f, 555f), font);
 
         // 1. Control de Volumen de Música
         CreateVolumeRow(panel.transform, "FilaMusica", "VOLUMEN DE MÚSICA",
-            new Vector2(0f, 110f), SaveSystem.GetMusicVolume(), font,
+            new Vector2(0f, 132f), SaveSystem.GetMusicVolume(), font,
             val =>
             {
                 SaveSystem.SetMusicVolume(val);
@@ -272,17 +272,31 @@ public static class ColonialMenuModalHelper
 
         // 2. Control de Volumen de Efectos (SFX)
         CreateVolumeRow(panel.transform, "FilaSFX", "EFECTOS DE SONIDO (SFX)",
-            new Vector2(0f, 20f), SaveSystem.GetSfxVolume(), font,
+            new Vector2(0f, 48f), SaveSystem.GetSfxVolume(), font,
             val =>
             {
                 SaveSystem.SetSfxVolume(val);
             });
 
-        // 3. Botón de Pantalla Completa
+        // 3. Interruptor de Controles Táctiles (Automático / Siempre Visibles / Ocultos)
+        Button touchModeBtn = EnsureColonialButton(panel.transform, "Btn_ControlesTactiles",
+            $"CONTROLES TÁCTILES: {MobileInputManager.GetCurrentModeDisplayLabel()}",
+            new Vector2(0f, -36f), new Vector2(450f, 46f), 17, false, font);
+        Text touchModeTxt = touchModeBtn.GetComponentInChildren<Text>();
+        touchModeBtn.onClick.RemoveAllListeners();
+        touchModeBtn.onClick.AddListener(() =>
+        {
+            MobileInputManager.CycleControlsMode();
+            if (touchModeTxt != null)
+                touchModeTxt.text = $"CONTROLES TÁCTILES: {MobileInputManager.GetCurrentModeDisplayLabel()}";
+            if (AudioManager.Instance != null) AudioManager.Instance.PlayButtonSound();
+        });
+
+        // 4. Botón de Pantalla Completa
         bool isFull = Screen.fullScreen;
         Button fullBtn = EnsureColonialButton(panel.transform, "Btn_PantallaCompleta",
             $"PANTALLA COMPLETA: {(isFull ? "ACTIVA" : "VENTANA")}",
-            new Vector2(0f, -68f), new Vector2(420f, 48f), 19, false, font);
+            new Vector2(0f, -92f), new Vector2(450f, 46f), 18, false, font);
         Text fullTxt = fullBtn.GetComponentInChildren<Text>();
         fullBtn.onClick.RemoveAllListeners();
         fullBtn.onClick.AddListener(() =>
@@ -294,12 +308,12 @@ public static class ColonialMenuModalHelper
             if (AudioManager.Instance != null) AudioManager.Instance.PlayButtonSound();
         });
 
-        // 4. Botón para abrir Controles desde Opciones
+        // 5. Botón para abrir Controles desde Opciones
         if (onOpenControlsClicked != null)
         {
             Button ctrlBtn = EnsureColonialButton(panel.transform, "Btn_VerControles",
                 "VER CONTROLES DEL JUEGO",
-                new Vector2(0f, -128f), new Vector2(420f, 48f), 19, false, font);
+                new Vector2(0f, -148f), new Vector2(450f, 46f), 18, false, font);
             ctrlBtn.onClick.RemoveAllListeners();
             ctrlBtn.onClick.AddListener(() =>
             {
@@ -308,10 +322,10 @@ public static class ColonialMenuModalHelper
             });
         }
 
-        // 5. Botón Volver / Cerrar
+        // 6. Botón Volver / Cerrar
         Button closeBtn = EnsureColonialButton(panel.transform, "Btn_CerrarOpciones",
             "← VOLVER",
-            new Vector2(0f, -195f), new Vector2(280f, 52f), 21, true, font);
+            new Vector2(0f, -214f), new Vector2(280f, 50f), 21, true, font);
         closeBtn.onClick.RemoveAllListeners();
         closeBtn.onClick.AddListener(() =>
         {
@@ -456,7 +470,7 @@ public static class ColonialMenuModalHelper
     }
 
     /// <summary>
-    /// Construye el panel informativo con todos los Controles del Juego para que el jugador sepa qué teclas usar.
+    /// Construye el panel informativo con todos los Controles del Juego (PC y Móvil) para que el jugador sepa qué usar.
     /// </summary>
     public static GameObject BuildControlsSubPanel(Transform parentOverlay, Font font, Action onCloseClicked)
     {
@@ -471,21 +485,22 @@ public static class ColonialMenuModalHelper
 
         GameObject panel = new GameObject("PanelControles", typeof(RectTransform));
         panel.transform.SetParent(parentOverlay, false);
-        StyleColonialModalPanel(panel, "CONTROLES DEL JUEGO", new Vector2(680f, 540f), font);
+        StyleColonialModalPanel(panel, "CONTROLES DEL JUEGO", new Vector2(690f, 575f), font);
 
         string[,] controls = new string[,]
         {
-            { "W, A, S, D  /  Flechas", "Mover a Carlos por el escenario" },
-            { "Shift Izquierdo",        "Correr más rápido (consume estamina)" },
-            { "Espacio",                "Saltar obstáculos bajos (Nivel 2)" },
-            { "Tecla [E]",              "Esconderse / Recoger veladoras o Agua Bendita" },
-            { "Tecla [F]",              "Ofrendar vela / Consagrar nicho / Agua Bendita" },
-            { "Clic Izquierdo",         "Lanzar Agua Bendita hacia el cursor (Nivel 4)" },
-            { "Esc  o  Tecla [P]",      "Pausar o reanudar la partida" }
+            { "WASD / Joystick Izq.",   "Mover a Carlos por el escenario" },
+            { "Shift Izq. / [CORRER]",  "Correr más rápido (consume estamina)" },
+            { "Espacio / [SALTAR]",     "Saltar obstáculos bajos (Nivel 2)" },
+            { "Tecla [E] / [USAR]",     "Esconderse / Recoger velas o Agua Bendita" },
+            { "Tecla [F] / [OFRENDA]",  "Ofrendar vela / Consagrar nicho / Agua" },
+            { "Clic Izq. / Tocar",      "Apuntar y lanzar Agua Bendita (Nivel 4)" },
+            { "Esc, [P] / Botón [||]",  "Pausar o reanudar la partida" },
+            { "Celular / Táctil",       "Activa o prueba el modo táctil en Opciones" }
         };
 
-        float startY = 138f;
-        float stepY = 46f;
+        float startY = 156f;
+        float stepY = 43f;
 
         for (int i = 0; i < controls.GetLength(0); i++)
         {
@@ -495,7 +510,7 @@ public static class ColonialMenuModalHelper
 
         Button closeBtn = EnsureColonialButton(panel.transform, "Btn_CerrarControles",
             "← VOLVER",
-            new Vector2(0f, -212f), new Vector2(280f, 52f), 21, true, font);
+            new Vector2(0f, -228f), new Vector2(280f, 50f), 21, true, font);
         closeBtn.onClick.RemoveAllListeners();
         closeBtn.onClick.AddListener(() =>
         {
@@ -515,7 +530,7 @@ public static class ColonialMenuModalHelper
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = new Vector2(0f, yPos);
-        rt.sizeDelta = new Vector2(610f, 38f);
+        rt.sizeDelta = new Vector2(620f, 36f);
 
         // Fondo sutil de fila
         Image rowBg = row.AddComponent<Image>();
@@ -529,7 +544,7 @@ public static class ColonialMenuModalHelper
         kbRt.anchorMin = kbRt.anchorMax = new Vector2(0f, 0.5f);
         kbRt.pivot = new Vector2(0f, 0.5f);
         kbRt.anchoredPosition = new Vector2(8f, 0f);
-        kbRt.sizeDelta = new Vector2(210f, 30f);
+        kbRt.sizeDelta = new Vector2(220f, 28f);
 
         Image kbImg = keyBadge.AddComponent<Image>();
         kbImg.sprite = GetWhiteSprite();
@@ -538,7 +553,7 @@ public static class ColonialMenuModalHelper
         kbOut.effectColor = new Color(0.90f, 0.72f, 0.28f, 0.90f);
         kbOut.effectDistance = new Vector2(1.2f, -1.2f);
 
-        GameObject kTxtGo = CreateColonialText(keyBadge.transform, "KeyText", keyText, 15,
+        GameObject kTxtGo = CreateColonialText(keyBadge.transform, "KeyText", keyText, 14,
             new Color(1f, 0.92f, 0.48f), TextAnchor.MiddleCenter, font);
         RectTransform kTxtRt = kTxtGo.GetComponent<RectTransform>();
         kTxtRt.anchorMin = Vector2.zero;
@@ -547,13 +562,13 @@ public static class ColonialMenuModalHelper
         kTxtRt.offsetMax = Vector2.zero;
 
         // Descripción de acción (derecha)
-        GameObject actTxtGo = CreateColonialText(row.transform, "ActionText", actionText, 16,
+        GameObject actTxtGo = CreateColonialText(row.transform, "ActionText", actionText, 15,
             new Color(0.96f, 0.94f, 0.88f), TextAnchor.MiddleLeft, font);
         RectTransform actRt = actTxtGo.GetComponent<RectTransform>();
         actRt.anchorMin = actRt.anchorMax = new Vector2(0f, 0.5f);
         actRt.pivot = new Vector2(0f, 0.5f);
-        actRt.anchoredPosition = new Vector2(232f, 0f);
-        actRt.sizeDelta = new Vector2(368f, 34f);
+        actRt.anchoredPosition = new Vector2(240f, 0f);
+        actRt.sizeDelta = new Vector2(370f, 32f);
     }
 
     public static GameObject CreateColonialText(Transform parent, string name, string content, int fontSize,

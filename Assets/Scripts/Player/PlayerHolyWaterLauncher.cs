@@ -7,7 +7,8 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// Sistema de combate de Carlos para el Boss Fight final (Nivel 4):
 /// - Permite a Carlos apuntar y lanzar Jarros de Agua Bendita contra La Llorona.
-/// - Controles: Clic Izquierdo (apunta con el cursor hacia La Llorona) o Tecla F (hacia donde mira/camina Carlos).
+/// - Controles PC: Clic Izquierdo (apunta con el cursor hacia La Llorona) o Tecla F.
+/// - Controles Móvil: Tocar directamente en el escenario hacia La Llorona (ignorando el joystick/botones UI) o botón [AGUA BENDITA].
 /// - Administra la munición de jarros y notifica a la interfaz de usuario.
 /// </summary>
 public class PlayerHolyWaterLauncher : MonoBehaviour
@@ -28,6 +29,7 @@ public class PlayerHolyWaterLauncher : MonoBehaviour
     float lastFireTime = -99f;
     PlayerMovement playerMovement;
     Collider2D playerCollider;
+    Vector2 lastAimDir = Vector2.right;
 
     public int CurrentJars => currentJars;
     public int MaxJars => maxJars;
@@ -46,41 +48,95 @@ public class PlayerHolyWaterLauncher : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+            return;
+
         if (playerMovement != null && playerMovement.IsHidden) return;
 
-        // Disparo con Clic Izquierdo (Apunta con el cursor del mouse)
+        if (playerMovement != null && playerMovement.MoveInput.sqrMagnitude > 0.05f)
+        {
+            lastAimDir = playerMovement.MoveInput.normalized;
+        }
+
+        // 1. Disparo táctil multitouch en pantalla (tocar el escenario fuera del joystick y botones UI)
+        bool handledTouchAim = false;
+        var ts = Touchscreen.current;
+        if (ts != null)
+        {
+            foreach (var touch in ts.touches)
+            {
+                if (touch.press.wasPressedThisFrame)
+                {
+                    Vector2 touchPos = touch.position.ReadValue();
+                    int touchId = touch.touchId.ReadValue();
+                    if (!MobileInputManager.IsScreenPointOverUI(touchPos, touchId))
+                    {
+                        ThrowTowardsScreenPoint(touchPos);
+                        handledTouchAim = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (handledTouchAim) return;
+
+        // 2. Disparo con Clic Izquierdo en PC (ignorando clics sobre botones de pausa o controles UI)
         var mouse = Mouse.current;
-        if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame && (ts == null || !ts.primaryTouch.press.isPressed))
         {
             Vector2 mouseScreenPos = mouse.position.ReadValue();
-            Vector3 mouseWorld = transform.position + (transform.localScale.x < 0 ? Vector3.left : Vector3.right);
-
-            if (Camera.main != null)
+            if (!MobileInputManager.IsScreenPointOverUI(mouseScreenPos))
             {
-                float camDist = Mathf.Abs(Camera.main.transform.position.z);
-                if (camDist < 0.1f) camDist = 10f;
-                mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, camDist));
+                ThrowTowardsScreenPoint(mouseScreenPos);
+                return;
             }
-
-            Vector2 fireDir = new Vector2(mouseWorld.x - transform.position.x, mouseWorld.y - transform.position.y);
-            if (fireDir.sqrMagnitude < 0.001f)
-            {
-                fireDir = (transform.localScale.x < 0) ? Vector2.left : Vector2.right;
-            }
-            TryThrowJar(fireDir.normalized);
         }
-        // Disparo con tecla F (En la dirección de movimiento o vista de Carlos)
-        else
+
+        // 3. Disparo con tecla [F] o botón táctil [AGUA BENDITA]
+        var kb = Keyboard.current;
+        bool fPressed = (kb != null && kb.fKey.wasPressedThisFrame) || MobileInputManager.ActionFPressedThisFrame;
+        if (fPressed)
         {
-            var kb = Keyboard.current;
-            if (kb != null && kb.fKey.wasPressedThisFrame)
+            Vector2 fireDir = GetSmartAutoAimDirection();
+            TryThrowJar(fireDir);
+        }
+    }
+
+    void ThrowTowardsScreenPoint(Vector2 screenPos)
+    {
+        Vector3 worldPoint = transform.position + (Vector3)lastAimDir;
+        if (Camera.main != null)
+        {
+            float camDist = Mathf.Abs(Camera.main.transform.position.z);
+            if (camDist < 0.1f) camDist = 10f;
+            worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, camDist));
+        }
+
+        Vector2 fireDir = new Vector2(worldPoint.x - transform.position.x, worldPoint.y - transform.position.y);
+        if (fireDir.sqrMagnitude < 0.001f)
+        {
+            fireDir = lastAimDir;
+        }
+        TryThrowJar(fireDir.normalized);
+    }
+
+    Vector2 GetSmartAutoAimDirection()
+    {
+        // En móvil o con botón rápido, si La Llorona Boss está cerca y visible, auto-apuntar hacia ella facilita el combate táctil
+        if (MobileInputManager.ShouldShowTouchControls && LloronaBossAI.Instance != null && LloronaBossAI.Instance.gameObject.activeInHierarchy)
+        {
+            Vector2 toBoss = LloronaBossAI.Instance.transform.position - transform.position;
+            if (toBoss.sqrMagnitude > 0.01f && toBoss.magnitude <= 14f)
             {
-                Vector2 fireDir = (playerMovement != null && playerMovement.MoveInput.sqrMagnitude > 0.05f)
-                    ? playerMovement.MoveInput.normalized 
-                    : (transform.localScale.x < 0 ? Vector2.left : Vector2.right);
-                TryThrowJar(fireDir);
+                return toBoss.normalized;
             }
         }
+
+        if (playerMovement != null && playerMovement.MoveInput.sqrMagnitude > 0.05f)
+            return playerMovement.MoveInput.normalized;
+
+        return lastAimDir.sqrMagnitude > 0.01f ? lastAimDir.normalized : Vector2.right;
     }
 
     public bool TryThrowJar(Vector2 direction)

@@ -81,24 +81,37 @@ public class PlayerMovement : MonoBehaviour
         }
 
         var kb = Keyboard.current;
-        if (kb == null) return;
+        Vector2 kbInput = Vector2.zero;
+        if (kb != null)
+        {
+            kbInput = new Vector2(
+                (kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1 : 0) - (kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1 : 0),
+                (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0)
+            ).normalized;
+        }
 
-        input = new Vector2(
-            (kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1 : 0) - (kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1 : 0),
-            (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1 : 0) - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1 : 0)
-        ).normalized;
+        Vector2 joyInput = MobileInputManager.JoystickDirection;
+        if (kbInput.sqrMagnitude > 0.01f)
+            input = kbInput;
+        else if (joyInput.sqrMagnitude > 0.01f)
+            input = joyInput.normalized;
+        else
+            input = Vector2.zero;
 
-        bool wantsToRun = CanRun && (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed) && input != Vector2.zero;
+        bool shiftPressed = (kb != null && (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed)) || MobileInputManager.SprintHeld;
+        bool wantsToRun = CanRun && shiftPressed && input != Vector2.zero;
 
-        // Salto con Barra Espaciadora [Espacio]
-        if (kb.spaceKey.wasPressedThisFrame && !IsJumping && !IsHidden && currentStamina >= jumpStaminaCost)
+        // Salto con Barra Espaciadora [Espacio] o botón táctil SALTAR
+        bool jumpPressed = (kb != null && kb.spaceKey.wasPressedThisFrame) || MobileInputManager.JumpPressedThisFrame;
+        if (jumpPressed && !IsJumping && !IsHidden && currentStamina >= jumpStaminaCost)
         {
             currentStamina = Mathf.Max(0f, currentStamina - jumpStaminaCost);
             StartJump();
         }
 
-        // Ofrenda / Orar con [F] (Prioriza consagrar nicho sagrado si está cerca, o colocar ofrenda en el suelo)
-        if (kb.fKey.wasPressedThisFrame && !IsHidden)
+        // Ofrenda / Orar con [F] o botón táctil OFRENDA (Prioriza consagrar nicho sagrado si está cerca, o colocar ofrenda en el suelo)
+        bool actionFPressed = (kb != null && kb.fKey.wasPressedThisFrame) || MobileInputManager.ActionFPressedThisFrame;
+        if (actionFPressed && !IsHidden && GetComponent<PlayerHolyWaterLauncher>() == null)
         {
             if (Candle.PlayerCandlesCount > 0)
             {

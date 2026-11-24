@@ -67,7 +67,8 @@ public class CandleStand : MonoBehaviour
         if (inRange)
         {
             var kb = Keyboard.current;
-            if (kb != null && kb.eKey.wasPressedThisFrame)
+            bool interactPressed = (kb != null && kb.eKey.wasPressedThisFrame) || MobileInputManager.InteractPressedThisFrame;
+            if (interactPressed)
             {
                 TryTakeCandle();
             }

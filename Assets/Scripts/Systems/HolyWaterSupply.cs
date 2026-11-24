@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Pila / Fuente de Agua Bendita en el panteón:
-/// - Carlos se acerca y presiona [E] para recargar sus jarros de agua bendita al máximo.
+/// - Carlos se acerca y presiona [E] (o botón táctil) para recargar sus jarros de agua bendita al máximo.
 /// - Cuenta con luz sacra parpadeante y aviso contextual en pantalla.
 /// </summary>
 public class HolyWaterSupply : MonoBehaviour
@@ -74,9 +74,11 @@ public class HolyWaterSupply : MonoBehaviour
             }
         }
 
-        // Interacción con tecla [E] o [Espacio]
+        // Interacción con tecla [E], [Espacio] o botón táctil
         var kb = Keyboard.current;
-        if (inRange && kb != null && (kb.eKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+        bool interactPressed = (kb != null && (kb.eKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+                            || MobileInputManager.InteractPressedThisFrame;
+        if (inRange && interactPressed)
         {
             TryRefill();
         }
